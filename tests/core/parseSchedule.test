@@ -3,36 +3,26 @@ Scheduling annotations.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-+ foo() @parallel
++ foo() @parallel {
     _
-    
+}
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <CallExpression>
-        <schedule>
-            <Id name="parallel"/>
-        </schedule>
-        <Id name="foo"/>
-    </CallExpression>
+<FunctionDeclaration id="foo" access="public" schedule="parallel">
     <Id name="null"/>
-</Declaration>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() @parallel do
++ foo() @parallel do {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <CallExpression imperative="true">
-        <schedule>
-            <Id name="parallel"/>
-        </schedule>
-        <Id name="foo"/>
-    </CallExpression>
+<FunctionDeclaration id="foo" access="public" schedule="parallel" imperative="true">
     <Id name="null"/>
-</Declaration>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------

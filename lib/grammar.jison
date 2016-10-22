@@ -78,6 +78,14 @@ hex 0x[0-9A-Fa-f]+
 ">>"                { return 'RARROW2'; }
 "*>>"               { return 'RARROW2MUL'; }
 
+"+="                { return 'ADD_EQ'; }
+"*="                { return 'STAR_EQ'; }
+"-="                { return 'SUBTRACT_EQ'; }
+"//="               { return 'SLASH2_EQ'; }
+"/="                { return 'SLASH_EQ'; }
+"**="               { return 'STAR2_EQ'; }
+"++="               { return 'CONCAT_EQ'; }
+
 "--"                { return 'DASHDASH'; }
 "//"                { return 'SLASH2'; }
 "**"                { return 'STAR2'; }
@@ -111,14 +119,6 @@ hex 0x[0-9A-Fa-f]+
 "::"                { return 'COLON2'; }
 ":="                { return 'COLONEQ'; }
 ":"                 { return 'COLON'; }
-
-"+="                { return 'ADD_EQ'; }
-"*="                { return 'STAR_EQ'; }
-"-="                { return 'SUBTRACT_EQ'; }
-"/="                { return 'SLASH_EQ'; }
-"//="               { return 'SLASH2_EQ'; }
-"**="               { return 'STAR2_EQ'; }
-"++="               { return 'CONCAT_EQ'; }
 
 "@"                 { return 'AT'; }
 "^"                 { return 'CARET'; }
@@ -272,26 +272,34 @@ declarationBlock:
         { $$ = T.parseFuncBlock(@1, $1, $2, null, false); }
     | accessMode declFunc block
         { $$ = T.parseFuncBlock(@1, $1, $2, $3, false); }
-    | accessMode declFunc DO block
+    | accessMode declFunc DO blockOrTuple
         { $$ = T.parseFuncBlock(@1, $1, $2, $4, true); }
-    | accessMode declFunc FATARROW block
+    | accessMode declFunc FATARROW blockOrTuple
         { $$ = T.parseFuncBlock(@1, $1, $2, $4, false); }
-    | accessMode declFunc FATARROW simpleExpression
-        { $$ = T.parseFuncBlock(@1, $1, $2, new T.SetSyntax(@4, $4), false); }
 
-    | accessMode declType
-        { $$ = T.parseTypeBlock(@1, $1, $2, null, false); }
-    | accessMode declType block
-        { $$ = T.parseTypeBlock(@1, $1, $2, $3, false); }
+    | accessMode declClassId
+        { $$ = T.parseClass(@1, $1, $2, null, null); }
+    | accessMode declClassId COLON declTypeId
+        { $$ = T.parseClass(@1, $1, $2, $3, null); }
+    | accessMode declClassId block
+        { $$ = T.parseClass(@1, $1, $2, null, $3); }
+    | accessMode declClassId COLON declTypeId block
+        { $$ = T.parseClass(@1, $1, $2, $4, $5); }
 
-    // | accessMode declarationHeader lineEnding WHERE block lineEnding
-    //     { $$ = PARSE_DECLARATION(@1, $1, $2, $3, $5); }
-    // | accessMode assignmentExpression block lineEnding WHERE block lineEnding
-    //     { $$ = PARSE_DECLARATION(@1, $1, $2, $3, $6); }
-    // | accessMode blockRight
-    //     { $$ = PARSE_DECLARATION(@1, $1, $2, NULL, NULL); }
-    // | accessMode blockRight WHERE block lineEnding
-    //     { $$ = PARSE_DECLARATION(@1, $1, $2, NULL, $5); }
+    | accessMode IDENTIFIER EQ blockOrTuple
+        { $$ = T.parseProperty(@1, $1, $2, null, $4); }
+    | accessMode IDENTIFIER EQ blockOrTuple WHERE blockOrTuple
+        { $$ = T.parseProperty(@1, $1, $2, null, $4, $6); }
+    | accessMode IDENTIFIER COLON declTypeId EQ blockOrTuple
+        { $$ = T.parseProperty(@1, $1, $2, $4, $6); }
+    | accessMode IDENTIFIER COLON declTypeId EQ blockOrTuple WHERE blockOrTuple
+        { $$ = T.parseProperty(@1, $1, $2, $4, $6, $8); }
+    ;
+
+blockOrTuple:
+    block
+    | tupleExpression
+        { $$ = new T.SetSyntax(@1, $1); }
     ;
 
 declFunc:
@@ -299,53 +307,50 @@ declFunc:
         { $$ = T.parseFuncDecl(@1, $1, null, null, null); }
     | declId LP RP
         { $$ = T.parseFuncDecl(@1, $1, null, null, null); }
-    | declId LP RP AT identifier
-        { $$ = T.parseFuncDecl(@1, $1, null, null, $7); }
+    | declId LP RP AT IDENTIFIER
+        { $$ = T.parseFuncDecl(@1, $1, null, null, $5); }
     | declId LP RP COLON declTypeId
         { $$ = T.parseFuncDecl(@1, $1, null, $5, null); }
-    | declId LP RP COLON declTypeId AT identifier
+    | declId LP RP COLON declTypeId AT IDENTIFIER
         { $$ = T.parseFuncDecl(@1, $1, null, $5, $7); }
     
     | declId LP declArgumentList RP
         { $$ = T.parseFuncDecl(@1, $1, $3); }
-    | declId LP declArgumentList RP AT identifier
+    | declId LP declArgumentList RP AT IDENTIFIER
         { $$ = T.parseFuncDecl(@1, $1, $3, null, $6); }
     | declId LP declArgumentList RP COLON declTypeId
         { $$ = T.parseFuncDecl(@1, $1, $3, $6, null); }
-    | declId LP declArgumentList RP COLON declTypeId AT identifier
+    | declId LP declArgumentList RP COLON declTypeId AT IDENTIFIER
         { $$ = T.parseFuncDecl(@1, $1, $3, $6, $8); }
-    ;
-
-declClass:
-    declTypeId
-        { $$ = T.parseTypeDecl(@1, $1, null); }
-    | declTypeId COLON declTypeId
-        { $$ = T.parseTypeDecl(@1, $1, $3); }
     ;
 
 declClassId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declClassId BACKSLASH UIDENTIFIER
-        { $$ = $1; T.addTypeArg($1, $3); }
+        { $$ = $1; $1.addId($3); }
     ;
 
 declId:
     IDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declId BACKSLASH UIDENTIFIER
-        { $$ = $1; T.addTypeArg($1, $3); }
+        { $$ = $1; $1.addId($3); }
     ;
 
 declTypeId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declTypeId BACKSLASH UIDENTIFIER
-        { $$ = $1; T.addTypeArg($1, $3); }
+        { $$ = $1; $1.addId($3); }
+    | declTypeId BACKSLASH LP declTypeId RP
+        { $$ = $1; $1.add($4); }
     | LT declTypeId GT
-        { $$ = $2; }
+        { $$ = T.parseTypeId(@1, 'Channel'); $$.add($2); }
     | LB declTypeId RB
-        { $$ = $2; }
+        { $$ = T.parseTypeId(@1, 'List'); $$.add($2); }
+    | LCBG declTypeId RCBG
+        { $$ = T.parseTypeId(@1, 'Map'); $$.add($2); }
     ;
     
 declArgumentList:
@@ -366,13 +371,13 @@ declArgumentPair:
 
 declArgument:
     declArgumentPair
-        { $$ = T.parseArg(@1, $1, null, false); }
+        { $$ = T.parseArgDecl(@1, $1, null, false); }
     | BIDENTIFIER declArgumentPair
-        { $$ = T.parseArg(@1, $2, $1, false); }
+        { $$ = T.parseArgDecl(@1, $2, $1, false); }
     | BIDENTIFIER
-        { $$ = T.parseArg(@1, null, $1, false); }
+        { $$ = T.parseArgDecl(@1, null, $1, false); }
     | DOT3 declArgumentPair
-        { $$ = T.parseArg(@1, $2, null, true); }
+        { $$ = T.parseArgDecl(@1, $2, null, true); }
     | declArgument EQ simpleExpression
         { $$ = $1; $1.defaultValue = $3; }
     ;
@@ -386,7 +391,7 @@ accessMode:
     
 statement:
     rightBlock
-    // | controlFlowStatement
+    | controlFlowStatement
     // | whileBlock
     // | tryBlock
     | STAR2 declArgument
@@ -422,17 +427,17 @@ moduleNameList:
 
 controlFlowStatement:
     EQ rightBlock
-        { $$ = PARSE_1(UpReturnSyntaxType, @1, $2); }
+        { $$ = T.parseReturn(@1, $2); }
     | EQ lineEnding
-        { $$ = PARSE_1(UpReturnSyntaxType, @1, PARSE_UNDEFINED(@1)); }
+        { $$ = T.parseReturn(@1, T.parseUndefined(@1)); }
     | CONTINUE lineEnding
-        { $$ = PARSE_1(UpContinueSyntaxType, @1, NULL); }
+        { $$ = T.parseContinue(@1, null); }
     | BREAK lineEnding
-        { $$ = NODE(UpBreakSyntaxType, @1); }
+        { $$ = T.parseBreak(@1); }
     | THROW rightBlock
-        { $$ = PARSE_1(UpThrowSyntaxType, @1, $2); }
+        { $$ = T.parseThrow(@1, $2); }
     | THROW lineEnding
-        { $$ = PARSE_1(UpThrowSyntaxType, @1, PARSE_UNDEFINED(@1)); }
+        { $$ = T.parseThrow(@1, T.parseUndefined(@1)); }
     ;
 
 whileBlock:
@@ -557,14 +562,14 @@ blockLeft:
     | channelOp blockRight
         { $$ = T.parseUnary(@1, $1, $2); }
     
-    | tupleExpression funcOp assignmentExpression
-        { $$ = PARSE_FUNCTION(@1, $1, $3, $2); }
-    | tupleExpression funcOp blockRight
-        { $$ = PARSE_FUNCTION(@1, $1, $3, $2); }
-    | funcOp assignmentExpression
-        { $$ = PARSE_FUNCTION(@1, NULL, $2, $1); }
-    | funcOp blockRight
-        { $$ = PARSE_FUNCTION(@1, NULL, $2, $1); }
+    | GT anonFuncArgs assignmentExpression
+        { $$ = T.parseAnonFunc(@1, $2, false, $3); }
+    | GT anonFuncArgs blockRight
+        { $$ = T.parseAnonFunc(@1, $2, false, $3); }
+    | GT anonFuncArgs DO assignmentExpression
+        { $$ = T.parseAnonFunc(@1, $2, true, $4); }
+    | GT anonFuncArgs DO blockRight
+        { $$ = T.parseAnonFunc(@1, $2, true, $4); }
     
     // | tupleExpression IS elseLine lineEnding
     //     { $$ = PARSE_IS(@1, $1, $3); }
@@ -607,6 +612,13 @@ blockLeft:
     //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
     ;
 
+anonFuncArgs:
+    LP RP
+        { $$ = null; }
+    | LP declArgumentList RP
+        { $$ = $2; }
+    ;
+
 blockRight:
     block
     // | tupleExpression assignOp blockRight
@@ -625,11 +637,11 @@ blockRight:
     | channelOp
         { $$ = T.parseUnary(@1, $1, null); }
     
-    // | tupleExpression funcOp blockRight
-    //     { $$ = PARSE_FUNCTION(@1, $1, $3, $2); }
-    // | funcOp blockRight
-    //     { $$ = PARSE_FUNCTION(@1, NULL, $2, $1); }
-    //
+    | GT anonFuncArgs blockRight
+        { $$ = T.parseAnonFunc(@1, $2, false, $3); }
+    | GT anonFuncArgs DO blockRight
+        { $$ = T.parseAnonFunc(@1, $2, true, $4); }
+    
     // | tupleExpression IS elseLine lineEnding
     //     { $$ = PARSE_IS(@1, $1, $3); }
     // | tupleExpression IS LCB elseLines RCB
@@ -714,11 +726,11 @@ assignmentExpressionSimple:
     | channelOp
         { $$ = T.parseUnary(@1, $1, right); }
     
-    // | simpleExpression funcOp right
-    //     { $$ = PARSE_FUNCTION(@1, $1, $3, $2); }
-    // | funcOp right
-    //     { $$ = PARSE_FUNCTION(@1, NULL, $2, $1); }
-    //
+    | GT anonFuncArgs right
+        { $$ = T.parseAnonFunc(@1, $2, false, $3); }
+    | GT anonFuncArgs DO right
+        { $$ = T.parseAnonFunc(@1, $2, true, $4); }
+    
     // | simpleExpression IS elseLineSimple
     //     { $$ = PARSE_IS(@1, $1, $3); }
     //
@@ -835,13 +847,13 @@ logicalOrExpression:
     | logicalOrExpression PIPE logicalAndExpression
         { $$ = T.parseBinary(@1, T.OrOp, $1, $3); }
     | logicalOrExpression TO logicalAndExpression
-        { $$ = PARSE_RANGE(@1, $1, $3, PARSE_UNDEFINED(@1), false); }
+        { $$ = T.parseRange(@1, $1, $3, null, false); }
     | logicalOrExpression TO logicalAndExpression BY logicalAndExpression
-        { $$ = PARSE_RANGE(@1, $1, $3, $5, false); }
+        { $$ = T.parseRange(@1, $1, $3, $5, false); }
     | logicalOrExpression THROUGH logicalAndExpression
-        { $$ = PARSE_RANGE(@1, $1, $3, PARSE_UNDEFINED(@1), true); }
+        { $$ = T.parseRange(@1, $1, $3, null, true); }
     | logicalOrExpression THROUGH logicalAndExpression BY logicalAndExpression
-        { $$ = PARSE_RANGE(@1, $1, $3, $5, true); }
+        { $$ = T.parseRange(@1, $1, $3, $5, true); }
     ;
 
 logicalAndExpression:
@@ -927,41 +939,27 @@ bindList:
     ;
 
 callExpression:
-    typeExpression
-    // | callExpression COLON typeExpression
-    //     { $$ = PARSE_SUBTYPE(@1, $1, $3); }
-    // | callExpression COLON2 typeExpression
-    //     { $$ = PARSE_SUBTYPE(@1, $1, $3); }
-    // | callExpression AS typeExpression
-    //     { $$ = PARSE_CAST(@1, $1, $3); }
+    basicExpression
+    | IDENTIFIER COLON declTypeId
+        { $$ = T.parseTypeAssignment(@1, $1, $3); }
+    | callExpression AS basicExpression
+        { $$ = T.parseCast(@1, $1, $3); }
     
     | callExpression callArguments
-        { $$ = $1; /*PARSE_CALL(@1, $1, $2);*/ }
-    // | callExpression callArguments AT id
-    //     { $$ = PARSE_CALL_TASK(@1, $1, $2, false, $4); }
-    // | callExpression callArguments DO
-    //     { $$ = PARSE_CALL_TASK(@1, $1, $2, true, NULL); }
-    // | callExpression callArguments AT id DO
-    //     { $$ = PARSE_CALL_TASK(@1, $1, $2, true, $4); }
+        { $$ = T.parseCall(@1, $1, $2); }
     
     | callExpression DOT IDENTIFIER
-        { $$ = PARSE_PROPERTY(@1, $1, $3); }
+        { $$ = T.parseGet(@1, $1, $3); }
     
     | callExpression DOT LB right RB
         { $$ = T.parseBinary(@1, T.LookupOp, $1, $4); }
     | callExpression DOT LB right ELSE right RB
-        { $$ = T.parseBinary(@1, T.LookupOp, $1, PARSE_DEFAULT(@4, $4, $6)); }
+        { $$ = T.parseBinary(@1, T.LookupOp, $1, T.parseDefault(@4, $4, $6)); }
     
     | callExpression LB right RB
         { $$ = T.parseBinary(@1, T.IndexOp, $1, $3); }
     | callExpression LB right ELSE right RB
-        { $$ = T.parseBinary(@1, T.IndexOp, $1, PARSE_DEFAULT(@3, $3, $5)); }
-    ;
-    
-typeExpression:
-    basicExpression
-    // | typeExpression BACKSLASH basicExpression
-    //     { $$ = APPEND_TYPE($1, $3); }
+        { $$ = T.parseBinary(@1, T.IndexOp, $1, T.parseDefault(@3, $3, $5)); }
     ;
     
 basicExpression:
@@ -1107,24 +1105,16 @@ callArguments:
 
 argumentList:
     argument
-        { $$ = $1; }
-    | argument COMMA
-        { $$ = $1; }
-    | argument COMMA argumentList
-        { $$ = $1; APPEND_ARG($1, $3); }
+        { $$ = [$1]; }
+    | argumentList COMMA argument
+        { $$ = $1; $1.push($3); }
     ;
 
 argument:
     right
-        { $$ = PARSE_ARG(@1, NULL, $1, NULL); }
+        { $$ = T.parseArg(@1, $1, null); }
     | BIDENTIFIER right
-        { $$ = PARSE_ARG(@1, $1, $2, NULL); }
-    | BIDENTIFIER
-        { $$ = PARSE_ARG(@1, $1, NULL, NULL); }
-    | BIDENTIFIER EQ right
-        { $$ = PARSE_ARG(@1, $1, T.parseAssignment(@1, T.EqOp, T.parseId(@1, $1), $3), NULL); }
-    | DOT3 right
-        { $$ = PARSE_VARG(@1, $2); }
+        { $$ = T.parseArg(@1, $2, $1); }
     ;
 
 mapTupleExpression:

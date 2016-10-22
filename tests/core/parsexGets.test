@@ -9,9 +9,9 @@ a.b
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<PropertyExpression name="b">
+<GetExpression name="b">
     <Id name="a"/>
-</PropertyExpression>
+</GetExpression>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -19,9 +19,9 @@ a . b
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<PropertyExpression name="b">
+<GetExpression name="b">
     <Id name="a"/>
-</PropertyExpression>
+</GetExpression>
 
 ====================================================================================================
 Property key lookups.
@@ -93,7 +93,6 @@ foo[bar to baz]
     <Range>
         <Id name="bar"/>
         <Id name="baz"/>
-        <Undefined/>
     </Range>
 </BinaryExpression>
 
@@ -123,7 +122,6 @@ foo[bar through baz]
     <Range through="true">
         <Id name="bar"/>
         <Id name="baz"/>
-        <Undefined/>
     </Range>
 </BinaryExpression>
 

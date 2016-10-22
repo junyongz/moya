@@ -21,9 +21,9 @@ a.b = 1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <PropertyExpression name="b">
+    <GetExpression name="b">
         <Id name="a"/>
-    </PropertyExpression>
+    </GetExpression>
     <Integer value="1"/>
 </AssignmentExpression>
 
@@ -36,12 +36,9 @@ a += 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="+=">
     <Id name="a"/>
-    <BinaryExpression op="+=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -50,12 +47,9 @@ a -= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="-=">
     <Id name="a"/>
-    <BinaryExpression op="-=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -65,12 +59,9 @@ a *= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="*=">
     <Id name="a"/>
-    <BinaryExpression op="*=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -79,12 +70,9 @@ a /= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="/=">
     <Id name="a"/>
-    <BinaryExpression op="/=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -93,12 +81,9 @@ a //= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="%=">
     <Id name="a"/>
-    <BinaryExpression op="//=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -107,12 +92,9 @@ a **= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="**=">
     <Id name="a"/>
-    <BinaryExpression op="**=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </BinaryExpression>
+    <Integer value="1"/>
 </AssignmentExpression>
 
 ====================================================================================================
@@ -124,12 +106,12 @@ a() += 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="+=">
+<AssignmentExpression op="+=">
     <CallExpression>
         <Id name="a"/>
     </CallExpression>
     <Integer value="1"/>
-</BinaryExpression>
+</AssignmentExpression>
 
 ====================================================================================================
 Key assignments.
@@ -163,7 +145,6 @@ foo[bar to baz] = 1
         <Range>
             <Id name="bar"/>
             <Id name="baz"/>
-            <Undefined/>
         </Range>
     </BinaryExpression>
     <Integer value="1"/>
@@ -197,10 +178,9 @@ foo: Bar = 1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <TypeId name="Bar"/>
-    </Subtype>
+    <TypeAssignment name="foo">
+        <TypeId id="Bar"/>
+    </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
 
@@ -211,82 +191,48 @@ foo: Bar\T = 1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <Type>
-            <TypeId name="Bar"/>
-            <TypeId name="T"/>
-        </Type>
-    </Subtype>
+    <TypeAssignment name="foo">
+        <TypeId id="Bar">
+            <TypeId id="T"/>
+        </TypeId>
+    </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo: Bar\(T:S\G) = 1
+foo: Bar\(S\G\V) = 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <Type>
-            <TypeId name="Bar"/>
-            <Subtype>
-                <TypeId name="T"/>
-                <Type>
-                    <TypeId name="S"/>
-                    <TypeId name="G"/>
-                </Type>
-            </Subtype>
-        </Type>
-    </Subtype>
+    <TypeAssignment name="foo">
+        <TypeId id="Bar">
+            <TypeId id="S">
+                <TypeId id="G"/>
+                <TypeId id="V"/>
+            </TypeId>
+        </TypeId>
+    </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo: Bar\(T:S\(G:B)) = 1
+foo: Bar\(S\(G\V)) = 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <Type>
-            <TypeId name="Bar"/>
-            <Subtype>
-                <TypeId name="T"/>
-                <Type>
-                    <TypeId name="S"/>
-                    <Subtype>
-                        <TypeId name="G"/>
-                        <TypeId name="B"/>
-                    </Subtype>
-                </Type>
-            </Subtype>
-        </Type>
-    </Subtype>
-    <Integer value="1"/>
-</AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo: Bar\(T:String) = 1
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <Type>
-            <TypeId name="Bar"/>
-            <Subtype>
-                <TypeId name="T"/>
-                <TypeId name="String"/>
-            </Subtype>
-        </Type>
-    </Subtype>
+    <TypeAssignment name="foo">
+        <TypeId id="Bar">
+            <TypeId id="S">
+                <TypeId id="G">
+                    <TypeId id="V"/>
+                </TypeId>
+            </TypeId>
+        </TypeId>
+    </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
 
@@ -297,48 +243,19 @@ foo: [Foo] = 1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Subtype>
-        <Id name="foo"/>
-        <List>
-            <TypeId name="Foo"/>
-        </List>
-    </Subtype>
+    <TypeAssignment name="foo">
+        <TypeId id="List">
+            <TypeId id="Foo"/>
+        </TypeId>
+    </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
-
-====================================================================================================
-Assignments can be made public or private (valid only in declarative contexts).
-====================================================================================================
-----------------------------------------------------------------------------------------------------
-
-+ a = 1
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<Declaration access="public">
-    <AssignmentExpression op="=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </AssignmentExpression>
-</Declaration>
-
-----------------------------------------------------------------------------------------------------
-
-- a = 1
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<Declaration access="private">
-    <AssignmentExpression op="=">
-        <Id name="a"/>
-        <Integer value="1"/>
-    </AssignmentExpression>
-</Declaration>
 
 ====================================================================================================
 Illegal assignments.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 a() = 1
 

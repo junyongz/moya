@@ -23,9 +23,7 @@ foo(a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Id name="a"/>
-    </Argument>
+    <Id name="a"/>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -36,12 +34,8 @@ foo(a, b)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Id name="a"/>
-    </Argument>
-    <Argument>
-        <Id name="b"/>
-    </Argument>
+    <Id name="a"/>
+    <Id name="b"/>
 </CallExpression>
 
 ====================================================================================================
@@ -55,9 +49,9 @@ foo(•name a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument name="name">
+    <arg name="name">
         <Id name="a"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -69,12 +63,10 @@ foo(a, •name b)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Id name="a"/>
-    </Argument>
-    <Argument name="name">
+    <Id name="a"/>
+    <arg name="name">
         <Id name="b"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -86,15 +78,11 @@ foo(a, •name b, c)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Id name="a"/>
-    </Argument>
-    <Argument name="name">
+    <Id name="a"/>
+    <arg name="name">
         <Id name="b"/>
-    </Argument>
-    <Argument>
-        <Id name="c"/>
-    </Argument>
+    </arg>
+    <Id name="c"/>
 </CallExpression>
 
 ====================================================================================================
@@ -102,65 +90,47 @@ Anonymous function arguments must put their own arguments in parentheses if more
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-foo(a => 1)
+foo(> (a) 1)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Function expression="true">
-            <head>
-                <Id name="a"/>
-            </head>
-            <Integer value="1"/>
-        </Function>
-    </Argument>
+    <Function>
+        <Argument name="a"/>
+        <Integer value="1"/>
+    </Function>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo((a,b) => 1)
+foo(> (a,b) 1)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Function expression="true">
-            <head>
-                <GroupExpression>
-                    <Id name="a"/>
-                    <Id name="b"/>
-                </GroupExpression>
-            </head>
-            <Integer value="1"/>
-        </Function>
-    </Argument>
+    <Function>
+        <Argument name="a"/>
+        <Argument name="b"/>
+        <Integer value="1"/>
+    </Function>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo((a,b) => 1, c)
+foo(> (a,b) 1, c)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Function expression="true">
-            <head>
-                <GroupExpression>
-                    <Id name="a"/>
-                    <Id name="b"/>
-                </GroupExpression>
-            </head>
-            <Integer value="1"/>
-        </Function>
-    </Argument>
-    <Argument>
-        <Id name="c"/>
-    </Argument>
+    <Function>
+        <Argument name="a"/>
+        <Argument name="b"/>
+        <Integer value="1"/>
+    </Function>
+    <Id name="c"/>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------

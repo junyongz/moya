@@ -1,74 +1,50 @@
 ----------------------------------------------------------------------------------------------------
 # Anonymous function with no arguments
 
-=> 2
+> () 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
-    <Integer value="2"/>
-</Function>
-
-----------------------------------------------------------------------------------------------------
-# Anonymous function with no arguments
-
-() => 2
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<Function expression="true">
-    <head>
-        <GroupExpression>
-        </GroupExpression>
-    </head>
+<Function>
     <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 # Anonymous function with one argument
 
-a => 2
+> (a) 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
-    <head>
-        <Id name="a"/>
-    </head>
+<Function>
+    <Argument name="a"/>
     <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 # Anonymous function with multiple argument
 
-(a,b) => 2
+> (a,b) 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
-    <head>
-        <GroupExpression>
-            <Id name="a"/>
-            <Id name="b"/>
-        </GroupExpression>
-    </head>
+<Function>
+    <Argument name="a"/>
+    <Argument name="b"/>
     <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an expression
 
-= () =>
+= > () {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
-    <Function expression="true">
-        <head>
-            <GroupExpression>
-            </GroupExpression>
-        </head>
+    <Function>
         <Id name="null"/>
     </Function>
 </Return>
@@ -76,13 +52,15 @@ a => 2
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an expression
 
-= =>
+= > (a) {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
-    <Function expression="true">
+    <Function>
+        <Argument name="a"/>
         <Id name="null"/>
     </Function>
 </Return>
@@ -90,16 +68,15 @@ a => 2
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an expression
 
-= (a) =>
+= > (a,) {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
-    <Function expression="true">
-        <head>
-            <Id name="a"/>
-        </head>
+    <Function>
+        <Argument name="a"/>
         <Id name="null"/>
     </Function>
 </Return>
@@ -107,34 +84,16 @@ a => 2
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an expression
 
-= a, =>
+= > (a,b) {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
-    <Function expression="true">
-        <head>
-            <Id name="a"/>
-        </head>
-        <Id name="null"/>
-    </Function>
-</Return>
-
-----------------------------------------------------------------------------------------------------
-# Anonymous function in an expression
-
-= a,b =>
-    _
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<Return>
-    <Function expression="true">
-        <head>
-            <Id name="a"/>
-            <Id name="b"/>
-        </head>
+    <Function>
+        <Argument name="a"/>
+        <Argument name="b"/>
         <Id name="null"/>
     </Function>
 </Return>
@@ -142,45 +101,37 @@ a => 2
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an assignment
 
-x = a,b =>
+x = > (a,b) {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
     <Id name="x"/>
-    <Function expression="true">
-        <head>
-            <Id name="a"/>
-            <Id name="b"/>
-        </head>
+    <Function>
+        <Argument name="a"/>
+        <Argument name="b"/>
         <Id name="null"/>
     </Function>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo((a,b) => a > b)
-
+foo(> (a,b) a + b)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Function expression="true">
-            <head>
-                <GroupExpression>
-                    <Id name="a"/>
-                    <Id name="b"/>
-                </GroupExpression>
-            </head>
-            <BinaryExpression op=">">
-                <Id name="a"/>
-                <Id name="b"/>
-            </BinaryExpression>
-        </Function>
-    </Argument>
+    <Function>
+        <Argument name="a"/>
+        <Argument name="b"/>
+        <BinaryExpression op="+">
+            <Id name="a"/>
+            <Id name="b"/>
+        </BinaryExpression>
+    </Function>
 </CallExpression>
 
 ====================================================================================================
@@ -188,15 +139,14 @@ With "do" annotation.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-a => do
+> (a) do {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function>
-    <head>
-        <Id name="a"/>
-    </head>
+<Function imperative="true">
+    <Argument name="a"/>
     <Id name="null"/>
 </Function>
 
@@ -212,9 +162,9 @@ n = ?.bar + 1
 <AssignmentExpression op="=">
     <Id name="n"/>
     <BinaryExpression op="+">
-        <PropertyExpression name="bar">
+        <GetExpression name="bar">
             <Id name="?"/>
-        </PropertyExpression>
+        </GetExpression>
         <Integer value="1"/>
     </BinaryExpression>
 </AssignmentExpression>
@@ -231,9 +181,9 @@ n = *.bar + 1
 <AssignmentExpression op="=">
     <Id name="n"/>
     <BinaryExpression op="+">
-        <PropertyExpression name="bar">
+        <GetExpression name="bar">
             <Id name="*"/>
-        </PropertyExpression>
+        </GetExpression>
         <Integer value="1"/>
     </BinaryExpression>
 </AssignmentExpression>

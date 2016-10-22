@@ -13,10 +13,10 @@ Basic class declarations
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <TypeId name="Foo"/>
+<Class access="public">
+    <TypeId id="Foo"/>
     <Id name="null"/>
-</Declaration>
+</Class>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -26,10 +26,10 @@ Basic class declarations
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="private">
-    <TypeId name="Foo"/>
+<Class access="private">
+    <TypeId id="Foo"/>
     <Id name="null"/>
-</Declaration>
+</Class>
 
 ====================================================================================================
 Subclass declarations
@@ -42,13 +42,13 @@ Subclass declarations
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="private">
-    <Subtype>
-        <TypeId name="Foo"/>
-        <TypeId name="Bar"/>
-    </Subtype>
+<Class access="private">
+    <TypeId id="Foo"/>
+    <base>
+        <TypeId id="Bar"/>
+    </base>
     <Id name="null"/>
-</Declaration>
+</Class>
 
 ====================================================================================================
 Parameterized class declarations
@@ -60,12 +60,11 @@ Parameterized class declarations
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="private">
-    <Type>
-        <TypeId name="Foo"/>
-        <TypeId name="T"/>
-    </Type>
-</Declaration>
+<Class access="private">
+    <TypeId id="Foo">
+        <TypeId id="T"/>
+    </TypeId>
+</Class>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -75,13 +74,12 @@ Parameterized class declarations
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="private">
-    <Type>
-        <TypeId name="Foo"/>
-        <TypeId name="U"/>
-        <TypeId name="T"/>
-    </Type>
+<Class access="private">
+    <TypeId id="Foo">
+        <TypeId id="U"/>
+        <TypeId id="T"/>
+    </TypeId>
     <Id name="null"/>
-</Declaration>
+</Class>
 
 ----------------------------------------------------------------------------------------------------
