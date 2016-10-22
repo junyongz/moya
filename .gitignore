@@ -1,0 +1,6 @@
+*.pyc
+*.gch
+.DS_Store
+.moyaversion
+.tags*
+node_modules

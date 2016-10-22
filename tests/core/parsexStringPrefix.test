@@ -1,0 +1,77 @@
+====================================================================================================
+# Prefixed strings
+
+Strings can be prefixed with an identifier that qualifies it. This is a handy way to embed DSLs in the language while indicating the format of the language. The prefixes are translated to a standard function call.
+
+@string/prefix
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+foo"bar"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <String value="bar"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo"bar
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <String value="bar"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo"
+    bar
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <String value="bar"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo"\\-"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <String value="\-"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo"abc %def"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <BinaryExpression op="concat">
+            <String value="abc "/>
+            <Id name="def"/>
+        </BinaryExpression>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------

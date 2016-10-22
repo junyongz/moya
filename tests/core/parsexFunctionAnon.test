@@ -1,0 +1,241 @@
+----------------------------------------------------------------------------------------------------
+# Anonymous function with no arguments
+
+=> 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function expression="true">
+    <Integer value="2"/>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with no arguments
+
+() => 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function expression="true">
+    <head>
+        <GroupExpression>
+        </GroupExpression>
+    </head>
+    <Integer value="2"/>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with one argument
+
+a => 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function expression="true">
+    <head>
+        <Id name="a"/>
+    </head>
+    <Integer value="2"/>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with multiple argument
+
+(a,b) => 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function expression="true">
+    <head>
+        <GroupExpression>
+            <Id name="a"/>
+            <Id name="b"/>
+        </GroupExpression>
+    </head>
+    <Integer value="2"/>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an expression
+
+= () =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Function expression="true">
+        <head>
+            <GroupExpression>
+            </GroupExpression>
+        </head>
+        <Id name="null"/>
+    </Function>
+</Return>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an expression
+
+= =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Function expression="true">
+        <Id name="null"/>
+    </Function>
+</Return>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an expression
+
+= (a) =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Function expression="true">
+        <head>
+            <Id name="a"/>
+        </head>
+        <Id name="null"/>
+    </Function>
+</Return>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an expression
+
+= a, =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Function expression="true">
+        <head>
+            <Id name="a"/>
+        </head>
+        <Id name="null"/>
+    </Function>
+</Return>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an expression
+
+= a,b =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Function expression="true">
+        <head>
+            <Id name="a"/>
+            <Id name="b"/>
+        </head>
+        <Id name="null"/>
+    </Function>
+</Return>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function in an assignment
+
+x = a,b =>
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="x"/>
+    <Function expression="true">
+        <head>
+            <Id name="a"/>
+            <Id name="b"/>
+        </head>
+        <Id name="null"/>
+    </Function>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo((a,b) => a > b)
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Function expression="true">
+            <head>
+                <GroupExpression>
+                    <Id name="a"/>
+                    <Id name="b"/>
+                </GroupExpression>
+            </head>
+            <BinaryExpression op=">">
+                <Id name="a"/>
+                <Id name="b"/>
+            </BinaryExpression>
+        </Function>
+    </Argument>
+</CallExpression>
+
+====================================================================================================
+With "do" annotation.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+a => do
+    _
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <head>
+        <Id name="a"/>
+    </head>
+    <Id name="null"/>
+</Function>
+
+====================================================================================================
+Function expression shorthand.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+n = ?.bar + 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <BinaryExpression op="+">
+        <PropertyExpression name="bar">
+            <Id name="?"/>
+        </PropertyExpression>
+        <Integer value="1"/>
+    </BinaryExpression>
+</AssignmentExpression>
+
+====================================================================================================
+Map expression shorthand.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+n = *.bar + 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <BinaryExpression op="+">
+        <PropertyExpression name="bar">
+            <Id name="*"/>
+        </PropertyExpression>
+        <Integer value="1"/>
+    </BinaryExpression>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------

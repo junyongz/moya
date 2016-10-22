@@ -1,0 +1,166 @@
+====================================================================================================
+# Function calls
+
+Basic function calls are included within parentheses.
+
+@calls/basic
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+foo()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo(a)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Id name="a"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo(a, b)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Id name="a"/>
+    </Argument>
+    <Argument>
+        <Id name="b"/>
+    </Argument>
+</CallExpression>
+
+====================================================================================================
+Named arguments are indicated with a bullet prefix.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+foo(•name a)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument name="name">
+        <Id name="a"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+# External name on second argument
+
+foo(a, •name b)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Id name="a"/>
+    </Argument>
+    <Argument name="name">
+        <Id name="b"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+# External name before un-named argument
+
+foo(a, •name b, c)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Id name="a"/>
+    </Argument>
+    <Argument name="name">
+        <Id name="b"/>
+    </Argument>
+    <Argument>
+        <Id name="c"/>
+    </Argument>
+</CallExpression>
+
+====================================================================================================
+Anonymous function arguments must put their own arguments in parentheses if more than one.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+foo(a => 1)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Function expression="true">
+            <head>
+                <Id name="a"/>
+            </head>
+            <Integer value="1"/>
+        </Function>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo((a,b) => 1)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Function expression="true">
+            <head>
+                <GroupExpression>
+                    <Id name="a"/>
+                    <Id name="b"/>
+                </GroupExpression>
+            </head>
+            <Integer value="1"/>
+        </Function>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo((a,b) => 1, c)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <Argument>
+        <Function expression="true">
+            <head>
+                <GroupExpression>
+                    <Id name="a"/>
+                    <Id name="b"/>
+                </GroupExpression>
+            </head>
+            <Integer value="1"/>
+        </Function>
+    </Argument>
+    <Argument>
+        <Id name="c"/>
+    </Argument>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------

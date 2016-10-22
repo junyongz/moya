@@ -1,0 +1,104 @@
+====================================================================================================
+# Where
+
+The where directive contains a set of assignments that apply to the expression above.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+a
+where
+    a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Where>
+    <Id name="a"/>
+    <AssignmentExpression op="=">
+        <Id name="a"/>
+        <Integer value="1"/>
+    </AssignmentExpression>
+</Where>
+
+----------------------------------------------------------------------------------------------------
+
+foo
+    1
+where
+    a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Where>
+    <CallExpression>
+        <Id name="foo"/>
+        <Argument>
+            <Integer value="1"/>
+        </Argument>
+    </CallExpression>
+    <AssignmentExpression op="=">
+        <Id name="a"/>
+        <Integer value="1"/>
+    </AssignmentExpression>
+</Where>
+
+====================================================================================================
+Where combined with a function declaration will apply to the function body and its parameters.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
++ foo()
+    a
+where
+    a = 1
+    b = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Declaration access="public">
+    <CallExpression>
+        <Id name="foo"/>
+    </CallExpression>
+    <Id name="a"/>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+        <AssignmentExpression op="=">
+            <Id name="b"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Declaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() => a
+where
+    a = 1
+    b = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Declaration access="public">
+    <Function expression="true">
+        <head>
+            <CallExpression>
+                <Id name="foo"/>
+            </CallExpression>
+        </head>
+        <Id name="a"/>
+    </Function>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+        <AssignmentExpression op="=">
+            <Id name="b"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Declaration>
+
+----------------------------------------------------------------------------------------------------

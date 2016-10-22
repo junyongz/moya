@@ -1,0 +1,154 @@
+----------------------------------------------------------------------------------------------------
+# * before +
+
+1 + 2 * 3
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="+">
+    <Integer value="1"/>
+    <BinaryExpression op="*">
+        <Integer value="2"/>
+        <Integer value="3"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# / before +
+
+1 + 2 / 3
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="+">
+    <Integer value="1"/>
+    <BinaryExpression op="/">
+        <Integer value="2"/>
+        <Integer value="3"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# * before -
+
+1 - 2 * 3
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="-">
+    <Integer value="1"/>
+    <BinaryExpression op="*">
+        <Integer value="2"/>
+        <Integer value="3"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# / before -
+
+1 - 2 / 3
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="-">
+    <Integer value="1"/>
+    <BinaryExpression op="/">
+        <Integer value="2"/>
+        <Integer value="3"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# - unary before - binary
+
+1 - -a
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="-">
+    <Integer value="1"/>
+    <UnaryExpression op="-">
+        <Id name="a"/>
+    </UnaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# > before +
+
+a > b + c
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op=">">
+    <Id name="a"/>
+    <BinaryExpression op="+">
+        <Id name="b"/>
+        <Id name="c"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+# or before +
+
+a | b + c
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="|">
+    <Id name="a"/>
+    <BinaryExpression op="+">
+        <Id name="b"/>
+        <Id name="c"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+
+a & b | c & d
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="|">
+    <BinaryExpression op="&">
+        <Id name="a"/>
+        <Id name="b"/>
+    </BinaryExpression>
+    <BinaryExpression op="&">
+        <Id name="c"/>
+        <Id name="d"/>
+    </BinaryExpression>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+
+a | b & c | d
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<BinaryExpression op="|">
+    <BinaryExpression op="|">
+        <Id name="a"/>
+        <BinaryExpression op="&">
+            <Id name="b"/>
+            <Id name="c"/>
+        </BinaryExpression>
+    </BinaryExpression>
+    <Id name="d"/>
+</BinaryExpression>
+
+----------------------------------------------------------------------------------------------------
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+# lambda before assignment
+
+=> a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function expression="true">
+    <AssignmentExpression op="=">
+        <Id name="a"/>
+        <Integer value="1"/>
+    </AssignmentExpression>
+</Function>
+
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,27 @@
+{
+  "name": "moya",
+  "description": "A lingual experience.",
+  "version": "0.0.1",
+  "homepage": "http://github.com/joehewitt/moya",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/joehewitt/moya.git"
+  },
+  "keywords": [],
+  "author": "Joe Hewitt <joe@joehewitt.com>",
+  "contributors": [],
+  "dependencies": {
+    "fool": "",
+    "dandy": "",
+    "underscore": ""
+  },
+  "main": "./lib/Moya",
+  "directories": {},
+  "engines": {
+    "node": ">=4.5.0"
+  },
+  "devDependencies": {},
+  "app.js": {
+    "static": "./static"
+  }
+}

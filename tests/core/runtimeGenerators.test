@@ -1,0 +1,442 @@
+----------------------------------------------------------------------------------------------------
+# Basic generator identity
+
+foo()
+    <- 1
+
+-- foo()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Channel foo>
+
+----------------------------------------------------------------------------------------------------
+# Basic generator iterated in for loop
+
+iterator()
+    <- 1
+    <- 2
+    <- 3
+
+stuff = iterator()
+for value in stuff
+    -- value
+
+-- "done"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+2
+3
+done
+
+----------------------------------------------------------------------------------------------------
+# Basic generator created and iterated in for loop
+
+iterator()
+    <- 1
+    <- 2
+    <- 3
+
+for value in iterator()
+    -- value
+
+-- "done"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+2
+3
+done
+
+----------------------------------------------------------------------------------------------------
+# Basic generator iteration with closure references
+
++ stuff(a)
+    <- a+1
+    <- a+2
+
+for n in stuff(3)
+    -- n
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+4
+5
+
+----------------------------------------------------------------------------------------------------
+# Basic generator with manual iteration
+
++ stuff()
+    <- 1
+    <- 2
+
+iterator = stuff()
+-- -> iterator
+-- -> iterator
+-- -> iterator
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+2
+<Exception 'closed'>
+
+----------------------------------------------------------------------------------------------------
+# Illegally iterating past the end
+
++ stuff()
+    <- 1
+
+iterator = stuff()
+-- -> iterator
+-- -> iterator
+-- -> iterator
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+<Exception 'closed'>
+---
+Exception: Channel is closed.
+<no file>, line 7, in <source>
+
+----------------------------------------------------------------------------------------------------
+# Illegally asking for builtin generator
+
++ stuff(a)
+    = a
+
+iterable = stuff(3)
+iterator = in iterable
+-- -> iterator
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Method 'op:in' not found
+<no file>, line 5, in <source>
+
+----------------------------------------------------------------------------------------------------
+# Wrapped access to a generator
+
++ stuff(a)
+    <- a+1
+    <- a+2
+
++ wrapStuff(a)
+     = stuff(a)
+
+for n in wrapStuff(3)
+    -- n
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+4
+5
+
+----------------------------------------------------------------------------------------------------
+# For loop nested inside for loop
+
+iteratorA()
+    <- 1
+    <- 2
+
+iteratorB()
+    <- 10
+    <- 20
+
+for valueA in iteratorA()
+    -- valueA
+    for valueB in iteratorB()
+        -- valueB
+    -- "done B"
+-- "done A"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+10
+20
+done B
+2
+10
+20
+done B
+done A
+
+----------------------------------------------------------------------------------------------------
+# For loop nested inside for loop with closure references
+
+iteratorA()
+    <- 1
+    <- 2
+
+iteratorB(a)
+    <- a+10
+    <- a+20
+
+for valueA in iteratorA()
+    -- valueA
+    for valueB in iteratorB(valueA)
+        -- valueB
+    -- "done B"
+-- "done A"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+11
+21
+done B
+2
+12
+22
+done B
+done A
+
+----------------------------------------------------------------------------------------------------
+# Manual iteration nested inside for loop
+
+iteratorA()
+    <- 1
+    <- 2
+    <- 3
+
+iteratorB()
+    <- 10
+    <- 20
+
+stuff = iteratorB()
+for i in iteratorA()
+    n = -> stuff
+    -- "%i, %n
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1, 10
+2, 20
+3, <Exception 'closed'>
+
+----------------------------------------------------------------------------------------------------
+# Manual iteration nested inside for loop nested inside for loop
+
+iteratorA()
+    <- 1
+    <- 2
+    <- 3
+
+iteratorB()
+    <- 10
+    <- 20
+
+iteratorC()
+    <- 100
+    <- 200
+    <- 300
+    <- 400
+    <- 500
+
+stuff = iteratorC()
+for i in iteratorA()
+    for j in iteratorB()
+        k = -> stuff
+        -- "%i, %j, %k
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1, 10, 100
+1, 20, 200
+2, 10, 300
+2, 20, 400
+3, 10, 500
+3, 20, <Exception 'closed'>
+
+----------------------------------------------------------------------------------------------------
+# Generator defined inside another generator
+
+iteratorA()
+    iteratorB()
+        <- 2
+
+    <- 1
+    for i in iteratorB()
+        <- i
+    <- 3
+
+
+for a in iteratorA()
+    -- a
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+2
+3
+
+----------------------------------------------------------------------------------------------------
+# Generator from iterable object
+
+Iterbot is class
+    + in this
+        <- 1
+        <- 2
+
+iterable = Iterbot()
+genny = in iterable
+-- -> genny
+-- -> genny
+-- -> genny
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+1
+2
+<Exception 'closed'>
+
+----------------------------------------------------------------------------------------------------
+# Generator expression identity
+
+iterable = for n in 1 to 5 -> n
+
+-- iterable
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Channel generator>
+
+----------------------------------------------------------------------------------------------------
+# Generator expression
+
+iterable = for n in 1 to 5 -> n * 2
+
+-- []iterable
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+[2, 4, 6, 8, 10]
+
+----------------------------------------------------------------------------------------------------
+# Inline generator with condition
+
+iterable = for n in 1 to 5 if n > 3 -> n * 2
+-- []iterable
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+[8, 10]
+
+----------------------------------------------------------------------------------------------------
+# Inline generator
+
+-- List(for n in 1 to 5 -> n * 2)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+[2, 4, 6, 8, 10]
+
+----------------------------------------------------------------------------------------------------
+# Illegal generator syntax
+
+-- for n
+    n * 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Iterable is required for generator expressions.
+<no file>, line 1
+
+----------------------------------------------------------------------------------------------------
+# Illegal yield throws an exception
+
+<- 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: '__GENERATOR__' is not defined
+<no file>, line 1
+
+----------------------------------------------------------------------------------------------------
+# Illegal yield is a compile-time exception
+
+try
+    <- 1
+catch exc
+    -- exc
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: '__GENERATOR__' is not defined
+<no file>, line 2
+
+----------------------------------------------------------------------------------------------------
+# Write to reading generator
+
+task()
+    while true
+        message = ->
+        -- "read %message"
+        if message == closed
+            break
+    -- "task exit"
+
+outputs = task()
+outputs <- 1
+outputs.close()
+-- "main exit"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+read 1
+read <Exception 'closed'>
+task exit
+main exit
+
+----------------------------------------------------------------------------------------------------
+# Write to reading generator and wait for response
+
+task()
+    while true
+        message = ->
+        if message == closed
+            break
+        -- "read %message"
+        >> "respond to %message"
+    -- "task exit"
+
+outputs = task()
+response = outputs << 1
+-- "response: \"%response\""
+outputs.close()
+-- "main exit"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+read 1
+response: "respond to 1"
+task exit
+main exit
+
+----------------------------------------------------------------------------------------------------
+# Write to reading generator
+
+task()
+    for message
+        -- "read %message"
+    -- "task exit"
+
+outputs = task()
+outputs <- 1
+outputs <- 2
+outputs.close()
+-- "main exit"
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+read 1
+read 2
+task exit
+main exit
+
+----------------------------------------------------------------------------------------------------
