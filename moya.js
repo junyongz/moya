@@ -38,17 +38,17 @@ function compile(source, sourcePath) {
         if (exc.hash) {
             var line = exc.hash.loc ? exc.hash.loc.first_line : '0';
             console.log('Exception: syntax error\n<' + sourcePath + '>, line ' + line);
-            D&&D(exc.message);
+            // D&&D(exc.message);
         } else if (exc.message) {
             var line = exc.loc ? exc.loc.first_line : '0';
             console.log('Exception: ' + exc.message + '\n<' + sourcePath + '>, line ' + line);
-            throw exc;
+            // throw exc;
         } else {
             throw exc;
         }
     }
-
 }
+
 function writeResult(result) {
     if (argv.debug == "ast") {
         var writer = new XMLWriter();

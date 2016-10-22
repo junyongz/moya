@@ -542,3 +542,39 @@ foo
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
+
+n = ;
+    foo()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <UnaryExpression op=";">
+        <CallExpression>
+            <Id name="foo"/>
+        </CallExpression>
+    </UnaryExpression>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+n = ;
+    foo()
+    bar()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <UnaryExpression op=";">
+        <CallExpression>
+            <Id name="foo"/>
+        </CallExpression>
+        <CallExpression>
+            <Id name="bar"/>
+        </CallExpression>
+    </UnaryExpression>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------

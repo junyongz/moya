@@ -6,13 +6,14 @@ var T = require('./syntax');
 
 %lex
 
-%s ccode
+%x text
+%x ccode
 
 escape [0abfnrtvxuU'"?\\}%]
 escapeSequence [\\]({escape})
 stringChar [^'\\\n]|{escapeSequence}
 fstringChar [^"\\\n]|{escapeSequence}
-rawTextChar [^%\\]|{escapeSequence}
+rawTextChar [^%\\"]|{escapeSequence}
 
 ws [ \t]
 nl [\n\r]
@@ -21,7 +22,7 @@ idLower [a-z][0-9a-zA-Z]*
 idUpper [A-Z][0-9a-zA-Z]*
 idDots ({idLower}*)([.]{idLower}+)*
 idSymbol [%$¢€£¥]+
-specialty [a-zA-Z][0-9a-zA-Z]*(@[a-zA-Z_][0-9a-zA-Z_]*)?
+specialty [a-zA-Z][0-9a-zA-Z]*(@[a-zA-Z][0-9a-zA-Z]*)?
 unit [a-zA-Z%$¢€£¥]+
 
 integer [0-9]+
@@ -65,10 +66,10 @@ hex 0x[0-9A-Fa-f]+
 {nl}*{ws}*")"       { return 'RP'; }
 "["{ws}*{nl}*{ws}*  { return 'LB'; }
 {nl}*{ws}*"]"       { return 'RB'; }
+"{|"{ws}*{nl}*{ws}* { return 'LCBP'; }
+{nl}*{ws}*"|}"      { return 'RCBP'; }
 "{"{ws}*{nl}*{ws}*  { return 'LCB'; }
 {nl}*{ws}*"}"       { return 'RCB'; }
-"{%"{ws}*{nl}*{ws}* { return 'LCBP'; }
-{nl}*{ws}*"%}"      { return 'RCBP'; }
 
 "<-"                { return 'LARROW'; }
 "->"                { return 'RARROW'; }
@@ -97,14 +98,13 @@ hex 0x[0-9A-Fa-f]+
 "/"                 { return 'SLASH'; }
 
 "as"                { return 'AS'; }
-"is"                { return 'IS'; }
-"is"{ws}+"not"      { return 'ISNOT'; }
-"has"               { return 'HAS'; }
-"has{ws+}not"       { return 'HASNOT'; }
-
-"in"                { return 'IN'; }
 "is"{ws}+"in"       { return 'ISIN'; }
+"is"{ws}+"not"      { return 'ISNOT'; }
+"is"                { return 'IS'; }
 "not"{ws}+"in"      { return 'NOTIN'; }
+"has{ws+}not"       { return 'HASNOT'; }
+"has"               { return 'HAS'; }
+"in"                { return 'IN'; }
 
 "=="                { return 'EQ2'; }
 "!="                { return 'NEQ'; }
@@ -141,9 +141,9 @@ hex 0x[0-9A-Fa-f]+
 {nl}                                { return 'NEWLINE'; }
 
 "C"["]                              { this.begin('ccode'); }
-{specialty}?["]{fstringChar}*["]    { return 'FSTRING_SPECIAL'; }
-{specialty}?["]{fstringChar}*{nl}   { return 'FSTRING_SPECIAL'; }
+{specialty}?["]                     { this.begin('text'); return 'STRING_OPEN'; }
 
+"0x"[0-9A-Fa-f]+                    { return 'HEX'; }
 {floatExp}                          { return 'FLOAT_EXP'; }
 [0-9]+[\.][0-9]+{unit}              { return 'FLOAT_UNIT'; }
 [0-9]+[\.][0-9]+                    { return 'FLOAT'; }
@@ -151,17 +151,22 @@ hex 0x[0-9A-Fa-f]+
 [0-9]+{unit}                        { return 'INTEGER_UNIT'; }
 [0-9]+                              { return 'INTEGER'; }
 
-"0x"[0-9A-Fa-f]+ { return 'HEX'; }
-
 {idLower} { return 'IDENTIFIER'; }
-
 {idSymbol} { return 'IDENTIFIER'; }
-{idUpper} { return 'UIDENTIFIER'; }
+"_"{idLower} { return 'UNIDENTIFIER'; }
+{idUpper}  { return 'UIDENTIFIER'; }
 
 "•"{idLower}        { return 'BIDENTIFIER'; }
 "•"                 { return 'BULLET'; }
 
 . { throw({message: 'Invalid syntax', loc: yylloc}); }
+
+// ***********************************************************************************************
+
+<text>"%"{idDots}           { return 'STRING_FORMAT'; }
+<text>{rawTextChar}+        { return 'STRING'; }
+<text>["]                   { this.popState(); return 'STRING_CLOSE'; }
+<text>.                     { throw({message: 'Invalid syntax', loc: yylloc}); }
 
 // ***********************************************************************************************
 
@@ -204,11 +209,12 @@ hex 0x[0-9A-Fa-f]+
 
 %token <stringValue> IDENTIFIER
 %token <stringValue> UIDENTIFIER
+%token <stringValue> UNIDENTIFIER
 %token <stringValue> BIDENTIFIER
+%token <objectValue> STRING_OPEN
+%token <objectValue> STRING_CLOSE
 %token <objectValue> STRING
-%token <objectValue> FSTRING
-%token <objectValue> STRING_LINE
-%token <objectValue> FSTRING_LINE
+%token <objectValue> STRING_FORMAT
 %token <objectValue> INTEGER
 %token <objectValue> INTEGER_UNIT
 %token <objectValue> FLOAT
@@ -328,29 +334,29 @@ declClassId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declClassId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.addId($3); }
+        { $$ = $1; $1.appendId($3); }
     ;
 
 declId:
     IDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.addId($3); }
+        { $$ = $1; $1.appendId($3); }
     ;
 
 declTypeId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declTypeId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.addId($3); }
+        { $$ = $1; $1.appendId($3); }
     | declTypeId BACKSLASH LP declTypeId RP
-        { $$ = $1; $1.add($4); }
+        { $$ = $1; $1.append($4); }
     | LT declTypeId GT
-        { $$ = T.parseTypeId(@1, 'Channel'); $$.add($2); }
+        { $$ = T.parseTypeId(@1, 'Channel'); $$.append($2); }
     | LB declTypeId RB
-        { $$ = T.parseTypeId(@1, 'List'); $$.add($2); }
+        { $$ = T.parseTypeId(@1, 'List'); $$.append($2); }
     | LCBG declTypeId RCBG
-        { $$ = T.parseTypeId(@1, 'Map'); $$.add($2); }
+        { $$ = T.parseTypeId(@1, 'Map'); $$.append($2); }
     ;
     
 declArgumentList:
@@ -486,7 +492,7 @@ rightBlock:
 rightList:
     right
     | rightList COMMA right
-        { $$ = ENSURE_SET($1); APPEND($$, $3); }
+        { $$ = T.ensureSet(@1, $1); $$.append($3); }
     | rightList COMMA
         { $$ = $1; }
     ;
@@ -832,8 +838,8 @@ conditionExpression:
     
 binaryExpression:
     concatExpression
-    | concatExpression UNDERSCORE basicExpression binaryExpression
-        { $$ = PARSE_SET(@1); APPEND($$, $1); APPEND($$, $4); $$ = PARSE_CALL(@1, $3, $$); }
+    | concatExpression UNIDENTIFIER binaryExpression
+        { $$ = T.parseInfixOp(@1, $2, $1, $3); }
     ;
 
 concatExpression:
@@ -911,7 +917,7 @@ multiplyExpression:
     ;
 
 unaryExpression:
-    callExpression
+    bindExpression
     | SUBTRACT_EQ unaryExpression
         { $$ = T.parseUnary(@1, T.DeleteOp, $2); }
     | SUBTRACT unaryExpression
@@ -920,22 +926,20 @@ unaryExpression:
         { $$ = T.parseUnary(@1, T.NotOp, $2); }
     | IN unaryExpression
         { $$ = T.parseUnary(@1, T.InOp, $2); }
-    | UNDERSCORE basicExpression unaryExpression
-        { $$ = PARSE_SET(@1); APPEND($$, $3); $$ = PARSE_CALL(@1, $2, $$); }
     ;
 
 bindExpression:
     callExpression
-    // | SEMICOLON bindList
-    //     { $$ = T.parseUnary(@1, T.BindOp, $2); }
-    // | SEMICOLON block
-    //     { $$ = T.parseUnary(@1, T.BindOp, $2); }
+    | SEMICOLON bindList
+        { $$ = T.parseUnary(@1, T.BindOp, $2); }
+    | SEMICOLON block
+        { $$ = T.parseUnary(@1, T.BindOp, $2); }
     ;
 
 bindList:
     callExpression
     | bindList SEMICOLON callExpression
-        { $$ = ENSURE_SET($1); APPEND($$, $3); }
+        { $$ = T.ensureSet(@1, $1); $$.append($3); }
     ;
 
 callExpression:
@@ -980,23 +984,23 @@ parenExpression:
 
 listExpression:
     LB rightList RB
-        { $$ = PARSE_LIST(@1, $2); }
+        { $$ = T.parseList(@1, $2); }
     | LB RB
-        { $$ = PARSE_LIST(@1, NULL); }
+        { $$ = T.parseList(@1, null); }
     ;
 
 mapExpression:
     LCBP mapTupleExpression RCBP
-        { $$ = PARSE_MAP(@1, $2); }
+        { $$ = T.parseMap(@1, $2); }
     | LCBP RCBP
-        { $$ = PARSE_MAP(@1, NULL); }
+        { $$ = T.parseMap(@1, null); }
     ;
 
 channelExpression:
     LT GT
-        { $$ = PARSE_CHANNEL(@1, NULL); }
+        { $$ = T.parseChannel(@1, null); }
     | LT callExpression GT
-        { $$ = PARSE_CHANNEL(@1, $2); }
+        { $$ = T.parseChannel(@1, $2); }
     ;
 
 id:
@@ -1008,19 +1012,18 @@ id:
 
 literal:
     INTEGER
-        { $$ = T.parseNumber($1, @1); }
+        { $$ = T.parseNumber(@1, $1); }
     | INTEGER_UNIT
-        { $$ = T.parseNumber($1, @1); }
+        { $$ = T.parseNumber(@1, $1); }
     | FLOAT
-        { $$ = T.parseNumber($1, @1); }
+        { $$ = T.parseNumber(@1, $1); }
     | FLOAT_UNIT
-        { $$ = T.parseNumber($1, @1); }
+        { $$ = T.parseNumber(@1, $1); }
     | FLOAT_EXP
-        { $$ = T.parseExponent($1, @1); }
+        { $$ = T.parseFloatNumber(@1, $1); }
     | HEX
-        { $$ = T.parseHex($1, @1); }
-    | STRING
-        { $$ = T.parseString($1, @1); }
+        { $$ = T.parseHex(@1, $1); }
+    | string
     | UNDERSCORE
         { $$ = T.parseId(@1, "null"); }
     | CFUNCTION
@@ -1031,6 +1034,24 @@ literal:
         { $$ = T.parseId(@1, "*"); }
     ;
 
+string:
+    STRING_OPEN STRING_CLOSE
+        { $$ = T.parseString(@1, ''); }
+    | STRING_OPEN stringList STRING_CLOSE
+        { $$ = $2; }
+    ;
+
+stringList:
+    STRING
+        { $$ = T.parseString(@1, $1); }
+    | STRING_FORMAT
+        { $$ = T.parseStringFormat(@1, $1); }
+    | stringList STRING
+        { $$ = T.addString(@1, $1, T.parseString(@2, $2)); }
+    | stringList STRING_FORMAT
+        { $$ = T.addString(@1, $1, T.parseStringFormat(@2, $2)); }
+    ;
+    
 assignOp:
     EQ
         { $$ = T.EqOp; }
@@ -1119,10 +1140,11 @@ argument:
 
 mapTupleExpression:
     mapAssignmentExpression
+        { $$ = T.ensureSet(@1, $1); }
     | mapTupleExpression COMMA mapAssignmentExpression
-        { $$ = ENSURE_SET($1); APPEND($$, $3); }
+        { $$ = T.ensureSet(@1, $1); $$.append($3); }
     | mapTupleExpression COMMA
-        { $$ = ENSURE_SET($1); }
+        { $$ = T.ensureSet(@1, $1); }
     ;
 
 mapAssignmentExpression:

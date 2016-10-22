@@ -29,7 +29,7 @@ Type declarations in function parameters.
 <FunctionDeclaration id="foo" access="public">
     <Argument name="f">
         <TypeId id="Foo">
-            <arg name="T"/>
+            <TypeId id="T"/>
         </TypeId>
     </Argument>
     <Id name="null"/>
@@ -46,7 +46,7 @@ Type declarations in function parameters.
 <FunctionDeclaration id="foo" access="public">
     <Argument name="f">
         <TypeId id="Foo">
-            <arg name="T"/>
+            <TypeId id="T"/>
         </TypeId>
     </Argument>
     <Argument name="b">
@@ -66,7 +66,7 @@ Type declarations in function parameters.
 <FunctionDeclaration id="foo" access="public">
     <Argument name="f">
         <TypeId id="Foo">
-            <arg name="T"/>
+            <TypeId id="T"/>
         </TypeId>
         <Integer value="1"/>
     </Argument>
@@ -101,8 +101,10 @@ Type declarations in function returns.
 
 <FunctionDeclaration id="foo" access="public">
     <returns>
-        <TypeId id="T">
-            <arg name="G"/>
+        <TypeId id="Channel">
+            <TypeId id="T">
+                <TypeId id="G"/>
+            </TypeId>
         </TypeId>
     </returns>
     <Id name="null"/>

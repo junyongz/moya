@@ -7,23 +7,23 @@ Ids can be referenced within strings to insert them within the string.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-"abc %def
+"abc %def"
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
+<BinaryExpression op="++">
     <String value="abc "/>
     <Id name="def"/>
 </BinaryExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-"abc %def ghi
+"abc %def ghi"
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
-    <BinaryExpression op="concat">
+<BinaryExpression op="++">
+    <BinaryExpression op="++">
         <String value="abc "/>
         <Id name="def"/>
     </BinaryExpression>
@@ -35,32 +35,17 @@ The shorthand also works for a chain of property references.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-"abc %def.ghi.jkl
+"abc %def.ghi.jkl"
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
+<BinaryExpression op="++">
     <String value="abc "/>
-    <PropertyExpression name="jkl">
-        <PropertyExpression name="ghi">
+    <GetExpression name="jkl">
+        <GetExpression name="ghi">
             <Id name="def"/>
-        </PropertyExpression>
-    </PropertyExpression>
-</BinaryExpression>
-
-----------------------------------------------------------------------------------------------------
-
-"abc %def.ghi.jkl
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<BinaryExpression op="concat">
-    <String value="abc "/>
-    <PropertyExpression name="jkl">
-        <PropertyExpression name="ghi">
-            <Id name="def"/>
-        </PropertyExpression>
-    </PropertyExpression>
+        </GetExpression>
+    </GetExpression>
 </BinaryExpression>
 
 ====================================================================================================
@@ -68,12 +53,12 @@ Trailing periods are allowed and will remain part of the string literal.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-"abc %def.
+"abc %def."
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
-    <BinaryExpression op="concat">
+<BinaryExpression op="++">
+    <BinaryExpression op="++">
         <String value="abc "/>
         <Id name="def"/>
     </BinaryExpression>
@@ -82,12 +67,12 @@ Trailing periods are allowed and will remain part of the string literal.
 
 ----------------------------------------------------------------------------------------------------
 
-"abc %def. ghi
+"abc %def. ghi"
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
-    <BinaryExpression op="concat">
+<BinaryExpression op="++">
+    <BinaryExpression op="++">
         <String value="abc "/>
         <Id name="def"/>
     </BinaryExpression>
@@ -122,8 +107,8 @@ The % symbol on its own should be embedded directly.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="concat">
-    <BinaryExpression op="concat">
+<BinaryExpression op="++">
+    <BinaryExpression op="++">
         <String value="abc "/>
         <String value="%"/>
     </BinaryExpression>
