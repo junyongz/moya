@@ -41,12 +41,9 @@ n << channel
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="=">
+<AssignmentExpression op="<<">
     <Id name="n"/>
-    <BinaryExpression op="<<">
-        <Id name="n"/>
-        <Id name="channel"/>
-    </BinaryExpression>
+    <Id name="channel"/>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -57,10 +54,9 @@ foo(<<)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <UnaryExpression op="<<">
-        </UnaryExpression>
-    </Argument>
+    <arg>
+        <UnaryExpression op="<<"/>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -71,11 +67,11 @@ foo(<< channel)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <UnaryExpression op="<<">
             <Id name="channel"/>
         </UnaryExpression>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -105,8 +101,9 @@ message >> channel
 ----------------------------------------------------------------------------------------------------
 # Write expression in block
 
->>
+>> {
     message
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -129,7 +126,6 @@ Write all operator.
 </UnaryExpression>
 
 ----------------------------------------------------------------------------------------------------
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 # Write all expression without channel
 
 channel *>> channel

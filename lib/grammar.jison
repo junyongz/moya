@@ -126,8 +126,8 @@ hex 0x[0-9A-Fa-f]+
 "#"                 { return 'POUND'; }
 "~"                 { return 'TILDE'; }
 "&"                 { return 'AMPERSAND'; }
-"|"                 { return 'PIPE'; }
 "||"                { return 'PIPE2'; }
+"|"                 { return 'PIPE'; }
 "?"                 { return 'QUESTION'; }
 "!"                 { return 'EXCLAMATION'; }
 "\\"                { return 'BACKSLASH'; }
@@ -272,16 +272,18 @@ declarationList:
         { $$ = $1; $1.append($2); }
     ;
 
-
 declarationBlock:
     accessMode declFunc
-        { $$ = T.parseFuncBlock(@1, $1, $2, null, false); }
+        { $$ = T.parseFuncBlock(@1, $1, $2, null, null, false); }
     | accessMode declFunc block
-        { $$ = T.parseFuncBlock(@1, $1, $2, $3, false); }
-    | accessMode declFunc DO blockOrRight
-        { $$ = T.parseFuncBlock(@1, $1, $2, $4, true); }
-    | accessMode declFunc FATARROW blockOrRight
-        { $$ = T.parseFuncBlock(@1, $1, $2, $4, false); }
+        { $$ = T.parseFuncBlock(@1, $1, $2, $3, null, false); }
+    | accessMode declFunc funcOp blockOrRight
+        { $$ = T.parseFuncBlock(@1, $1, $2, $4, null, $3); }
+
+    | accessMode declFunc block WHERE blockOrRight
+        { $$ = T.parseFuncBlock(@1, $1, $2, $3, $5, false); }
+    | accessMode declFunc funcOp blockOrRight WHERE blockOrRight
+        { $$ = T.parseFuncBlock(@1, $1, $2, $4, $6, $3); }
 
     | accessMode declClassId
         { $$ = T.parseClass(@1, $1, $2, null, null); }
@@ -512,9 +514,9 @@ rightList:
 whereExpression:
     blockChain
     | blockChain WHERE blockLeft
-        { $$ = PARSE_WHERE(@1, $1, $3); }
+        { $$ = T.parseWhere(@1, $1, $3); }
     | blockChain WHERE block
-        { $$ = PARSE_WHERE(@1, $1, $3); }
+        { $$ = T.parseWhere(@1, $1, $3); }
     ;
 
 blockChain:
@@ -551,10 +553,10 @@ blockLeft:
     | DASHDASH blockRight
         { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
     
-    // | tupleExpression writeOp assignmentExpressio
-    //     { $$ = T.parseBinary(@1, $2, $1, $3); }
-    // | tupleExpression writeOp blockRight
-    //     { $$ = T.parseBinary(@1, $2, $1, $3); }
+    | tupleExpression writeOp assignmentExpression
+        { $$ = T.parseBinary(@1, $2, $1, $3); }
+    | tupleExpression writeOp blockRight
+        { $$ = T.parseBinary(@1, $2, $1, $3); }
 
     | channelOp assignmentExpression
         { $$ = T.parseUnary(@1, $1, $2); }
@@ -568,6 +570,7 @@ blockLeft:
     // | tupleExpression IS LCB elseLines RCB
     //     { $$ = PARSE_IS(@1, $1, $4); }
 
+    | isBlock
     | ifBlock
     
     // | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression lineEnding
@@ -617,46 +620,57 @@ anonFuncArgs:
         { $$ = $2; }
     ;
 
+isBlock:
+    tupleExpression IS matchExpr
+        { $$ = T.parseIs(@1, $1, $3); }
+    | tupleExpression IS matchExpr ELSE blockOrRight
+        { $$ = T.parseIs(@1, $1, $3, $5); }
+    | tupleExpression IS LCB matchList RCB
+        { $$ = T.parseIs(@1, $1, $4); }
+    | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
+        { $$ = T.parseIs(@1, $1, $4, $8); }
+    ;
+    
 ifBlock:
     IF elseIfChain
-        { $$ = $2; }
+        { $$ = T.parseIf(@1, $2, null); }
     | IF elseIfChain ELSE blockOrRight
-        { $$ = $2; $$.setElse($4); }
+        { $$ = T.parseIf(@1, $2, $4); }
     | IF LCB matchList RCB
-        { $$ = $3;  }
+        { $$ = T.parseIf(@1, $3); }
+    | IF LCB matchList lineEnding ELSE RARROW blockOrRight RCB
+        { $$ = T.parseIf(@1, $3, $7); }
     ;
 
 elseIfChain:
     tupleExpression block
-        { $$ = T.parseIf(@1, $1, $2); }
+        { $$ = T.parseTransform(@1, $1, $2); }
     | elseIfChain ELSE IF tupleExpression block
-        { $$ = $1; $$.addIf($4, $5); }
+        { $$ = $1; $$.addPair($4, $5); }
     ;
 
 matchList:
     tupleExpression RARROW blockOrRight
-        { $$ = T.parseIf(@1, $1, $3); }
-    | lineEnding
+        { $$ = T.parseTransform(@1, $1, $3); }
     | matchList lineEnding tupleExpression RARROW blockOrRight
-        { $$ = $1; $$.addIf($3, $5); }
-    | matchList lineEnding ELSE RARROW blockOrRight
-        { $$ = $1; $$.addIf(null, $5); }
+        { $$ = $1; $$.addPair($3, $5); }
     | matchList lineEnding
         { $$ = $1; }
+    | lineEnding
     ;
 
 ifExpr:
     IF matchExpr
-        { $$ = $2;  }
+        { $$ = T.parseIf(@1, $2, null);  }
     | IF matchExpr ELSE binaryExpression
-        { $$ = $2; $$.setElse($4); }
+        { $$ = T.parseIf(@1, $2, $4); }
     ;
 
 matchExpr:
     binaryExpression RARROW binaryExpression
-        { $$ = T.parseIf(@1, $1, $3); }
+        { $$ = T.parseTransform(@1, $1, $3); }
     | matchExpr OR binaryExpression RARROW binaryExpression
-        { $$ = $1; $$.addIf($3, $5); }
+        { $$ = $1; $$.addPair($3, $5); }
     ;
         
 blockRight:
@@ -682,12 +696,7 @@ blockRight:
     | GT anonFuncArgs DO blockRight
         { $$ = T.parseAnonFunc(@1, $2, true, $4); }
     
-    // | tupleExpression IS elseLine lineEnding
-    //     { $$ = PARSE_IS(@1, $1, $3); }
-    // | tupleExpression IS LCB elseLines RCB
-    //     { $$ = PARSE_IS(@1, $1, $4); }
-    //
-    
+    | isBlock
     | ifBlock
 
     // | STAR tupleExpression inOn tupleExpression RARROW blockRight
@@ -717,11 +726,11 @@ assignmentExpression:
 
     // | tupleExpression BULLET assignmentExpression
     //     { $$ = $1; /*PARSE_CALL(@1, $1, NULL); APPEND_ARGS($$, $3);*/ }
-    //
-    // | DASHDASH assignmentExpression
-    //     { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
-    //
-    // | tupleExpression writeOp assignmentExpression
+
+    | DASHDASH assignmentExpression
+        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+
+    // | assignmentExpression writeOp tupleExpression
     //     { $$ = T.parseBinary(@1, $2, $1, $3); }
     | channelOp tupleExpression
         { $$ = T.parseUnary(@1, $1, $2); }
@@ -750,23 +759,28 @@ assignmentExpressionSimple:
     
     // | simpleExpression BULLET right
     //     { $$ = $1; /*PARSE_CALL(@1, $1, NULL); APPEND_ARGS($$, $3);*/ }
-    //
-    // | DASHDASH right
-    //     { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
-    //
-    // | simpleExpression writeOp right
-    //     { $$ = T.parseBinary(@1, $2, $1, $3); }
+    
+    | DASHDASH right
+        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+    
+    | simpleExpression writeOp right
+        { $$ = T.parseBinary(@1, $2, $1, $3); }
     
     | channelOp right
         { $$ = T.parseUnary(@1, $1, $2); }
     | channelOp
-        { $$ = T.parseUnary(@1, $1, right); }
+        { $$ = T.parseUnary(@1, $1, null); }
     
     | GT anonFuncArgs right
         { $$ = T.parseAnonFunc(@1, $2, false, $3); }
     | GT anonFuncArgs DO right
         { $$ = T.parseAnonFunc(@1, $2, true, $4); }
     
+    | simpleExpression IS matchExpr
+        { $$ = T.parseIs(@1, $1, $3, null);  }
+    | simpleExpression IS matchExpr ELSE right
+        { $$ = T.parseIs(@1, $1, $3, $5); }
+
     // | simpleExpression IS elseLineSimple
     //     { $$ = PARSE_IS(@1, $1, $3); }
     //
@@ -985,13 +999,13 @@ callExpression:
     
     | callExpression DOT LB right RB
         { $$ = T.parseBinary(@1, T.LookupOp, $1, $4); }
-    // | callExpression DOT LB right ELSE right RB
-    //     { $$ = T.parseBinary(@1, T.LookupOp, $1, T.parseDefault(@4, $4, $6)); }
+    | callExpression DOT LB right PIPE2 right RB
+        { $$ = T.parseBinary(@1, T.LookupOp, $1, T.parseDefault(@4, $4, $6)); }
     
     | callExpression LB right RB
         { $$ = T.parseBinary(@1, T.IndexOp, $1, $3); }
-    // | callExpression LB right ELSE right RB
-    //     { $$ = T.parseBinary(@1, T.IndexOp, $1, T.parseDefault(@3, $3, $5)); }
+    | callExpression LB right PIPE2 right RB
+        { $$ = T.parseBinary(@1, T.IndexOp, $1, T.parseDefault(@3, $3, $5)); }
     ;
     
 basicExpression:
@@ -1120,7 +1134,7 @@ writeOp:
 funcOp:
     FATARROW
         { $$ = false; }
-    | FATARROW DO
+    | DO
         { $$ = true; }
     ;
 

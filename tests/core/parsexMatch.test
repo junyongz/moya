@@ -6,109 +6,100 @@ foo is a -> 1
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </Is>
 
 ----------------------------------------------------------------------------------------------------
 
-foo is a -> 1 || b -> 2
+foo is a -> 1 or b -> 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
-            <Id name="b"/>
-            <Integer value="2"/>
-        </Transform>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
+        <Id name="b"/>
+        <Integer value="2"/>
+    </if>
 </Is>
 
 ----------------------------------------------------------------------------------------------------
 
-foo is a -> 1 || b -> 2 || 3
+foo is a -> 1 or b -> 2 else 3
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
-            <Id name="b"/>
-            <Integer value="2"/>
-        </Transform>
-        <else>
-            <Integer value="3"/>
-        </else>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
+        <Id name="b"/>
+        <Integer value="2"/>
+    </if>
+    <else>
+        <Integer value="3"/>
+    </else>
 </Is>
 
 ----------------------------------------------------------------------------------------------------
 
-foo is a -> 1 || c
+foo is a -> 1 else c
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <else>
-            <Id name="c"/>
-        </else>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <else>
+        <Id name="c"/>
+    </else>
 </Is>
 
 ----------------------------------------------------------------------------------------------------
 
-foo is
+foo is {
     a -> 1
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </Is>
 
 ----------------------------------------------------------------------------------------------------
 
-foo is
-    a ->
+foo is {
+    a -> {
         1
+    }
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Is>
     <Id name="foo"/>
-    <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-    </If>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </Is>
 
 ====================================================================================================
@@ -116,63 +107,59 @@ Within expressions.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-=> foo is a -> 1
+>() foo is a -> 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <Is>
         <Id name="foo"/>
-        <If>
-            <Transform>
-                <Id name="a"/>
-                <Integer value="1"/>
-            </Transform>
-        </If>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
     </Is>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 
-bar(foo is a -> 1 || 2)
+bar(foo is a -> 1 else 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="bar"/>
-    <Argument>
+    <arg>
         <Is>
             <Id name="foo"/>
-            <If>
-                <Transform>
-                    <Id name="a"/>
-                    <Integer value="1"/>
-                </Transform>
-                <else>
-                    <Integer value="2"/>
-                </else>
-            </If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <else>
+                <Integer value="2"/>
+            </else>
         </Is>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-=> foo is
-    a ->
+>() foo is {
+    a -> {
         1
+    }
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <Is>
         <Id name="foo"/>
-        <If>
-            <Transform>
-                <Id name="a"/>
-                <Integer value="1"/>
-            </Transform>
-        </If>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
     </Is>
 </Function>
 
@@ -181,27 +168,26 @@ Block expressions within a transform.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-=> foo is
-    a ->
-        b =>
+>() foo is {
+    a -> {
+        >(b) {
             1
+        }
+    }
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <Is>
         <Id name="foo"/>
-        <If>
-            <Transform>
-                <Id name="a"/>
-                <Function expression="true">
-                    <head>
-                        <Id name="b"/>
-                    </head>
-                    <Integer value="1"/>
-                </Function>
-            </Transform>
-        </If>
+        <if>
+            <Id name="a"/>
+            <Function>
+                <Argument name="b"/>
+                <Integer value="1"/>
+            </Function>
+        </if>
     </Is>
 </Function>
 

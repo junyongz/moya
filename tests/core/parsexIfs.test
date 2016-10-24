@@ -12,8 +12,10 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -27,8 +29,10 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
     <else>
         <Integer value="2"/>
     </else>
@@ -45,12 +49,14 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -66,12 +72,14 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
     <else>
         <Integer value="3"/>
     </else>
@@ -89,8 +97,10 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -103,12 +113,14 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -122,12 +134,14 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
     <else>
         <Integer value="3"/>
     </else>
@@ -144,8 +158,8 @@ if {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Only one else allowed
-<no file>, line 0
+Exception: syntax error
+<no file>, line 3
 
 ----------------------------------------------------------------------------------------------------
 
@@ -160,12 +174,14 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
     <else>
         <Integer value="3"/>
     </else>
@@ -181,8 +197,10 @@ if a -> 1
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -192,12 +210,14 @@ if a -> 1 or b -> 2
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -207,12 +227,14 @@ if a -> 1 or b -> 2 else 3
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Id name="a"/>
-    <Integer value="1"/>
-    <elseIf>
+    <if>
+        <Id name="a"/>
+        <Integer value="1"/>
+    </if>
+    <if>
         <Id name="b"/>
         <Integer value="2"/>
-    </elseIf>
+    </if>
     <else>
         <Integer value="3"/>
     </else>
@@ -232,8 +254,10 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
     </If>
 </AssignmentExpression>
 
@@ -250,8 +274,10 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
         <else>
             <Integer value="2"/>
         </else>
@@ -273,12 +299,14 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
-        <elseIf>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+        <if>
             <Id name="b"/>
             <Integer value="2"/>
-        </elseIf>
+        </if>
         <else>
             <Integer value="3"/>
         </else>
@@ -294,12 +322,14 @@ n = if a -> 1 or b -> 2
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
-        <elseIf>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+        <if>
             <Id name="b"/>
             <Integer value="2"/>
-        </elseIf>
+        </if>
     </If>
 </AssignmentExpression>
 
@@ -313,12 +343,14 @@ foo(if a -> 1 or b -> 2 else 3)
     <Id name="foo"/>
     <arg>
         <If>
-            <Id name="a"/>
-            <Integer value="1"/>
-            <elseIf>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <if>
                 <Id name="b"/>
                 <Integer value="2"/>
-            </elseIf>
+            </if>
             <else>
                 <Integer value="3"/>
             </else>
@@ -334,12 +366,14 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
-        <elseIf>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+        <if>
             <Id name="b"/>
             <Integer value="2"/>
-        </elseIf>
+        </if>
     </If>
 </Function>
 
@@ -355,8 +389,10 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
         <else>
             <Integer value="2"/>
         </else>
@@ -373,8 +409,10 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
     </If>
 </Function>
 
@@ -388,11 +426,13 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Function>
-            <Argument name="b"/>
-            <Integer value="1"/>
-        </Function>
+        <if>
+            <Id name="a"/>
+            <Function>
+                <Argument name="b"/>
+                <Integer value="1"/>
+            </Function>
+        </if>
     </If>
 </Function>
 
@@ -408,12 +448,14 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
-        <elseIf>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+        <if>
             <Id name="b"/>
             <Integer value="2"/>
-        </elseIf>
+        </if>
         <else>
             <Integer value="3"/>
         </else>
@@ -431,8 +473,10 @@ foo(if a -> 1 or b -> 2 else 3)
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Integer value="1"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
         <else>
             <Integer value="2"/>
         </else>
@@ -456,11 +500,13 @@ Block expressions within a transform.
 
 <Function>
     <If>
-        <Id name="a"/>
-        <Function>
-            <Argument name="b"/>
-            <Integer value="1"/>
-        </Function>
+        <if>
+            <Id name="a"/>
+            <Function>
+                <Argument name="b"/>
+                <Integer value="1"/>
+            </Function>
+        </if>
     </If>
 </Function>
 

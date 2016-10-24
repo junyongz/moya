@@ -293,4 +293,55 @@ Extra arguments.
     </Argument>
 </FunctionDeclaration>
 
+====================================================================================================
+Where combined with a function declaration will apply to the function body and its parameters.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    a
+} where {
+    a = 1
+    b = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration id="foo" access="public">
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+        <AssignmentExpression op="=">
+            <Id name="b"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+    <Id name="a"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() => a where {
+    a = 1
+    b = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration id="foo" access="public">
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+        <AssignmentExpression op="=">
+            <Id name="b"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+    <Id name="a"/>
+</FunctionDeclaration>
+
 ----------------------------------------------------------------------------------------------------
