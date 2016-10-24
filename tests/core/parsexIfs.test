@@ -4,7 +4,6 @@
 if-else blocks.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 if a {
     1
@@ -13,10 +12,8 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -30,10 +27,8 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
     <else>
         <Integer value="2"/>
     </else>
@@ -50,14 +45,12 @@ if a {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
-    <Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
         <Id name="b"/>
         <Integer value="2"/>
-    </Transform>
+    </elseIf>
 </If>
 
 ----------------------------------------------------------------------------------------------------
@@ -66,21 +59,19 @@ if a {
     1
 } else if b {
     2
-else {
+} else {
     3
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
-    <Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
         <Id name="b"/>
         <Integer value="2"/>
-    </Transform>
+    </elseIf>
     <else>
         <Integer value="3"/>
     </else>
@@ -93,6 +84,37 @@ Multiple line if expressions.
 
 if {
     a -> 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<If>
+    <Id name="a"/>
+    <Integer value="1"/>
+</If>
+
+----------------------------------------------------------------------------------------------------
+
+if {
+    a -> 1
+    b -> 2
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<If>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
+        <Id name="b"/>
+        <Integer value="2"/>
+    </elseIf>
+</If>
+
+----------------------------------------------------------------------------------------------------
+
+if {
+    a -> 1
     b -> 2
     else -> 3
 }
@@ -100,18 +122,30 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
-    <Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
         <Id name="b"/>
         <Integer value="2"/>
-    </Transform>
+    </elseIf>
     <else>
         <Integer value="3"/>
     </else>
 </If>
+
+----------------------------------------------------------------------------------------------------
+
+if {
+    a -> 1
+    else -> 3
+    b -> 2
+    else -> 4
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Only one else allowed
+<no file>, line 0
 
 ----------------------------------------------------------------------------------------------------
 
@@ -126,14 +160,12 @@ if {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
-    <Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
         <Id name="b"/>
         <Integer value="2"/>
-    </Transform>
+    </elseIf>
     <else>
         <Integer value="3"/>
     </else>
@@ -144,35 +176,46 @@ Single line if expressions.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-if a -> 1 or b -> 2 else 3
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
-    <Transform>
-        <Id name="b"/>
-        <Integer value="2"/>
-    </Transform>
-    <else>
-        <Integer value="3"/>
-    </else>
-</If>
-
-----------------------------------------------------------------------------------------------------
-
 if a -> 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <If>
-    <Transform>
-        <Id name="a"/>
-        <Integer value="1"/>
-    </Transform>
+    <Id name="a"/>
+    <Integer value="1"/>
+</If>
+
+----------------------------------------------------------------------------------------------------
+
+if a -> 1 or b -> 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<If>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
+        <Id name="b"/>
+        <Integer value="2"/>
+    </elseIf>
+</If>
+
+----------------------------------------------------------------------------------------------------
+
+if a -> 1 or b -> 2 else 3
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<If>
+    <Id name="a"/>
+    <Integer value="1"/>
+    <elseIf>
+        <Id name="b"/>
+        <Integer value="2"/>
+    </elseIf>
+    <else>
+        <Integer value="3"/>
+    </else>
 </If>
 
 ====================================================================================================
@@ -189,10 +232,8 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
     </If>
 </AssignmentExpression>
 
@@ -209,10 +250,8 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
         <else>
             <Integer value="2"/>
         </else>
@@ -234,14 +273,12 @@ n = if a {
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
+        <elseIf>
             <Id name="b"/>
             <Integer value="2"/>
-        </Transform>
+        </elseIf>
         <else>
             <Integer value="3"/>
         </else>
@@ -257,37 +294,36 @@ n = if a -> 1 or b -> 2
 <AssignmentExpression op="=">
     <Id name="n"/>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
+        <elseIf>
             <Id name="b"/>
             <Integer value="2"/>
-        </Transform>
+        </elseIf>
     </If>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo(if a -> 1 or b -> 2)
+foo(if a -> 1 or b -> 2 else 3)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <If>
-            <Transform>
-                <Id name="a"/>
-                <Integer value="1"/>
-            </Transform>
-            <Transform>
+            <Id name="a"/>
+            <Integer value="1"/>
+            <elseIf>
                 <Id name="b"/>
                 <Integer value="2"/>
-            </Transform>
+            </elseIf>
+            <else>
+                <Integer value="3"/>
+            </else>
         </If>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -296,22 +332,20 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
+        <elseIf>
             <Id name="b"/>
             <Integer value="2"/>
-        </Transform>
+        </elseIf>
     </If>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 
-=> if a {
+>() if a {
     1
 } else {
     2
@@ -319,12 +353,10 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
         <else>
             <Integer value="2"/>
         </else>
@@ -339,12 +371,10 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
     </If>
 </Function>
 
@@ -356,17 +386,13 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Function expression="true">
-                <head>
-                    <Id name="b"/>
-                </head>
-                <Integer value="1"/>
-            </Function>
-        </Transform>
+        <Id name="a"/>
+        <Function>
+            <Argument name="b"/>
+            <Integer value="1"/>
+        </Function>
     </If>
 </Function>
 
@@ -380,16 +406,14 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
-        <Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
+        <elseIf>
             <Id name="b"/>
             <Integer value="2"/>
-        </Transform>
+        </elseIf>
         <else>
             <Integer value="3"/>
         </else>
@@ -405,12 +429,10 @@ foo(if a -> 1 or b -> 2)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </Transform>
+        <Id name="a"/>
+        <Integer value="1"/>
         <else>
             <Integer value="2"/>
         </else>
@@ -432,17 +454,13 @@ Block expressions within a transform.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function expression="true">
+<Function>
     <If>
-        <Transform>
-            <Id name="a"/>
-            <Function expression="true">
-                <head>
-                    <Id name="b"/>
-                </head>
-                <Integer value="1"/>
-            </Function>
-        </Transform>
+        <Id name="a"/>
+        <Function>
+            <Argument name="b"/>
+            <Integer value="1"/>
+        </Function>
     </If>
 </Function>
 

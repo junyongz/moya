@@ -124,14 +124,16 @@ foo(> (a,b) a + b)
 
 <CallExpression>
     <Id name="foo"/>
-    <Function>
-        <Argument name="a"/>
-        <Argument name="b"/>
-        <BinaryExpression op="+">
-            <Id name="a"/>
-            <Id name="b"/>
-        </BinaryExpression>
-    </Function>
+    <arg>
+        <Function>
+            <Argument name="a"/>
+            <Argument name="b"/>
+            <BinaryExpression op="+">
+                <Id name="a"/>
+                <Id name="b"/>
+            </BinaryExpression>
+        </Function>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
