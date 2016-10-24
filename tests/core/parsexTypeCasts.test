@@ -11,7 +11,7 @@ foo as Bar
 
 <Cast>
     <Id name="foo"/>
-    <TypeId name="Bar"/>
+    <TypeId id="Bar"/>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -22,11 +22,10 @@ foo as Foo\Bar\Baz
 
 <Cast>
     <Id name="foo"/>
-    <Type>
-        <TypeId name="Foo"/>
-        <TypeId name="Bar"/>
-        <TypeId name="Baz"/>
-    </Type>
+    <TypeId id="Foo">
+        <TypeId id="Bar"/>
+        <TypeId id="Baz"/>
+    </TypeId>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -37,25 +36,23 @@ foo as [Foo]
 
 <Cast>
     <Id name="foo"/>
-    <List>
-        <TypeId name="Foo"/>
-    </List>
+    <TypeId id="List">
+        <TypeId id="Foo"/>
+    </TypeId>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
 
-foo as {Foo = Bar}
+foo as {| Foo = Bar |}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Cast>
     <Id name="foo"/>
-    <Map>
-        <BinaryExpression op="=">
-            <TypeId name="Foo"/>
-            <TypeId name="Bar"/>
-        </BinaryExpression>
-    </Map>
+    <TypeId id="Map">
+        <TypeId id="Foo"/>
+        <TypeId id="Bar"/>
+    </TypeId>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -66,7 +63,7 @@ foo as <>
 
 <Cast>
     <Id name="foo"/>
-    <Channel/>
+    <TypeId id="Channel"/>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -77,25 +74,24 @@ foo as <Foo>
 
 <Cast>
     <Id name="foo"/>
-    <Channel>
-        <TypeId name="Foo"/>
-    </Channel>
+    <TypeId id="Channel">
+        <TypeId id="Foo"/>
+    </TypeId>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
 
-foo as (Foo => Bar)
+foo as >(Foo,Bar):Baz
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Cast>
     <Id name="foo"/>
-    <Function expression="true">
-        <head>
-            <TypeId name="Foo"/>
-        </head>
-        <TypeId name="Bar"/>
-    </Function>
+    <TypeId id="Function">
+        <TypeId id="Baz"/>
+        <TypeId id="Foo"/>
+        <TypeId id="Bar"/>
+    </TypeId>
 </Cast>
 
 ====================================================================================================
@@ -103,38 +99,32 @@ Combination of different type declarations.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-foo as Foo\(Foo\Bar\Baz)\[Foo]\{Foo = Bar}\<Foo>\(Foo => Bar)
+foo as Foo\(Foo\Bar\Baz)\([Foo])\({| Foo = Bar |})\(<Foo>)\(>(Foo): Bar)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Cast>
     <Id name="foo"/>
-    <Type>
-        <TypeId name="Foo"/>
-        <Type>
-            <TypeId name="Foo"/>
-            <TypeId name="Bar"/>
-            <TypeId name="Baz"/>
-        </Type>
-        <List>
-            <TypeId name="Foo"/>
-        </List>
-        <Map>
-            <BinaryExpression op="=">
-                <TypeId name="Foo"/>
-                <TypeId name="Bar"/>
-            </BinaryExpression>
-        </Map>
-        <Channel>
-            <TypeId name="Foo"/>
-        </Channel>
-        <Function expression="true">
-            <head>
-                <TypeId name="Foo"/>
-            </head>
-            <TypeId name="Bar"/>
-        </Function>
-    </Type>
+    <TypeId id="Foo">
+        <TypeId id="Foo">
+            <TypeId id="Bar"/>
+            <TypeId id="Baz"/>
+        </TypeId>
+        <TypeId id="List">
+            <TypeId id="Foo"/>
+        </TypeId>
+        <TypeId id="Map">
+            <TypeId id="Foo"/>
+            <TypeId id="Bar"/>
+        </TypeId>
+        <TypeId id="Channel">
+            <TypeId id="Foo"/>
+        </TypeId>
+        <TypeId id="Function">
+            <TypeId id="Bar"/>
+            <TypeId id="Foo"/>
+        </TypeId>
+    </TypeId>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------

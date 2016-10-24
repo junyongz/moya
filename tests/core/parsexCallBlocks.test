@@ -3,32 +3,34 @@ An expression followed by an indented block is treated as a function call. The b
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-iter
+iter {
     2
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="iter"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-iter
+iter {
     2
     b
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="iter"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
         <Id name="b"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -36,35 +38,35 @@ If the expression already has arguments, the block is appended as another argume
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-iter()
+iter() {
     2
-
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="iter"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-iter(1)
+iter(1) {
     2
-
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="iter"/>
-    <Argument>
+    <arg>
         <Integer value="1"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="2"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -72,98 +74,73 @@ Only identifiers or calls can be used in this manner.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-a + b
+a + b {
     3
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+%nyi
 
 Exception: Syntax does not accept arguments
 <no file>, line 1
 
 ====================================================================================================
-Lines beginning with & are additional arguments.
+Lines beginning with • are additional arguments.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-& 3
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <Argument>
-        <Integer value="2"/>
-    </Argument>
-    <Argument>
-        <Integer value="3"/>
-    </Argument>
-</CallExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo
-    2
-&
+} • {
     3
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo
-    2
-& 3
-& 4
+foo {
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Integer value="2"/>
-    </Argument>
-    <Argument>
-        <Integer value="3"/>
-    </Argument>
-    <Argument>
-        <Integer value="4"/>
-    </Argument>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-&
+} • {
     3
-&
+} • {
     4
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="3"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="4"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -171,142 +148,229 @@ Lines beginning with a bullet-prefixed name are additional named arguments.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-•arg2 3
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <Argument>
-        <Integer value="2"/>
-    </Argument>
-    <Argument name="arg2">
-        <Integer value="3"/>
-    </Argument>
-</CallExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo
-    2
-•arg2
+} •arg2 {
     3
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument name="arg2">
+    </arg>
+    <arg name="arg2">
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-•arg2 3
-•arg3 4
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <Argument>
-        <Integer value="2"/>
-    </Argument>
-    <Argument name="arg2">
-        <Integer value="3"/>
-    </Argument>
-    <Argument name="arg3">
-        <Integer value="4"/>
-    </Argument>
-</CallExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo
-    2
-•arg2
+} •arg2 {
     3
-•arg3
+} •arg3 {
     4
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument name="arg2">
+    </arg>
+    <arg name="arg2">
         <Integer value="3"/>
-    </Argument>
-    <Argument name="arg3">
+    </arg>
+    <arg name="arg3">
         <Integer value="4"/>
-    </Argument>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo •>() {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+<CallExpression>
+    <Id name="foo"/>
+    <arg>
+        <Function/>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo •>(args) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg>
+        <Function>
+            <Argument name="args"/>
+        </Function>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo •cb >(args) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg name="cb">
+        <Function>
+            <Argument name="args"/>
+        </Function>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo •>(args) 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg>
+        <Function>
+            <Argument name="args"/>
+            <Integer value="2"/>
+        </Function>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo {
+    2
+} •>(args) {
+    3
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg>
+        <Integer value="2"/>
+    </arg>
+    <arg>
+        <Function>
+            <Argument name="args"/>
+            <Integer value="3"/>
+        </Function>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo {
+    2
+} •cb >(args) {
+    3
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg>
+        <Integer value="2"/>
+    </arg>
+    <arg name="cb">
+        <Function>
+            <Argument name="args"/>
+            <Integer value="3"/>
+        </Function>
+    </arg>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo •arg1 {
+    2
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <Id name="foo"/>
+    <arg name="arg1">
+        <Integer value="2"/>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
-& lines and • lines can be mixed.
+• lines and •name lines can be mixed.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-&
+} • {
     3
-•arg3
+} •arg3 {
     4
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="3"/>
-    </Argument>
-    <Argument name="arg3">
+    </arg>
+    <arg name="arg3">
         <Integer value="4"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-foo
+foo {
     2
-•arg2
+} •arg2 {
     3
-&
+} • {
     4
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="2"/>
-    </Argument>
-    <Argument name="arg2">
+    </arg>
+    <arg name="arg2">
         <Integer value="3"/>
-    </Argument>
-    <Argument>
+    </arg>
+    <arg>
         <Integer value="4"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
 A bullet after any expression will call the result of that expression.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 a + b • 3
 
@@ -317,15 +381,16 @@ a + b • 3
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument>
+    <arg>
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-a + b •
+a + b • {
     3
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -334,9 +399,9 @@ a + b •
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument>
+    <arg>
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -351,14 +416,14 @@ a + b • a =>
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument>
+    <arg>
         <Function expression="true">
             <head>
                 <Id name="a"/>
             </head>
             <Integer value="3"/>
         </Function>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -375,9 +440,9 @@ a + b •arg 3
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument name="arg">
+    <arg name="arg">
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -392,9 +457,9 @@ a + b •arg
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument name="arg">
+    <arg name="arg">
         <Integer value="3"/>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -409,18 +474,18 @@ a + b •arg a =>
         <Id name="a"/>
         <Id name="b"/>
     </BinaryExpression>
-    <Argument name="arg">
+    <arg name="arg">
         <Function expression="true">
             <head>
                 <Id name="a"/>
             </head>
             <Integer value="3"/>
         </Function>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
-Argument lines can't exist on their own.
+arg lines can't exist on their own.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
@@ -434,7 +499,7 @@ Exception: syntax error, unexpected BIDENTIFIER
 
 ----------------------------------------------------------------------------------------------------
 
-&
+•
     1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -455,14 +520,14 @@ foo
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <CallExpression>
             <Id name="foo"/>
-            <Argument>
+            <arg>
                 <Id name="foo"/>
-            </Argument>
+            </arg>
         </CallExpression>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -475,14 +540,14 @@ foo •arg1
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument name="arg1">
+    <arg name="arg1">
         <CallExpression>
             <Id name="foo"/>
-            <Argument name="arg1">
+            <arg name="arg1">
                 <Id name="foo"/>
-            </Argument>
+            </arg>
         </CallExpression>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -497,7 +562,7 @@ foo • bar => baz =>
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Function expression="true">
             <head>
                 <Id name="bar"/>
@@ -509,7 +574,7 @@ foo • bar => baz =>
                 <Integer value="1"/>
             </Function>
         </Function>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -523,10 +588,10 @@ foo
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Integer value="1"/>
-    </Argument>
-    <Argument name="arg1">
+    </arg>
+    <arg name="arg1">
         <Function expression="true">
             <head>
                 <Id name="bar"/>
@@ -538,7 +603,7 @@ foo
                 <Integer value="1"/>
             </Function>
         </Function>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------

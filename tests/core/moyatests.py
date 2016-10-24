@@ -55,7 +55,7 @@ class MoyaTestFixture(TestFixture):
             extraArgs = []
             
         if isExpr:
-            source = '{ ' + source + ' }'
+            source = '{ ' + source + '\n\n}'
         else:
             source = ' ' + source + ' '
         escapedSource = source.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")

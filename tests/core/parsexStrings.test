@@ -31,7 +31,6 @@ Strings are enclosed within double quotation marks. Single quoted strings are tr
 <String value="  abc  "/>
 
 ----------------------------------------------------------------------------------------------------
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 foo"bar"
 
@@ -39,9 +38,7 @@ foo"bar"
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <String value="bar"/>
-    </Argument>
+    <String value="bar"/>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -52,9 +49,7 @@ foo"\\-"
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <String value="\-"/>
-    </Argument>
+    <String value="\-"/>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -65,12 +60,10 @@ foo"abc %def"
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <BinaryExpression op="concat">
-            <String value="abc "/>
-            <Id name="def"/>
-        </BinaryExpression>
-    </Argument>
+    <BinaryExpression op="++">
+        <String value="abc "/>
+        <Id name="def"/>
+    </BinaryExpression>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------

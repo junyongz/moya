@@ -42,7 +42,7 @@ function compile(source, sourcePath) {
         } else if (exc.message) {
             var line = exc.loc ? exc.loc.first_line : '0';
             console.log('Exception: ' + exc.message + '\n<' + sourcePath + '>, line ' + line);
-            // throw exc;
+            throw exc;
         } else {
             throw exc;
         }

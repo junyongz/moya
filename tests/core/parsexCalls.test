@@ -23,7 +23,9 @@ foo(a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Id name="a"/>
+    <arg>
+        <Id name="a"/>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -34,8 +36,12 @@ foo(a, b)
 
 <CallExpression>
     <Id name="foo"/>
-    <Id name="a"/>
-    <Id name="b"/>
+    <arg>
+        <Id name="a"/>
+    </arg>
+    <arg>
+        <Id name="b"/>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -63,7 +69,9 @@ foo(a, •name b)
 
 <CallExpression>
     <Id name="foo"/>
-    <Id name="a"/>
+    <arg>
+        <Id name="a"/>
+    </arg>
     <arg name="name">
         <Id name="b"/>
     </arg>
@@ -78,11 +86,15 @@ foo(a, •name b, c)
 
 <CallExpression>
     <Id name="foo"/>
-    <Id name="a"/>
+    <arg>
+        <Id name="a"/>
+    </arg>
     <arg name="name">
         <Id name="b"/>
     </arg>
-    <Id name="c"/>
+    <arg>
+        <Id name="c"/>
+    </arg>
 </CallExpression>
 
 ====================================================================================================
@@ -96,10 +108,12 @@ foo(> (a) 1)
 
 <CallExpression>
     <Id name="foo"/>
-    <Function>
-        <Argument name="a"/>
-        <Integer value="1"/>
-    </Function>
+    <arg>
+        <Function>
+            <Argument name="a"/>
+            <Integer value="1"/>
+        </Function>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -110,11 +124,13 @@ foo(> (a,b) 1)
 
 <CallExpression>
     <Id name="foo"/>
-    <Function>
-        <Argument name="a"/>
-        <Argument name="b"/>
-        <Integer value="1"/>
-    </Function>
+    <arg>
+        <Function>
+            <Argument name="a"/>
+            <Argument name="b"/>
+            <Integer value="1"/>
+        </Function>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -125,12 +141,16 @@ foo(> (a,b) 1, c)
 
 <CallExpression>
     <Id name="foo"/>
-    <Function>
-        <Argument name="a"/>
-        <Argument name="b"/>
-        <Integer value="1"/>
-    </Function>
-    <Id name="c"/>
+    <arg>
+        <Function>
+            <Argument name="a"/>
+            <Argument name="b"/>
+            <Integer value="1"/>
+        </Function>
+    </arg>
+    <arg>
+        <Id name="c"/>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------

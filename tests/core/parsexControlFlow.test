@@ -26,7 +26,7 @@ break a
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: syntax error, unexpected IDENTIFIER, expecting NEWLINE
+Exception: syntax error
 <no file>, line 1
 
 ----------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ continue a
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: syntax error, unexpected IDENTIFIER, expecting NEWLINE
+Exception: syntax error
 <no file>, line 1
 
 ====================================================================================================
@@ -48,7 +48,7 @@ The return statement
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
-    <Undefined/>
+    <Id name="undefined"/>
 </Return>
 
 ----------------------------------------------------------------------------------------------------
