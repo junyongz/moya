@@ -412,8 +412,8 @@ accessMode:
 statement:
     rightBlock
     | controlFlowStatement
-    // | whileBlock
-    // | tryBlock
+    | whileBlock
+    | tryBlock
     | STAR2 declArgument
         { $$ = $2; }
     | lineEnding
@@ -461,38 +461,35 @@ controlFlowStatement:
     ;
 
 whileBlock:
-    WHILE right block lineEnding
-        { $$ = PARSE_WHILE(@1, $2, $3); }
+    WHILE right block
+        { $$ = T.parseWhile(@1, $2, $3); }
+    | WHILE block
+        { $$ = T.parseWhile(@1, T.parseNumber(@1, '1'), $2); }
     ;
 
 tryBlock:
-    TRY block lineEnding catchBlockList
-        { $$ = PARSE_TRY(@1, $2, $4, null); }
-    | TRY block lineEnding catchBlockList finallyBlock
-        { $$ = PARSE_TRY(@1, $2, $4, $5); }
-    | TRY block lineEnding finallyBlock
-        { $$ = PARSE_TRY(@1, $2, null, $4); }
+    TRY block catchBlockList
+        { $$ = T.parseTry(@1, $2, $3, null); }
+    | TRY block catchBlockList FINALLY block
+        { $$ = T.parseTry(@1, $2, $3, $5); }
+    | TRY block FINALLY block
+        { $$ = T.parseTry(@1, $2, null, $4); }
     ;
 
 catchBlock:
-    CATCH block lineEnding
-        { $$ = PARSE_CATCH(@1, null, $2); }
+    CATCH block
+        { $$ = T.parseCatch(@1, null, $2); }
     | CATCH callExpression lineEnding
-        { $$ = PARSE_CATCH(@1, $2, null); }
-    | CATCH callExpression block lineEnding
-        { $$ = PARSE_CATCH(@1, $2, $3); }
+        { $$ = T.parseCatch(@1, $2, null); }
+    | CATCH callExpression block
+        { $$ = T.parseCatch(@1, $2, $3); }
     ;
 
 catchBlockList:
     catchBlock
-        { $$ = PARSE_SET(@1); APPEND($$, $1); }
+        { $$ = T.parseSet(@1, $1); }
     | catchBlockList catchBlock
-        { $$ = $1; APPEND($1, $2); }
-    ;
-
-finallyBlock:
-    FINALLY block lineEnding
-        { $$ = PARSE_1(UpFinallySyntaxType, @1, $2); }
+        { $$ = $1; $1.append($2); }
     ;
 
 right:
@@ -785,74 +782,6 @@ assignmentExpressionSimple:
         { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
     | STAR simpleExpression ifWhile simpleExpression RARROW right
         { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
-    ;
-
-elseBlocks:
-    transformBlockList
-        { $$ = PARSE_IF(@1, $1, null); }
-    | transformBlockList ELSE block
-        { $$ = PARSE_IF(@1, $1, $3); }
-    ;
-
-transformBlockList:
-    tupleExpression block lineEnding
-        { $$ = PARSE_TRANSFORM(@1, $1, $2); }
-    | transformBlockList ELSE IF tupleExpression block lineEnding
-        { $$ = APPEND_TRANSFORM($1, PARSE_TRANSFORM(@1, $4, $5)); }
-    ;
-
-elseLines:
-    transformLineList lineEnding
-        { $$ = PARSE_IF(@1, $1, null); }
-    | transformLineList lineEnding ELSE RARROW tupleExpression lineEnding
-        { $$ = PARSE_IF(@1, $1, $5); }
-    ;
-
-elseLine:
-    transformList
-        { $$ = PARSE_IF(@1, $1, null); }
-    | transformList PIPE2 tupleExpression
-        { $$ = PARSE_IF(@1, $1, $3); }
-    ;
-
-transformLineList:
-    transformExpression
-        { $$ = $1; }
-    | tupleExpression RARROW block
-        { $$ = PARSE_TRANSFORM(@1, $1, $3); }
-    | transformLineList lineEnding transformExpression
-        { $$ = APPEND_TRANSFORM($1, $3); }
-    ;
-
-transformExpression:
-    tupleExpression RARROW assignmentExpression
-        { $$ = PARSE_TRANSFORM(@1, $1, $3); }
-    ;
-
-transformList:
-    transformExpression
-        { $$ = $1; }
-    | transformList PIPE2 transformExpression
-        { $$ = APPEND_TRANSFORM($1, $3); }
-    ;
-
-elseLineSimple:
-    transformListSimple
-        { $$ = PARSE_IF(@1, $1, null); }
-    | transformListSimple PIPE2 simpleExpression
-        { $$ = PARSE_IF(@1, $1, $3); }
-    ;
-
-transformListSimple:
-    transformExpressionSimple
-        { $$ = $1; }
-    | transformListSimple PIPE2 transformExpressionSimple
-        { $$ = APPEND_TRANSFORM($1, $3); }
-    ;
-
-transformExpressionSimple:
-    simpleExpression RARROW simpleExpression
-        { $$ = PARSE_TRANSFORM(@1, $1, $3); }
     ;
 
 tupleExpression:
@@ -1190,9 +1119,9 @@ mapAssignmentExpression:
 
 cDeclarations:
     cDeclaration
-        { $$ = PARSE_SET(@2); APPEND($$, $2); }
+        { $$ = T.parseSet(@1, $1); }
     | cDeclarations cDeclaration
-        { $$ = $1; APPEND($1, $2); }
+        { $$ = $1; $1.append($2); }
     ;
 
 cDeclaration:
