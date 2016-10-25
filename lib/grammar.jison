@@ -18,6 +18,7 @@ rawTextChar [^%\\"]|{escapeSequence}
 ws [ \t]
 nl [\n\r]
 
+id [a-zA-Z][0-9a-zA-Z]*
 idLower [a-z][0-9a-zA-Z]*
 idUpper [A-Z][0-9a-zA-Z]*
 idDots ({idLower}*)([.]{idLower}+)*
@@ -140,7 +141,8 @@ hex 0x[0-9A-Fa-f]+
 {nl}{ws}+                           { return 'NEWLINE'; }
 {nl}                                { return 'NEWLINE'; }
 
-"C"["]                              { this.begin('ccode'); }
+"C@"{id}["]                         { this.begin('ccode'); return 'CCODE_OPEN'; }
+"C"["]                              { this.begin('ccode'); return 'CCODE_OPEN'; }
 {specialty}?["]                     { this.begin('text'); return 'STRING_OPEN'; }
 
 "0x"[0-9A-Fa-f]+                    { return 'HEX'; }
@@ -173,7 +175,7 @@ hex 0x[0-9A-Fa-f]+
 <ccode>{ws}+             { }
 <ccode>{nl}              { }
 
-<ccode>["]               { this.popState(); }
+<ccode>["]               { this.popState(); return 'CCODE_CLOSE'; }
 
 <ccode>"("               { return 'LP'; }
 <ccode>")"               { return 'RP'; }
@@ -215,6 +217,8 @@ hex 0x[0-9A-Fa-f]+
 %token <objectValue> STRING_CLOSE
 %token <objectValue> STRING
 %token <objectValue> STRING_FORMAT
+%token <objectValue> CCODE_OPEN
+%token <objectValue> CCODE_CLOSE
 %token <objectValue> INTEGER
 %token <objectValue> INTEGER_UNIT
 %token <objectValue> FLOAT
@@ -259,7 +263,7 @@ lineEnding:
 
 declaration:
     importDirective
-    | cDeclarations lineEnding
+    | cCode
     | declarationBlock
     | block
     | lineEnding
@@ -267,7 +271,7 @@ declaration:
 
 declarationList:
     declaration
-        { $$ = new T.SetSyntax(@1); $$.append($1); }
+        { $$ = T.parseSet(@1, $1); }
     | declarationList lineEnding declaration
         { $$ = $1; $1.append($2); }
     ;
@@ -307,7 +311,7 @@ declarationBlock:
 blockOrRight:
     block
     | right
-        { $$ = new T.SetSyntax(@1, $1); }
+        { $$ = T.parseSet(@1, $1); }
     ;
 
 declFunc:
@@ -375,7 +379,7 @@ declTypeIdList:
     
 declArgumentList:
     declArgument
-        { $$ = new T.SetSyntax(@1); $$.append($1); }
+        { $$ = T.parseSet(@1, $1); }
     | declArgumentList COMMA
         { $$ = $1; }
     | declArgumentList COMMA declArgument
@@ -1117,6 +1121,11 @@ mapAssignmentExpression:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+cCode:
+    CCODE_OPEN cDeclarations CCODE_CLOSE
+        { $$ = $2; T.setLibrary($2, $1); }
+    ;
+    
 cDeclarations:
     cDeclaration
         { $$ = T.parseSet(@1, $1); }
@@ -1135,9 +1144,9 @@ cLine:
 
 cFunction:
     cType IDENTIFIER LP cArgs RP
-        { $$ = T.parseCFunction(@1, $2, $1, $4); }
+        { $$ = T.parseCFunction(@1, $1, $2, $4); }
     | cType IDENTIFIER LP RP
-        { $$ = T.parseCFunction(@1, $2, $1, null); }
+        { $$ = T.parseCFunction(@1, $1, $2, null); }
     ;
 
 cType:
@@ -1154,12 +1163,12 @@ cType:
     | CONST CPRIMITIVE
         { $$ = T.parseCType(@1, $2); }
     | cType STAR
-        { $$ = $1.addPointer(@1, $1); }
+        { $$ = $1; $1.addPointer(@1, $1); }
     ;
 
 cArgs:
     cArg
-        { $$ = new T.SetSyntax(@1); $$.append($1); }
+        { $$ = T.parseSet(@1, $1); }
     | cArgs COMMA cArg
         { $$ = $1; $1.append($3); }
     ;

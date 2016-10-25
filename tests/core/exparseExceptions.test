@@ -10,10 +10,11 @@ throw 42
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch
+} catch {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -26,26 +27,28 @@ catch
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-finally
+} finally {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
     <Id name="null"/>
-    <Finally>
+    <finally>
         <Id name="null"/>
-    </Finally>
+    </finally>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch exc
+} catch exc {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -59,61 +62,61 @@ catch exc
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch exc:Exception
+} catch exc:Exception {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
     <Id name="null"/>
     <Catch>
-        <Subtype>
-            <Id name="exc"/>
-            <TypeId name="Exception"/>
-        </Subtype>
+        <TypeAssignment name="exc">
+            <TypeId id="Exception"/>
+        </TypeAssignment>
         <Id name="null"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch exc:Exception
+} catch exc:Exception {
     _
-catch exc:OtherException
+} catch exc:OtherException {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
     <Id name="null"/>
     <Catch>
-        <Subtype>
-            <Id name="exc"/>
-            <TypeId name="Exception"/>
-        </Subtype>
+        <TypeAssignment name="exc">
+            <TypeId id="Exception"/>
+        </TypeAssignment>
         <Id name="null"/>
     </Catch>
     <Catch>
-        <Subtype>
-            <Id name="exc"/>
-            <TypeId name="OtherException"/>
-        </Subtype>
+        <TypeAssignment name="exc">
+            <TypeId id="OtherException"/>
+        </TypeAssignment>
         <Id name="null"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch
+} catch {
     1
-catch
+} catch {
     2
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -129,12 +132,13 @@ catch
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch
+} catch {
     _
-finally
+} finally {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -143,21 +147,22 @@ finally
     <Catch>
         <Id name="null"/>
     </Catch>
-    <Finally>
+    <finally>
         <Id name="null"/>
-    </Finally>
+    </finally>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
-try
+try {
     _
-catch
+} catch {
     _
-catch
+} catch {
     _
-finally
+} finally {
     _
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -169,9 +174,9 @@ finally
     <Catch>
         <Id name="null"/>
     </Catch>
-    <Finally>
+    <finally>
         <Id name="null"/>
-    </Finally>
+    </finally>
 </Try>
 
 ----------------------------------------------------------------------------------------------------

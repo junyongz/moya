@@ -10,18 +10,7 @@ C"void foo()"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <return type="void"/>
-</CFunction>
-
-----------------------------------------------------------------------------------------------------
-
-C"
-    void foo()
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CFunction name="foo">
-    <return type="void"/>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -32,7 +21,7 @@ C"unsigned int foo()"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <return type="unsigned int"/>
+    <CType name="unsigned int"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -43,8 +32,10 @@ C"void foo(void)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="void"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="void"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -55,9 +46,13 @@ C"void foo(int, float)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="int"/>
-    <argument type="float"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="int"/>
+    </CArgument>
+    <CArgument>
+        <CType name="float"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -68,8 +63,10 @@ C"void foo(int a)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument name="a" type="int"/>
-    <return type="void"/>
+    <CArgument name="a">
+        <CType name="int"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -80,9 +77,13 @@ C"void foo(int a, float b)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument name="a" type="int"/>
-    <argument name="b" type="float"/>
-    <return type="void"/>
+    <CArgument name="a">
+        <CType name="int"/>
+    </CArgument>
+    <CArgument name="b">
+        <CType name="float"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -93,8 +94,10 @@ C"void foo(struct a)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="a"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="a"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -105,8 +108,10 @@ C"void foo(const a)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="a"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="a"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -117,8 +122,10 @@ C"void foo(Bar*)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="Bar" pointers="1"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="Bar" pointers="1"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -129,8 +136,10 @@ C"void foo(Bar**)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="Bar" pointers="2"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="Bar" pointers="2"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -141,8 +150,10 @@ C"void foo(Bar***)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument type="Bar" pointers="3"/>
-    <return type="void"/>
+    <CArgument>
+        <CType name="Bar" pointers="3"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -153,8 +164,10 @@ C"void foo(Bar* bar)"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <argument name="bar" type="Bar" pointers="1"/>
-    <return type="void"/>
+    <CArgument name="bar">
+        <CType name="Bar" pointers="1"/>
+    </CArgument>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
@@ -165,33 +178,17 @@ C"Bar* foo()"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo">
-    <return type="Bar" pointers="1"/>
-</CFunction>
-
-----------------------------------------------------------------------------------------------------
-# Multiple functions
-
-C"
-    void foo();
-    void foo2();
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CFunction name="foo">
-    <return type="void"/>
-</CFunction>
-<CFunction name="foo2">
-    <return type="void"/>
+    <CType name="Bar" pointers="1"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
 
-C@lib"void foo();
+C@lib"void foo()"
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <CFunction name="foo" library="lib">
-    <return type="void"/>
+    <CType name="void"/>
 </CFunction>
 
 ----------------------------------------------------------------------------------------------------
