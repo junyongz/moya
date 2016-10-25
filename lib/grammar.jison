@@ -421,28 +421,28 @@ statement:
 
 statementList:
     statement
-        { $$ = new T.SetSyntax(@1); $$.append($1); }
+        { $$ = T.parseSet(@1, $1); }
     | statementList lineEnding statement
         { $$ = $1; $1.append($3); }
     ;
 
 importDirective:
     GT moduleNameList
-        { $$ = PARSE_IMPORT(@1, $2); }
+        { $$ = T.parseImport(@1, $2); }
     ;
 
 moduleName:
     SLASH id
-        { $$ = PARSE_SET(@1); APPEND($$, $2); }
+        { $$ = T.parseSet(@1, $2); }
     | moduleName SLASH id
-        { $$ = $1; APPEND($$, $3); }
+        { $$ = $1; $1.append($3); }
     ;
 
 moduleNameList:
     moduleName
-        { $$ = PARSE_SET(@1); APPEND($$, $1); }
+        { $$ = [$1]; }
     | moduleNameList COMMA moduleName
-        { $$ = $1; APPEND($$, $3); }
+        { $$ = $1; $1.push($3); }
     ;
 
 controlFlowStatement:
