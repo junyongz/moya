@@ -467,18 +467,18 @@ whileBlock:
 
 tryBlock:
     TRY block lineEnding catchBlockList
-        { $$ = PARSE_TRY(@1, $2, $4, NULL); }
+        { $$ = PARSE_TRY(@1, $2, $4, null); }
     | TRY block lineEnding catchBlockList finallyBlock
         { $$ = PARSE_TRY(@1, $2, $4, $5); }
     | TRY block lineEnding finallyBlock
-        { $$ = PARSE_TRY(@1, $2, NULL, $4); }
+        { $$ = PARSE_TRY(@1, $2, null, $4); }
     ;
 
 catchBlock:
     CATCH block lineEnding
-        { $$ = PARSE_CATCH(@1, NULL, $2); }
+        { $$ = PARSE_CATCH(@1, null, $2); }
     | CATCH callExpression lineEnding
-        { $$ = PARSE_CATCH(@1, $2, NULL); }
+        { $$ = PARSE_CATCH(@1, $2, null); }
     | CATCH callExpression block lineEnding
         { $$ = PARSE_CATCH(@1, $2, $3); }
     ;
@@ -565,41 +565,36 @@ blockLeft:
     | channelOp blockRight
         { $$ = T.parseUnary(@1, $1, $2); }
         
-    // | tupleExpression IS elseLine lineEnding
-    //     { $$ = PARSE_IS(@1, $1, $3); }
-    // | tupleExpression IS LCB elseLines RCB
-    //     { $$ = PARSE_IS(@1, $1, $4); }
-
     | isBlock
     | ifBlock
     
-    // | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $6, $3, false); }
-    // | STAR tupleExpression inOn tupleExpression RARROW blockRight
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $6, $3, false); }
-    // | STAR tupleExpression inOn tupleExpression block lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $5, $3, false); }
-    // | STAR tupleExpression block lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, NULL, NULL, $3, 0, false); }
-    //
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $8, $3, $5); }
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $8, $3, $5); }
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $7, $3, $5); }
-    // | STAR tupleExpression ifWhile tupleExpression block lineEnding
-    //     { $$ = PARSE_ITERATOR(@1, $2, NULL, $4, $5, 0, $3); }
-    //
-    // | STAR tupleExpression RARROW assignmentExpression lineEnding
-    //     { $$ = PARSE_MAPPER(@1, $2, NULL, $4, false, false); }
-    // | STAR tupleExpression RARROW blockRight
-    //     { $$ = PARSE_MAPPER(@1, $2, NULL, $4, false, false); }
-    //
-    // | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression lineEnding
-    //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
-    // | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
-    //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
+    | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
+        { $$ = T.parseIterator(@1, $2, $4, null, $6, $3, false); }
+    | STAR tupleExpression inOn tupleExpression RARROW blockRight
+        { $$ = T.parseIterator(@1, $2, $4, null, $6, $3, false); }
+    | STAR tupleExpression inOn tupleExpression block
+        { $$ = T.parseIterator(@1, $2, $4, null, $5, $3, false); }
+    | STAR tupleExpression block
+        { $$ = T.parseIterator(@1, $2, null, null, $3, 0, false); }
+    
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
+        { $$ = T.parseIterator(@1, $2, $4, $6, $8, $3, $5); }
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
+        { $$ = T.parseIterator(@1, $2, $4, $6, $8, $3, $5); }
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
+        { $$ = T.parseIterator(@1, $2, $4, $6, $7, $3, $5); }
+    | STAR tupleExpression ifWhile tupleExpression block
+        { $$ = T.parseIterator(@1, $2, null, $4, $5, 0, $3); }
+    
+    | STAR tupleExpression RARROW assignmentExpression
+        { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
+    | STAR tupleExpression RARROW blockRight
+        { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
+    
+    | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
+        { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
+    | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
+        { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
     ;
 
 anonFunc:
@@ -679,7 +674,7 @@ blockRight:
     //     { $$ = T.parseAssignment(@1, $2, $1, $3); }
     
     // | tupleExpression BULLET blockRight
-    //     { $$ = $1; /*PARSE_CALL(@1, $1, NULL); APPEND_ARGS($$, $3);*/ }
+    //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
     //
     // | DASHDASH blockRight
     //     { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
@@ -699,24 +694,24 @@ blockRight:
     | isBlock
     | ifBlock
 
-    // | STAR tupleExpression inOn tupleExpression RARROW blockRight
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $6, $3, false); }
-    // | STAR tupleExpression inOn tupleExpression block
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $5, $3, false); }
-    // | STAR tupleExpression block
-    //     { $$ = PARSE_ITERATOR(@1, $2, NULL, NULL, $3, 0, false); }
-    //
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $8, $3, $5); }
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $7, $3, $5); }
-    // | STAR tupleExpression ifWhile tupleExpression block
-    //     { $$ = PARSE_ITERATOR(@1, $2, NULL, $4, $5, 0, $3); }
-    //
-    // | STAR tupleExpression RARROW blockRight
-    //     { $$ = PARSE_MAPPER(@1, $2, NULL, $4, false, false); }
-    // | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
-    //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
+    | STAR tupleExpression inOn tupleExpression RARROW blockRight
+        { $$ = T.parseIterator(@1, $2, $4, null, $6, $3, false); }
+    | STAR tupleExpression inOn tupleExpression block
+        { $$ = T.parseIterator(@1, $2, $4, null, $5, $3, false); }
+    | STAR tupleExpression block
+        { $$ = T.parseIterator(@1, $2, null, null, $3, 0, false); }
+    
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
+        { $$ = T.parseIterator(@1, $2, $4, $6, $8, $3, $5); }
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
+        { $$ = T.parseIterator(@1, $2, $4, $6, $7, $3, $5); }
+    | STAR tupleExpression ifWhile tupleExpression block
+        { $$ = T.parseIterator(@1, $2, null, $4, $5, 0, $3); }
+    
+    | STAR tupleExpression RARROW blockRight
+        { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
+    | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
+        { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
     ;
 
 assignmentExpression:
@@ -725,7 +720,7 @@ assignmentExpression:
         { $$ = T.parseAssignment(@1, $2, $1, $3); }
 
     // | tupleExpression BULLET assignmentExpression
-    //     { $$ = $1; /*PARSE_CALL(@1, $1, NULL); APPEND_ARGS($$, $3);*/ }
+    //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
 
     | DASHDASH assignmentExpression
         { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
@@ -738,18 +733,18 @@ assignmentExpression:
     // | tupleExpression funcOp assignmentExpression
     //     { $$ = PARSE_FUNCTION(@1, $1, $3, $2); }
     // | funcOp assignmentExpression
-    //     { $$ = PARSE_FUNCTION(@1, NULL, $2, $1); }
-    //
-    // | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $6, $3, false); }
-    //
-    // | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $8, $3, $5); }
-    //
-    // | STAR tupleExpression RARROW assignmentExpression
-    //     { $$ = PARSE_MAPPER(@1, $2, NULL, $4, false, false); }
-    // | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-    //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
+    //     { $$ = PARSE_FUNCTION(@1, null, $2, $1); }
+
+    | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
+        { $$ = T.parseIterator(@1, $2, $4, null, $6, $3, false); }
+    
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
+        { $$ = T.parseIterator(@1, $2, $4, $6, $8, $3, $5); }
+    
+    | STAR tupleExpression RARROW assignmentExpression
+        { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
+    | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
+        { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
     ;
 
 assignmentExpressionSimple:
@@ -758,7 +753,7 @@ assignmentExpressionSimple:
         { $$ = T.parseAssignment(@1, $2, $1, $3); }
     
     // | simpleExpression BULLET right
-    //     { $$ = $1; /*PARSE_CALL(@1, $1, NULL); APPEND_ARGS($$, $3);*/ }
+    //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
     
     | DASHDASH right
         { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
@@ -781,23 +776,20 @@ assignmentExpressionSimple:
     | simpleExpression IS matchExpr ELSE right
         { $$ = T.parseIs(@1, $1, $3, $5); }
 
-    // | simpleExpression IS elseLineSimple
-    //     { $$ = PARSE_IS(@1, $1, $3); }
-    //
-    // | STAR simpleExpression inOn simpleExpression RARROW right
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, NULL, $6, $3, false); }
-    // | STAR simpleExpression inOn simpleExpression ifWhile simpleExpression RARROW right
-    //     { $$ = PARSE_ITERATOR(@1, $2, $4, $6, $8, $3, $5); }
-    //
-    // | STAR simpleExpression RARROW right
-    //     { $$ = PARSE_MAPPER(@1, $2, NULL, $4, false, false); }
-    // | STAR simpleExpression ifWhile simpleExpression RARROW right
-    //     { $$ = PARSE_MAPPER(@1, $2, $4, $6, false, $3); }
+    | STAR simpleExpression inOn simpleExpression RARROW right
+        { $$ = T.parseIterator(@1, $2, $4, null, $6, $3, false); }
+    | STAR simpleExpression inOn simpleExpression ifWhile simpleExpression RARROW right
+        { $$ = T.parseIterator(@1, $2, $4, $6, $8, $3, $5); }
+    
+    | STAR simpleExpression RARROW right
+        { $$ = T.parseMapper(@1, $2, null, $4, false, false); }
+    | STAR simpleExpression ifWhile simpleExpression RARROW right
+        { $$ = T.parseMapper(@1, $2, $4, $6, false, $3); }
     ;
 
 elseBlocks:
     transformBlockList
-        { $$ = PARSE_IF(@1, $1, NULL); }
+        { $$ = PARSE_IF(@1, $1, null); }
     | transformBlockList ELSE block
         { $$ = PARSE_IF(@1, $1, $3); }
     ;
@@ -811,14 +803,14 @@ transformBlockList:
 
 elseLines:
     transformLineList lineEnding
-        { $$ = PARSE_IF(@1, $1, NULL); }
+        { $$ = PARSE_IF(@1, $1, null); }
     | transformLineList lineEnding ELSE RARROW tupleExpression lineEnding
         { $$ = PARSE_IF(@1, $1, $5); }
     ;
 
 elseLine:
     transformList
-        { $$ = PARSE_IF(@1, $1, NULL); }
+        { $$ = PARSE_IF(@1, $1, null); }
     | transformList PIPE2 tupleExpression
         { $$ = PARSE_IF(@1, $1, $3); }
     ;
@@ -846,7 +838,7 @@ transformList:
 
 elseLineSimple:
     transformListSimple
-        { $$ = PARSE_IF(@1, $1, NULL); }
+        { $$ = PARSE_IF(@1, $1, null); }
     | transformListSimple PIPE2 simpleExpression
         { $$ = PARSE_IF(@1, $1, $3); }
     ;
@@ -1216,7 +1208,7 @@ cFunction:
     cType IDENTIFIER LP cArgs RP
         { $$ = T.parseCFunction(@1, $2, $1, $4); }
     | cType IDENTIFIER LP RP
-        { $$ = T.parseCFunction(@1, $2, $1, NULL); }
+        { $$ = T.parseCFunction(@1, $2, $1, null); }
     ;
 
 cType:
@@ -1245,7 +1237,7 @@ cArgs:
 
 cArg:
     cType
-        { $$ = T.parseCArgument(@1, $1, NULL); }
+        { $$ = T.parseCArgument(@1, $1, null); }
     | cType IDENTIFIER
         { $$ = T.parseCArgument(@1, $1, $2); }
     ;

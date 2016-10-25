@@ -3,7 +3,7 @@
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-n = * a -> b
+n = * a in b -> c
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -13,8 +13,33 @@ n = * a -> b
         <left>
             <Id name="a"/>
         </left>
-        <Id name="b"/>
+        <iterable>
+            <Id name="b"/>
+        </iterable>
+        <Id name="c"/>
     </Iterator>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+n = * a -> b
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <Function>
+        <Argument name="iterable"/>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Id name="b"/>
+        </Iterator>
+    </Function>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -25,34 +50,47 @@ n = * a,x -> b
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <Id name="b"/>
-    </Iterator>
+    <Function>
+        <Argument name="iterable"/>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Id name="b"/>
+        </Iterator>
+    </Function>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
 
-n = * a,x if a ->
+n = * a,x if a -> {
     b
-   
+}
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <clause>
-            <Id name="a"/>
-        </clause>
-        <Id name="b"/>
-    </Iterator>
+    <Function>
+        <Argument name="iterable"/>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <clause>
+                <Id name="a"/>
+            </clause>
+            <Id name="b"/>
+        </Iterator>
+    </Function>
 </AssignmentExpression>
 
 ====================================================================================================
@@ -80,8 +118,9 @@ n = * a,x in b -> c
 
 ----------------------------------------------------------------------------------------------------
 
-n = * a,x in b ->
+n = * a,x in b -> {
     c
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -101,8 +140,9 @@ n = * a,x in b ->
 
 ----------------------------------------------------------------------------------------------------
 
-n = * a,x in b
+n = * a,x in b {
     c
+}
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -131,14 +171,20 @@ foo(* a -> a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Iterator>
-            <left>
+    <arg>
+        <Function>
+            <Argument name="iterable"/>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
                 <Id name="a"/>
-            </left>
-            <Id name="a"/>
-        </Iterator>
-    </Argument>
+            </Iterator>
+        </Function>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -150,17 +196,23 @@ foo(* a if a -> a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
-        <Iterator>
-            <left>
+    <arg>
+        <Function>
+            <Argument name="iterable"/>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
+                <clause>
+                    <Id name="a"/>
+                </clause>
                 <Id name="a"/>
-            </left>
-            <clause>
-                <Id name="a"/>
-            </clause>
-            <Id name="a"/>
-        </Iterator>
-    </Argument>
+            </Iterator>
+        </Function>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -171,7 +223,7 @@ foo(* a in b -> a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Iterator>
             <left>
                 <Id name="a"/>
@@ -181,7 +233,7 @@ foo(* a in b -> a)
             </iterable>
             <Id name="a"/>
         </Iterator>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -192,7 +244,7 @@ foo(* a in b if a -> a)
 
 <CallExpression>
     <Id name="foo"/>
-    <Argument>
+    <arg>
         <Iterator>
             <left>
                 <Id name="a"/>
@@ -205,7 +257,7 @@ foo(* a in b if a -> a)
             </clause>
             <Id name="a"/>
         </Iterator>
-    </Argument>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
