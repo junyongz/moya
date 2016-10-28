@@ -262,18 +262,18 @@ lineEnding:
     ;
 
 declaration:
-    importDirective
-    | cCode
-    | declarationBlock
-    | block
+    importDirective lineEnding
+    | cCode lineEnding
+    | declarationBlock lineEnding
+    | block lineEnding
     | lineEnding
     ;
 
 declarationList:
     declaration
         { $$ = T.parseSet(@1, $1); }
-    | declarationList lineEnding declaration
-        { $$ = $1; $1.append($3); }
+    | declarationList declaration
+        { $$ = $1; if ($2) {$1.append($2); } }
     ;
 
 declarationBlock:
