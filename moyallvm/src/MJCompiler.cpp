@@ -34,6 +34,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "compileFloat", CompileFloat);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
   Nan::SetPrototypeMethod(tpl, "compileAddI", CompileAddI);
+  Nan::SetPrototypeMethod(tpl, "compileReturn", CompileReturn);
   Nan::SetPrototypeMethod(tpl, "createVariable", CreateVariable);
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
   Nan::SetPrototypeMethod(tpl, "loadVariable", LoadVariable);
@@ -174,9 +175,12 @@ void MJCompiler::CreateVariable(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
+
+    int typeEnum = info[1]->NumberValue();
+    llvm::Type* type = bridge->TypeForEnum(typeEnum);
     
-    llvm::Value* value = bridge->compiler->CreateVariable(name);
-    
+    llvm::Value* value = bridge->compiler->CreateVariable(name, type);
+
     info.GetReturnValue().Set(MJValue::Create(value));
 }
 
@@ -232,6 +236,15 @@ void MJCompiler::CompileAddI(const Nan::FunctionCallbackInfo<Value>& info) {
     
     llvm::Value* ret = bridge->compiler->CompileAddI(lhs->GetValue(), rhs->GetValue());
     info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileReturn(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* expr = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    bridge->compiler->CompileReturn(expr->GetValue());
+    info.GetReturnValue().Set(Nan::Undefined());
 }
 
 void MJCompiler::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {

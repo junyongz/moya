@@ -34,14 +34,15 @@ public:
     llvm::Value* CompileFloat(double value);
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
     llvm::Value* CompileAddI(llvm::Value* lhs, llvm::Value* rhs);
-    llvm::Value* CreateVariable(const std::string& name);
+    void CompileReturn(llvm::Value* expr);
+    llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);
 
     int ExecuteMain();
         
 protected:
-    llvm::AllocaInst* CreateEntryBlockAlloca(llvm::Function*, const std::string&);
+    llvm::AllocaInst* CreateEntryBlockAlloca(llvm::Function*, const std::string&, llvm::Type*);
 
 private:
     llvm::LLVMContext context;

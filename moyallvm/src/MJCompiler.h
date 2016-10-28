@@ -27,6 +27,7 @@ private:
     static void CompileFloat(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileAddI(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileReturn(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void LoadVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);

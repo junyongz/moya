@@ -127,9 +127,9 @@ LLVMContext&
 MLVCompiler::GetContext() { return context; }
 
 AllocaInst*
-MLVCompiler::CreateEntryBlockAlloca(Function* f, const std::string& name) {
+MLVCompiler::CreateEntryBlockAlloca(Function* f, const std::string& name, Type* type) {
   IRBuilder<> TmpB(&f->getEntryBlock(), f->getEntryBlock().begin());
-  return TmpB.CreateAlloca(Type::getInt32Ty(context), 0, name.c_str());
+  return TmpB.CreateAlloca(type, 0, name.c_str());
 }
 
 void
@@ -183,12 +183,13 @@ MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vecto
     
     unsigned i = 0;
     for (auto &arg : func->args()) {
+        Type* argType = argTypes[i];
         std::string argName = argNames[i++];
         arg.setName(argName);
-
-        AllocaInst* alloca = CreateEntryBlockAlloca(func, argName);
+        
+        AllocaInst* alloca = CreateEntryBlockAlloca(func, argName, argType);
         builder.CreateStore(&arg, alloca);
-    
+        
         argsRet.push_back(alloca);
     }
         
@@ -219,10 +220,15 @@ MLVCompiler::CompileAddI(llvm::Value* lhs, llvm::Value* rhs) {
     return builder.CreateAdd(lhs, rhs);
 }
 
+void
+MLVCompiler::CompileReturn(llvm::Value* expr) {
+    builder.CreateRet(expr);
+}
+
 llvm::Value*
-MLVCompiler::CreateVariable(const std::string& name) {
+MLVCompiler::CreateVariable(const std::string& name, llvm::Type* type) {
     Function* f = builder.GetInsertBlock()->getParent();
-    AllocaInst* alloca = CreateEntryBlockAlloca(f, name);
+    AllocaInst* alloca = CreateEntryBlockAlloca(f, name, type);
     return alloca;
 }
 
