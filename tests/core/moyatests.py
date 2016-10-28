@@ -87,6 +87,12 @@ class ExparseTests(MoyaTestFixture):
     def testExparse(self, source, expected, mode="ast", **kwds):
         return self.runTest(["--debug", mode], source, True, **kwds)
 
+class RunTests(MoyaTestFixture):
+    order = 1
+
+    def testRun(self, source, expected, mode="", **kwds):
+        return self.runTest(["--debug", "compile"], source, False, **kwds)
+
 # **************************************************************************************************
 
 # class CompileTests(MoyaTestFixture):

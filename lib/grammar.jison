@@ -273,7 +273,7 @@ declarationList:
     declaration
         { $$ = T.parseSet(@1, $1); }
     | declarationList lineEnding declaration
-        { $$ = $1; $1.append($2); }
+        { $$ = $1; $1.append($3); }
     ;
 
 declarationBlock:
@@ -550,9 +550,9 @@ blockLeft:
         { $$ = T.parseAssignment(@1, $2, $1, $3); }
     
     | DASHDASH tupleExpression
-        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+        { $$ = T.parsePrint(@1, $2); }
     | DASHDASH blockRight
-        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+        { $$ = T.parsePrint(@1, $2); }
     
     | tupleExpression writeOp assignmentExpression
         { $$ = T.parseBinary(@1, $2, $1, $3); }
@@ -676,9 +676,9 @@ blockRight:
     
     // | tupleExpression BULLET blockRight
     //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
-    //
-    // | DASHDASH blockRight
-    //     { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+    
+    | DASHDASH blockRight
+        { $$ = T.parsePrint(@1, $2); }
     
     | tupleExpression writeOp blockRight
         { $$ = T.parseBinary(@1, $2, $1, $3); }
@@ -724,7 +724,7 @@ assignmentExpression:
     //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
 
     | DASHDASH assignmentExpression
-        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+        { $$ = T.parsePrint(@1, $2); }
 
     // | assignmentExpression writeOp tupleExpression
     //     { $$ = T.parseBinary(@1, $2, $1, $3); }
@@ -757,7 +757,7 @@ assignmentExpressionSimple:
     //     { $$ = $1; /*PARSE_CALL(@1, $1, null); APPEND_ARGS($$, $3);*/ }
     
     | DASHDASH right
-        { $$ = PARSE_1(UpPrintSyntaxType, @1, $2); }
+        { $$ = T.parsePrint(@1, $2); }
     
     | simpleExpression writeOp right
         { $$ = T.parseBinary(@1, $2, $1, $3); }
@@ -993,8 +993,6 @@ literal:
     | string
     | UNDERSCORE
         { $$ = T.parseId(@1, "null"); }
-    | CFUNCTION
-        { $$ = PARSE_PRIVATE_CFUNCTION($1); }
     | QUESTION
         { $$ = T.parseId(@1, "?"); }
     | STAR

@@ -2,6 +2,7 @@
 var fs = require('fs');
 
 var Moya = require('./lib/Moya'),
+    parseSource = Moya.parseSource,
     compileSource = Moya.compileSource,
     compileFile = Moya.compileFile;
 
@@ -19,21 +20,30 @@ var helpDocs =
 "    --dump         a path to write probes to\n";
 
 if (argv.c) {
-    compile(argv.c, 'no file');
+    compile(argv.c, 'no file', '__source__');
 } else if (argv.m) {
     
 } else {
     var sourceFilePath = argv._[0];
     if (sourceFilePath) {
         var source = fs.readFileSync(sourceFilePath, 'utf8');
-        compile(source, sourceFilePath);
+        compile(source, sourceFilePath, 'todo');
     }
 }
 
-function compile(source, sourcePath) {
+function compile(source, sourcePath, moduleName) {
     try {
-        var result = compileSource(source);
-        writeResult(result);
+        if (argv.debug == "ast") {
+            var result = parseSource(source);
+            var writer = new XMLWriter();
+            result.toXML(writer);
+            var ast = writer.read();
+            console.log(ast);
+        } else if (argv.debug == "compile") {
+            var result = compileSource(moduleName, source);
+        } else if (argv.debug == "bytecode") {
+        } else {
+        }
     } catch (exc) {
         if (exc.hash) {
             var line = exc.hash.loc ? exc.hash.loc.first_line : '0';
@@ -46,17 +56,5 @@ function compile(source, sourcePath) {
         } else {
             throw exc;
         }
-    }
-}
-
-function writeResult(result) {
-    if (argv.debug == "ast") {
-        var writer = new XMLWriter();
-        result.toXML(writer);
-        var ast = writer.read();
-        console.log(ast);
-    } else if (argv.debug == "compile") {
-    } else if (argv.debug == "bytecode") {
-    } else {
     }
 }
