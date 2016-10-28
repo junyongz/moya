@@ -22,13 +22,17 @@ public:
     void BeginModule(std::string& name);
     void EndModule();
     
-    std::vector<llvm::Value*> BeginFunction(std::string& name, const std::vector<llvm::Type*>& args,
-                       const std::vector<std::string>& argNames);
+    llvm::Value* DeclareFunction(std::string& name, llvm::Type* returnType,
+                                 const std::vector<llvm::Type*>& argTypes);
+
+    std::vector<llvm::Value*> BeginFunction(std::string& name, llvm::Type* returnType,
+                                            const std::vector<llvm::Type*>& args,
+                                            const std::vector<std::string>& argNames);
     void EndFunction();
     
     llvm::Value* CompileInteger(int value);
     llvm::Value* CompileFloat(double value);
-    llvm::Value* CompileCall(const std::string& name, std::vector<llvm::Value*>& args);
+    llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
     llvm::Value* CompileAddI(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* CreateVariable(const std::string& name);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
@@ -44,7 +48,6 @@ private:
     llvm::IRBuilder<> builder;
     llvm::TargetMachine* machine;
     std::unique_ptr<llvm::Module> module;
-    std::map<std::string, llvm::Function*> functionMap;
 
     
     llvm::orc::ObjectLinkingLayer<> objectLayer;

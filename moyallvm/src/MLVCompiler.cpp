@@ -136,22 +136,6 @@ void
 MLVCompiler::BeginModule(std::string& name) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(machine->createDataLayout());
-    
-    // External function declarations
-    
-    {
-        std::vector<Type*> args(1, Type::getInt32Ty(context));
-        FunctionType* sig = FunctionType::get(Type::getVoidTy(context), args, false);
-        functionMap["printInt"] =
-            Function::Create(sig, Function::ExternalLinkage, "printInt", module.get());
-    }
-    
-    {
-        std::vector<Type*> args(1, Type::getDoubleTy(context));
-        FunctionType* sig = FunctionType::get(Type::getVoidTy(context), args, false);
-        functionMap["printDouble"] =
-            Function::Create(sig, Function::ExternalLinkage, "printDouble", module.get());
-    }
 }
 
 void
@@ -178,17 +162,25 @@ MLVCompiler::EndModule() {
     optimizeLayer.addModuleSet(std::move(Ms), make_unique<SectionMemoryManager>(),
                                std::move(Resolver));
 }
+
+Value*
+MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes) {
+    FunctionType* ft = FunctionType::get(returnType, argTypes, false);
+    Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
+    return func;
+}
     
 std::vector<llvm::Value*>
-MLVCompiler::BeginFunction(std::string& name, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
-    FunctionType* ft = FunctionType::get(Type::getInt32Ty(context), argTypes, false);
+MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
+    FunctionType* ft = FunctionType::get(returnType, argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
-    functionMap[name] = func;
-
+    
     BasicBlock* bb = BasicBlock::Create(context, "entry", func);
     builder.SetInsertPoint(bb);
 
     std::vector<llvm::Value*> argsRet;
+    argsRet.push_back(func);
+    
     unsigned i = 0;
     for (auto &arg : func->args()) {
         std::string argName = argNames[i++];
@@ -196,7 +188,7 @@ MLVCompiler::BeginFunction(std::string& name, const std::vector<Type*>& argTypes
 
         AllocaInst* alloca = CreateEntryBlockAlloca(func, argName);
         builder.CreateStore(&arg, alloca);
-
+    
         argsRet.push_back(alloca);
     }
         
@@ -218,15 +210,8 @@ MLVCompiler::CompileFloat(double value) {
     return ConstantFP::get(context, APFloat(value));
 }
 
-llvm::Value* MLVCompiler::CompileCall(const std::string& name, std::vector<Value*>& args) {
-    Function* fcall = functionMap[name];
-    if (fcall) {
-        return builder.CreateCall(fcall, args);
-        // Value* calltmp = builder.CreateCall(f, args, "calltmp");
-        // builder.CreateRet(calltmp);
-    } else {
-        return nullptr;
-    }
+llvm::Value* MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
+    return builder.CreateCall(func, args);
 }
 
 llvm::Value*
