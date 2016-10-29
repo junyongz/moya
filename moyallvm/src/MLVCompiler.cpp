@@ -299,6 +299,15 @@ llvm::Value* MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& ar
 }
 
 llvm::Value*
+MLVCompiler::CompileNegate(llvm::Value* operand) {
+    if (operand->getType()->isIntegerTy()) {
+        return builder.CreateNeg(operand);
+    } else {
+        return builder.CreateFNeg(operand);
+    }
+}
+
+llvm::Value*
 MLVCompiler::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateAdd(lhs, rhs);

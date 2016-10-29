@@ -37,6 +37,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "castNumber", CastNumber);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
   Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
+  Nan::SetPrototypeMethod(tpl, "compileNegate", CompileNegate);
   Nan::SetPrototypeMethod(tpl, "compileSubtract", CompileSubtract);
   Nan::SetPrototypeMethod(tpl, "compileMultiply", CompileMultiply);
   Nan::SetPrototypeMethod(tpl, "compileDivide", CompileDivide);
@@ -269,6 +270,15 @@ void MJCompiler::CompileCall(const Nan::FunctionCallbackInfo<Value>& info) {
     } else {
         info.GetReturnValue().Set(Nan::Undefined());
     }
+}
+
+void MJCompiler::CompileNegate(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* operand = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    llvm::Value* ret = bridge->compiler->CompileNegate(operand->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
 void MJCompiler::CompileAdd(const Nan::FunctionCallbackInfo<Value>& info) {
