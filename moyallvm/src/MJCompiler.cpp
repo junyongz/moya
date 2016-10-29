@@ -27,6 +27,9 @@ void MJCompiler::Init(Local<Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
+  Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
+  Nan::SetPrototypeMethod(tpl, "setInsertBlock", SetInsertBlock);
+  Nan::SetPrototypeMethod(tpl, "createBlock", CreateBlock);
   Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
   Nan::SetPrototypeMethod(tpl, "beginFunction", BeginFunction);
@@ -49,6 +52,8 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "compileDivide", CompileDivide);
   Nan::SetPrototypeMethod(tpl, "compileMod", CompileMod);
   Nan::SetPrototypeMethod(tpl, "compileReturn", CompileReturn);
+  Nan::SetPrototypeMethod(tpl, "compileJump", CompileJump);
+  Nan::SetPrototypeMethod(tpl, "compileConditionalJump", CompileConditionalJump);
   Nan::SetPrototypeMethod(tpl, "createVariable", CreateVariable);
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
   Nan::SetPrototypeMethod(tpl, "loadVariable", LoadVariable);
@@ -107,6 +112,34 @@ void MJCompiler::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
   bridge->compiler->EndModule();
 
   info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::GetInsertBlock(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    llvm::Value* value = bridge->compiler->GetInsertBlock();
+    info.GetReturnValue().Set(MJValue::Create(value));
+}
+
+void MJCompiler::SetInsertBlock(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+    MJValue* block = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    bridge->compiler->SetInsertBlock(block->GetValue());
+    
+    info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::CreateBlock(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+
+    MJValue* block = info.Length() > 1 ? ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1])) : NULL;
+
+    llvm::Value* value = bridge->compiler->CreateBlock(name, block ? block->GetValue() : NULL);
+    info.GetReturnValue().Set(MJValue::Create(value));
 }
 
 void MJCompiler::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -405,6 +438,26 @@ void MJCompiler::CompileReturn(const Nan::FunctionCallbackInfo<Value>& info) {
     MJValue* expr = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
     
     bridge->compiler->CompileReturn(expr->GetValue());
+    info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::CompileJump(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* label = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    bridge->compiler->CompileJump(label->GetValue());
+    info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::CompileConditionalJump(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* cond = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* label1 = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    MJValue* label2 = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[2]));
+    
+    bridge->compiler->CompileConditionalJump(cond->GetValue(), label1->GetValue(), label2->GetValue());
     info.GetReturnValue().Set(Nan::Undefined());
 }
 

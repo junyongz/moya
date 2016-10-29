@@ -30,6 +30,11 @@ public:
     void BeginModule(std::string& name);
     void EndModule();
 
+    llvm::Value* GetInsertBlock();
+    void SetInsertBlock(llvm::Value* block);
+
+    llvm::Value* CreateBlock(const std::string& name, llvm::Value* func);
+    
     llvm::Value* DeclareString(const std::string& str);
     
     llvm::Value* DeclareFunction(std::string& name, llvm::Type* returnType,
@@ -63,6 +68,9 @@ public:
     llvm::Value* CompileMod(llvm::Value* lhs, llvm::Value* rhs);
 
     void CompileReturn(llvm::Value* expr);
+
+    void CompileJump(llvm::Value* label);
+    void CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2);
 
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);

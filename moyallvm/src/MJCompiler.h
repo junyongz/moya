@@ -20,6 +20,9 @@ private:
 
     static void BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void SetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareString(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void BeginFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -42,6 +45,8 @@ private:
     static void CompileDivide(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileMod(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileReturn(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileJump(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileConditionalJump(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void LoadVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);

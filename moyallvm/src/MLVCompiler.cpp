@@ -170,13 +170,28 @@ MLVCompiler::SetDumpMode(MLVDumpMode mode) {
     dumpMode = mode;
 }
 
-LLVMContext&
-MLVCompiler::GetContext() { return context; }
-
 AllocaInst*
 MLVCompiler::CreateEntryBlockAlloca(Function* f, const std::string& name, Type* type) {
   IRBuilder<> TmpB(&f->getEntryBlock(), f->getEntryBlock().begin());
   return TmpB.CreateAlloca(type, 0, name.c_str());
+}
+
+LLVMContext&
+MLVCompiler::GetContext() { return context; }
+
+llvm::Value*
+MLVCompiler::GetInsertBlock() {
+    return builder.GetInsertBlock();
+}
+
+void
+MLVCompiler::SetInsertBlock(llvm::Value* block) {
+    builder.SetInsertPoint(static_cast<llvm::BasicBlock*>(block));
+}
+
+llvm::Value*
+MLVCompiler::CreateBlock(const std::string& name, llvm::Value* func) {
+    return BasicBlock::Create(context, name.c_str(), static_cast<llvm::Function*>(func));
 }
 
 void
@@ -410,6 +425,17 @@ MLVCompiler::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
 void
 MLVCompiler::CompileReturn(llvm::Value* expr) {
     builder.CreateRet(expr);
+}
+
+void
+MLVCompiler::CompileJump(llvm::Value* label) {
+    builder.CreateBr(static_cast<llvm::BasicBlock*>(label));
+}
+
+void
+MLVCompiler::CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2) {
+    builder.CreateCondBr(condition, static_cast<llvm::BasicBlock*>(label1),
+                         static_cast<llvm::BasicBlock*>(label2));
 }
 
 llvm::Value*
