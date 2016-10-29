@@ -25,8 +25,10 @@ private:
     static void EndFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileInteger(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileFloat(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileDouble(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CastNumber(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void CompileAddI(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileAdd(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileReturn(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);

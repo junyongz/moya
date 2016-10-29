@@ -50,6 +50,8 @@
 using namespace llvm;
 using namespace llvm::orc;
 
+static MLVDumpMode dumpMode = MLVDumpNothing;
+
 extern "C" void
 printInt(int value) {
     printf("%d\n", value);
@@ -94,6 +96,10 @@ static std::unique_ptr<Module>
 optimizeModule(std::unique_ptr<Module> M) {
     llvm::sys::DynamicLibrary::LoadLibraryPermanently(nullptr);
 
+    if (dumpMode == MLVDumpUnoptimized) {
+        M->dump();
+    }
+
     auto FPM = llvm::make_unique<legacy::FunctionPassManager>(M.get());
     FPM->add(createInstructionCombiningPass());
     FPM->add(createReassociatePass());
@@ -103,6 +109,10 @@ optimizeModule(std::unique_ptr<Module> M) {
 
     for (auto &F : *M) {
         FPM->run(F);
+    }
+
+    if (dumpMode == MLVDumpOptimized) {
+        M->dump();
     }
 
     return M;
@@ -121,6 +131,11 @@ MLVCompiler::MLVCompiler():
 }
 
 MLVCompiler::~MLVCompiler() {
+}
+
+void
+MLVCompiler::SetDumpMode(MLVDumpMode mode) {
+    dumpMode = mode;
 }
 
 LLVMContext&
@@ -155,8 +170,6 @@ MLVCompiler::EndModule() {
           return RuntimeDyld::SymbolInfo(nullptr);
         });
         
-    module->dump();
-
     std::vector<std::unique_ptr<Module>> Ms;
     Ms.push_back(std::move(module));
     optimizeLayer.addModuleSet(std::move(Ms), make_unique<SectionMemoryManager>(),
@@ -198,17 +211,50 @@ MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vecto
 
 void
 MLVCompiler::EndFunction() {
+    // XXXjoe Return void here
     builder.CreateRet(ConstantInt::get(context, APInt(32, 0)));
 }
 
 llvm::Value*
-MLVCompiler::CompileInteger(int value) {
-    return ConstantInt::get(context, APInt(32, value));
+MLVCompiler::CompileInteger(size_t size, int value) {
+    return ConstantInt::get(context, APInt(size, value));
 }
 
 llvm::Value*
-MLVCompiler::CompileFloat(double value) {
+MLVCompiler::CompileFloat(float value) {
     return ConstantFP::get(context, APFloat(value));
+}
+
+llvm::Value*
+MLVCompiler::CompileDouble(double value) {
+    return ConstantFP::get(context, APFloat(value));
+}
+
+llvm::Value*
+MLVCompiler::CastNumber(llvm::Value* num, llvm::Type* toType) {
+    llvm::Type* fromType = num->getType();
+    if (fromType->isIntegerTy()) {
+        if (toType->isIntegerTy()) {
+            return builder.CreateSExtOrTrunc(num, toType);
+        } else if (toType->isFloatTy()) {
+            return builder.CreateSIToFP(num, toType);
+        } else if (toType->isDoubleTy()) {
+            return builder.CreateSIToFP(num, toType);
+        }
+    } else if (fromType->isFloatTy()) {
+        if (toType->isIntegerTy()) {
+            return builder.CreateFPToSI(num, toType);
+        } else if (toType->isDoubleTy()) {
+            return builder.CreateFPExt(num, toType);
+        }
+    } else if (fromType->isDoubleTy()) {
+        if (toType->isIntegerTy()) {
+            return builder.CreateFPToSI(num, toType);
+        } else if (toType->isFloatTy()) {
+            return builder.CreateFPTrunc(num, toType);
+        }
+    }
+    return num;
 }
 
 llvm::Value* MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
@@ -216,8 +262,12 @@ llvm::Value* MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& ar
 }
 
 llvm::Value*
-MLVCompiler::CompileAddI(llvm::Value* lhs, llvm::Value* rhs) {
-    return builder.CreateAdd(lhs, rhs);
+MLVCompiler::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateAdd(lhs, rhs);
+    } else {
+        return builder.CreateFAdd(lhs, rhs);
+    }
 }
 
 void

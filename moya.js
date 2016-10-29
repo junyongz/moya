@@ -39,10 +39,10 @@ function compile(source, sourcePath, moduleName) {
             result.toXML(writer);
             var ast = writer.read();
             console.log(ast);
-        } else if (argv.debug == "compile") {
-            var result = compileSource(moduleName, source);
-        } else if (argv.debug == "bytecode") {
+        } else if (argv.debug == "ir") {
+            compileSource(moduleName, source, true);
         } else {
+            compileSource(moduleName, source);
         }
     } catch (exc) {
         if (exc.hash) {

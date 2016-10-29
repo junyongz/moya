@@ -32,8 +32,10 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "endFunction", EndFunction);
   Nan::SetPrototypeMethod(tpl, "compileInteger", CompileInteger);
   Nan::SetPrototypeMethod(tpl, "compileFloat", CompileFloat);
+  Nan::SetPrototypeMethod(tpl, "compileDouble", CompileDouble);
+  Nan::SetPrototypeMethod(tpl, "castNumber", CastNumber);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
-  Nan::SetPrototypeMethod(tpl, "compileAddI", CompileAddI);
+  Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
   Nan::SetPrototypeMethod(tpl, "compileReturn", CompileReturn);
   Nan::SetPrototypeMethod(tpl, "createVariable", CreateVariable);
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
@@ -82,6 +84,10 @@ void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MJCompiler::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
   MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+  int mode = info[0]->NumberValue();
+  MLVCompiler::SetDumpMode((MLVDumpMode)mode);
+
   bridge->compiler->EndModule();
 
   info.GetReturnValue().Set(Nan::Undefined());
@@ -157,16 +163,37 @@ void MJCompiler::EndFunction(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MJCompiler::CompileInteger(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-    int num = info[0]->NumberValue();
-    llvm::Value* value = bridge->compiler->CompileInteger(num);
+    size_t size = info[0]->NumberValue();
+    int num = info[1]->NumberValue();
+    llvm::Value* value = bridge->compiler->CompileInteger(size, num);
 
     info.GetReturnValue().Set(MJValue::Create(value));
 }
 
 void MJCompiler::CompileFloat(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-    double num = info[0]->NumberValue();
+    float num = info[0]->NumberValue();
     llvm::Value* value = bridge->compiler->CompileFloat(num);
+
+    info.GetReturnValue().Set(MJValue::Create(value));
+}
+
+void MJCompiler::CompileDouble(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    double num = info[0]->NumberValue();
+    llvm::Value* value = bridge->compiler->CompileDouble(num);
+
+    info.GetReturnValue().Set(MJValue::Create(value));
+}
+
+void MJCompiler::CastNumber(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+    MJValue* numValue = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    int typeEnum = info[1]->NumberValue();
+    llvm::Type* type = bridge->TypeForEnum(typeEnum);
+    
+    llvm::Value* value = bridge->compiler->CastNumber(numValue->GetValue(), type);
 
     info.GetReturnValue().Set(MJValue::Create(value));
 }
@@ -228,13 +255,13 @@ void MJCompiler::CompileCall(const Nan::FunctionCallbackInfo<Value>& info) {
     }
 }
 
-void MJCompiler::CompileAddI(const Nan::FunctionCallbackInfo<Value>& info) {
+void MJCompiler::CompileAdd(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
   
     MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
     MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
     
-    llvm::Value* ret = bridge->compiler->CompileAddI(lhs->GetValue(), rhs->GetValue());
+    llvm::Value* ret = bridge->compiler->CompileAdd(lhs->GetValue(), rhs->GetValue());
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
@@ -249,6 +276,7 @@ void MJCompiler::CompileReturn(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MJCompiler::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {
   MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
   bridge->compiler->ExecuteMain();
   
   info.GetReturnValue().Set(Nan::Undefined());

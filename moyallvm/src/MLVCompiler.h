@@ -12,11 +12,19 @@
 #include "llvm/ExecutionEngine/Orc/IRCompileLayer.h"
 #include "llvm/ExecutionEngine/Orc/IRTransformLayer.h"
 
+typedef enum {
+    MLVDumpNothing = 0,
+    MLVDumpUnoptimized = 1,
+    MLVDumpOptimized = 2
+} MLVDumpMode;
+
 class MLVCompiler {
 public:
     MLVCompiler();
     ~MLVCompiler();
 
+    static void SetDumpMode(MLVDumpMode);
+    
     llvm::LLVMContext& GetContext();
     
     void BeginModule(std::string& name);
@@ -30,10 +38,13 @@ public:
                                             const std::vector<std::string>& argNames);
     void EndFunction();
     
-    llvm::Value* CompileInteger(int value);
-    llvm::Value* CompileFloat(double value);
+    llvm::Value* CompileInteger(size_t size, int value);
+    llvm::Value* CompileFloat(float value);
+    llvm::Value* CompileDouble(double value);
+    llvm::Value* CastNumber(llvm::Value* num, llvm::Type* type);
+
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
-    llvm::Value* CompileAddI(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileAdd(llvm::Value* lhs, llvm::Value* rhs);
     void CompileReturn(llvm::Value* expr);
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
@@ -49,7 +60,6 @@ private:
     llvm::IRBuilder<> builder;
     llvm::TargetMachine* machine;
     std::unique_ptr<llvm::Module> module;
-
     
     llvm::orc::ObjectLinkingLayer<> objectLayer;
     llvm::orc::IRCompileLayer<decltype(objectLayer)> compileLayer;

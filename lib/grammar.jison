@@ -24,7 +24,7 @@ idUpper [A-Z][0-9a-zA-Z]*
 idDots ({idLower}*)([.]{idLower}+)*
 idSymbol [%$¢€£¥]+
 specialty [a-zA-Z][0-9a-zA-Z]*(@[a-zA-Z][0-9a-zA-Z]*)?
-unit [a-zA-Z%$¢€£¥]+
+unit [a-zA-Z%$¢€£¥][a-zA-Z%$¢€£¥0-9]*
 
 integer [0-9]+
 float [0-9]+[\.][0-9]+

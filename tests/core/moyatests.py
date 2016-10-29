@@ -55,9 +55,9 @@ class MoyaTestFixture(TestFixture):
             extraArgs = []
             
         if isExpr:
-            source = '{ ' + source + '\n\n}'
+            source = '\n{ ' + source + '\n\n}\n'
         else:
-            source = source + '\n'
+            source = '\n' + source + '\n'
         escapedSource = source.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
         exePath = "%s %s %s -c $'%s'" % (moyaExePath, " ".join(args), " ".join(extraArgs), escapedSource)
 
@@ -91,7 +91,8 @@ class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        return self.runTest(["--debug", "compile"], source, False, **kwds)
+        # return self.runTest(["--debug", "ir"], source, False, **kwds)
+        return self.runTest([], source, False, **kwds)
 
 # **************************************************************************************************
 
