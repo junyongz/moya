@@ -27,6 +27,7 @@ void MJCompiler::Init(Local<Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
+  Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
   Nan::SetPrototypeMethod(tpl, "beginFunction", BeginFunction);
   Nan::SetPrototypeMethod(tpl, "endFunction", EndFunction);
@@ -64,6 +65,8 @@ MJCompiler::TypeForEnum(int num) {
         return llvm::Type::getFloatTy(compiler->GetContext());
     } else if (num == 6) {
         return llvm::Type::getDoubleTy(compiler->GetContext());
+    } else if (num == 7) {
+        return llvm::Type::getInt8Ty(compiler->GetContext())->getPointerTo();
     } else {
         return llvm::Type::getVoidTy(compiler->GetContext());
     }
@@ -95,6 +98,15 @@ void MJCompiler::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
   bridge->compiler->EndModule();
 
   info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    String::Utf8Value _str(info[0]->ToString());
+    std::string str = std::string(*_str);
+
+    llvm::Value* ret = bridge->compiler->DeclareString(str);
+    info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
 void MJCompiler::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {

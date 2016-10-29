@@ -53,18 +53,46 @@ using namespace llvm::orc;
 static MLVDumpMode dumpMode = MLVDumpNothing;
 
 extern "C" void
-printInt(int value) {
-    printf("%d\n", value);
-}
-
-extern "C" void
-printDouble(double value) {
-    printf("%f\n", value);
+printString(const char* value) {
+    printf("%s\n", value);
 }
 
 extern "C" double
 powerdd(double a, double b) {
     return pow(a, b);
+}
+
+extern "C" char*
+concatString(const char* left, const char* right) {
+    size_t l1 = strlen(left);
+    size_t l2 = strlen(right);
+    char* buf = (char*)malloc(l1+l2+1);
+    strcpy(buf, left);
+    strcpy(buf+l1, right);
+    return buf;
+}
+
+extern "C" char*
+intToString(long long num) {
+    char nbuf[128];
+    snprintf(nbuf, 128, "%lld", num);
+    
+    size_t l = strlen(nbuf);
+    char* buf = (char*)malloc(l+1);
+    strcpy(buf, nbuf);
+    return buf;
+}
+
+
+extern "C" char*
+doubleToString(double num) {
+    char nbuf[128];
+    snprintf(nbuf, 128, "%lf", num);
+    
+    size_t l = strlen(nbuf);
+    char* buf = (char*)malloc(l+1);
+    strcpy(buf, nbuf);
+    return buf;
 }
 
 static TargetMachine*
@@ -187,6 +215,11 @@ MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vec
     return func;
 }
     
+Value*
+MLVCompiler::DeclareString(const std::string& str) {
+    return builder.CreateGlobalStringPtr(str.c_str());
+}
+
 std::vector<llvm::Value*>
 MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
     FunctionType* ft = FunctionType::get(returnType, argTypes, false);

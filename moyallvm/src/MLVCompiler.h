@@ -29,6 +29,8 @@ public:
     
     void BeginModule(std::string& name);
     void EndModule();
+
+    llvm::Value* DeclareString(const std::string& str);
     
     llvm::Value* DeclareFunction(std::string& name, llvm::Type* returnType,
                                  const std::vector<llvm::Type*>& argTypes);
@@ -41,6 +43,7 @@ public:
     llvm::Value* CompileInteger(size_t size, int value);
     llvm::Value* CompileFloat(float value);
     llvm::Value* CompileDouble(double value);
+
     llvm::Value* CastNumber(llvm::Value* num, llvm::Type* type);
 
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
