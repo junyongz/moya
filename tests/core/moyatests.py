@@ -91,8 +91,7 @@ class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        # return self.runTest(["--debug", "ir"], source, False, **kwds)
-        return self.runTest([], source, False, **kwds)
+        return self.runTest(["--debug", mode], source, False, **kwds)
 
 # **************************************************************************************************
 

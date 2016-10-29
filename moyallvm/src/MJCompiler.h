@@ -29,6 +29,10 @@ private:
     static void CastNumber(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileAdd(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileSubtract(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileMultiply(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileDivide(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileMod(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileReturn(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);

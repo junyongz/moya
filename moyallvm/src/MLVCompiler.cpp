@@ -46,7 +46,7 @@
 #include <memory>
 #include <string>
 #include <vector>
- 
+
 using namespace llvm;
 using namespace llvm::orc;
 
@@ -62,9 +62,13 @@ printDouble(double value) {
     printf("%f\n", value);
 }
 
+extern "C" double
+powerdd(double a, double b) {
+    return pow(a, b);
+}
+
 static TargetMachine*
 InitMachine() {
-    // Initialize the target registry etc.
     InitializeAllTargetInfos();
     InitializeAllTargets();
     InitializeAllTargetMCs();
@@ -267,6 +271,42 @@ MLVCompiler::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
         return builder.CreateAdd(lhs, rhs);
     } else {
         return builder.CreateFAdd(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileSubtract(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateSub(lhs, rhs);
+    } else {
+        return builder.CreateFSub(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileMultiply(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateMul(lhs, rhs);
+    } else {
+        return builder.CreateFMul(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileDivide(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateSDiv(lhs, rhs);
+    } else {
+        return builder.CreateFDiv(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateSRem(lhs, rhs);
+    } else {
+        return builder.CreateFRem(lhs, rhs);
     }
 }
 

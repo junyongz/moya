@@ -36,6 +36,10 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "castNumber", CastNumber);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
   Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
+  Nan::SetPrototypeMethod(tpl, "compileSubtract", CompileSubtract);
+  Nan::SetPrototypeMethod(tpl, "compileMultiply", CompileMultiply);
+  Nan::SetPrototypeMethod(tpl, "compileDivide", CompileDivide);
+  Nan::SetPrototypeMethod(tpl, "compileMod", CompileMod);
   Nan::SetPrototypeMethod(tpl, "compileReturn", CompileReturn);
   Nan::SetPrototypeMethod(tpl, "createVariable", CreateVariable);
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
@@ -262,6 +266,46 @@ void MJCompiler::CompileAdd(const Nan::FunctionCallbackInfo<Value>& info) {
     MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
     
     llvm::Value* ret = bridge->compiler->CompileAdd(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileSubtract(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileSubtract(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileMultiply(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileMultiply(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileDivide(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileDivide(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileMod(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileMod(lhs->GetValue(), rhs->GetValue());
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 

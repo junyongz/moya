@@ -44,8 +44,15 @@ public:
     llvm::Value* CastNumber(llvm::Value* num, llvm::Type* type);
 
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
+
     llvm::Value* CompileAdd(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileSubtract(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileMultiply(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileDivide(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileMod(llvm::Value* lhs, llvm::Value* rhs);
+
     void CompileReturn(llvm::Value* expr);
+
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);
