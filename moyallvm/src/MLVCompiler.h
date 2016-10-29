@@ -48,6 +48,9 @@ public:
 
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
 
+    llvm::Value* CompileEquals(llvm::Value* lhs, llvm::Value* rhs);
+    llvm::Value* CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs);
+
     llvm::Value* CompileNegate(llvm::Value* operand);
     llvm::Value* CompileAdd(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* CompileSubtract(llvm::Value* lhs, llvm::Value* rhs);

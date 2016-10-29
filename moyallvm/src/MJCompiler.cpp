@@ -36,8 +36,10 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "compileDouble", CompileDouble);
   Nan::SetPrototypeMethod(tpl, "castNumber", CastNumber);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
-  Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
+  Nan::SetPrototypeMethod(tpl, "compileEquals", CompileEquals);
+  Nan::SetPrototypeMethod(tpl, "compileNotEquals", CompileNotEquals);
   Nan::SetPrototypeMethod(tpl, "compileNegate", CompileNegate);
+  Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
   Nan::SetPrototypeMethod(tpl, "compileSubtract", CompileSubtract);
   Nan::SetPrototypeMethod(tpl, "compileMultiply", CompileMultiply);
   Nan::SetPrototypeMethod(tpl, "compileDivide", CompileDivide);
@@ -55,18 +57,20 @@ void MJCompiler::Init(Local<Object> exports) {
 llvm::Type*
 MJCompiler::TypeForEnum(int num) {
     if (num == 1) {
-        return llvm::Type::getInt8Ty(compiler->GetContext());
+        return llvm::Type::getInt1Ty(compiler->GetContext());
     } else if (num == 2) {
-        return llvm::Type::getInt16Ty(compiler->GetContext());
+        return llvm::Type::getInt8Ty(compiler->GetContext());
     } else if (num == 3) {
-        return llvm::Type::getInt32Ty(compiler->GetContext());
+        return llvm::Type::getInt16Ty(compiler->GetContext());
     } else if (num == 4) {
-        return llvm::Type::getInt64Ty(compiler->GetContext());
+        return llvm::Type::getInt32Ty(compiler->GetContext());
     } else if (num == 5) {
-        return llvm::Type::getFloatTy(compiler->GetContext());
+        return llvm::Type::getInt64Ty(compiler->GetContext());
     } else if (num == 6) {
-        return llvm::Type::getDoubleTy(compiler->GetContext());
+        return llvm::Type::getFloatTy(compiler->GetContext());
     } else if (num == 7) {
+        return llvm::Type::getDoubleTy(compiler->GetContext());
+    } else if (num == 8) {
         return llvm::Type::getInt8Ty(compiler->GetContext())->getPointerTo();
     } else {
         return llvm::Type::getVoidTy(compiler->GetContext());
@@ -270,6 +274,26 @@ void MJCompiler::CompileCall(const Nan::FunctionCallbackInfo<Value>& info) {
     } else {
         info.GetReturnValue().Set(Nan::Undefined());
     }
+}
+
+void MJCompiler::CompileEquals(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileEquals(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileNotEquals(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileNotEquals(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
 void MJCompiler::CompileNegate(const Nan::FunctionCallbackInfo<Value>& info) {

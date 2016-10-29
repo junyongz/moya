@@ -29,6 +29,8 @@ private:
     static void CompileDouble(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CastNumber(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileNotEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileNegate(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileAdd(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileSubtract(const Nan::FunctionCallbackInfo<v8::Value>& info);

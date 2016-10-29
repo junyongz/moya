@@ -294,8 +294,27 @@ MLVCompiler::CastNumber(llvm::Value* num, llvm::Type* toType) {
     return num;
 }
 
-llvm::Value* MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
+llvm::Value*
+MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
     return builder.CreateCall(func, args);
+}
+
+llvm::Value*
+MLVCompiler::CompileEquals(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpEQ(lhs, rhs);
+    } else {
+        return builder.CreateFCmpUEQ(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpNE(lhs, rhs);
+    } else {
+        return builder.CreateFCmpUNE(lhs, rhs);
+    }
 }
 
 llvm::Value*
