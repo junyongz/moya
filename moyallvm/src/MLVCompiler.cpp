@@ -318,6 +318,42 @@ MLVCompiler::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
+MLVCompiler::CompileGreaterThan(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpSGT(lhs, rhs);
+    } else {
+        return builder.CreateFCmpUGT(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileGreaterThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpSGE(lhs, rhs);
+    } else {
+        return builder.CreateFCmpUGE(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileLessThan(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpSLT(lhs, rhs);
+    } else {
+        return builder.CreateFCmpULT(lhs, rhs);
+    }
+}
+
+llvm::Value*
+MLVCompiler::CompileLessThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
+    if (lhs->getType()->isIntegerTy()) {
+        return builder.CreateICmpSLE(lhs, rhs);
+    } else {
+        return builder.CreateFCmpULE(lhs, rhs);
+    }
+}
+
+llvm::Value*
 MLVCompiler::CompileNegate(llvm::Value* operand) {
     if (operand->getType()->isIntegerTy()) {
         return builder.CreateNeg(operand);

@@ -31,6 +31,10 @@ private:
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileNotEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileGreaterThan(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileGreaterThanEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileLessThan(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileLessThanEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileNegate(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileAdd(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileSubtract(const Nan::FunctionCallbackInfo<v8::Value>& info);

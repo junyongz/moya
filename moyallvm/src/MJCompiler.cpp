@@ -38,6 +38,10 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
   Nan::SetPrototypeMethod(tpl, "compileEquals", CompileEquals);
   Nan::SetPrototypeMethod(tpl, "compileNotEquals", CompileNotEquals);
+  Nan::SetPrototypeMethod(tpl, "compileGreaterThan", CompileGreaterThan);
+  Nan::SetPrototypeMethod(tpl, "compileGreaterThanEquals", CompileGreaterThanEquals);
+  Nan::SetPrototypeMethod(tpl, "compileLessThan", CompileLessThan);
+  Nan::SetPrototypeMethod(tpl, "compileLessThanEquals", CompileLessThanEquals);
   Nan::SetPrototypeMethod(tpl, "compileNegate", CompileNegate);
   Nan::SetPrototypeMethod(tpl, "compileAdd", CompileAdd);
   Nan::SetPrototypeMethod(tpl, "compileSubtract", CompileSubtract);
@@ -293,6 +297,46 @@ void MJCompiler::CompileNotEquals(const Nan::FunctionCallbackInfo<Value>& info) 
     MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
     
     llvm::Value* ret = bridge->compiler->CompileNotEquals(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileGreaterThan(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileGreaterThan(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileGreaterThanEquals(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileGreaterThanEquals(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileLessThan(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileLessThan(lhs->GetValue(), rhs->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
+}
+
+void MJCompiler::CompileLessThanEquals(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    MJValue* lhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    MJValue* rhs = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+    
+    llvm::Value* ret = bridge->compiler->CompileLessThanEquals(lhs->GetValue(), rhs->GetValue());
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
