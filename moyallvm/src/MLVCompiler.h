@@ -71,7 +71,8 @@ public:
 
     void CompileJump(llvm::Value* label);
     void CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2);
-
+    llvm::Value* CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& values, const std::vector<llvm::Value*>& blocks);
+    
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);

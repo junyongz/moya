@@ -47,6 +47,7 @@ private:
     static void CompileReturn(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileJump(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileConditionalJump(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompilePhi(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void LoadVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);

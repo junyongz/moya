@@ -420,14 +420,15 @@ statement:
     | tryBlock
     | STAR2 declArgument
         { $$ = $2; }
-    | lineEnding
     ;
 
 statementList:
     statement
         { $$ = T.parseSet(@1, $1); }
     | statementList lineEnding statement
-        { $$ = $1; $1.append($3); }
+        { $$ = $1; if ($3) $1.append($3); }
+    | statementList lineEnding
+        { $$ = $1; }
     ;
 
 importDirective:

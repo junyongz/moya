@@ -439,6 +439,18 @@ MLVCompiler::CompileConditionalJump(llvm::Value* condition, llvm::Value* label1,
 }
 
 llvm::Value*
+MLVCompiler::CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& values, const std::vector<llvm::Value*>& blocks) {
+    llvm::PHINode* phi = builder.CreatePHI(type, values.size());
+    
+    for(int i = 0, l = values.size(); i < l; ++i) {
+        llvm::Value* val = values[i];
+        llvm::BasicBlock* block = static_cast<llvm::BasicBlock*>(blocks[i]);
+        phi->addIncoming(val, block);
+    }
+    return phi;
+}
+
+llvm::Value*
 MLVCompiler::CreateVariable(const std::string& name, llvm::Type* type) {
     Function* f = builder.GetInsertBlock()->getParent();
     AllocaInst* alloca = CreateEntryBlockAlloca(f, name, type);

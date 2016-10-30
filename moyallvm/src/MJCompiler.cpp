@@ -54,6 +54,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "compileReturn", CompileReturn);
   Nan::SetPrototypeMethod(tpl, "compileJump", CompileJump);
   Nan::SetPrototypeMethod(tpl, "compileConditionalJump", CompileConditionalJump);
+  Nan::SetPrototypeMethod(tpl, "compilePhi", CompilePhi);
   Nan::SetPrototypeMethod(tpl, "createVariable", CreateVariable);
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
   Nan::SetPrototypeMethod(tpl, "loadVariable", LoadVariable);
@@ -459,6 +460,34 @@ void MJCompiler::CompileConditionalJump(const Nan::FunctionCallbackInfo<Value>& 
     
     bridge->compiler->CompileConditionalJump(cond->GetValue(), label1->GetValue(), label2->GetValue());
     info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::CompilePhi(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+  
+    int typeCode = info[0]->NumberValue();
+    llvm::Type* phiType = bridge->TypeForEnum(typeCode);
+
+    Handle<Array> jsExprs = Handle<Array>::Cast(info[1]);
+    std::vector<llvm::Value*> exprs(jsExprs->Length());
+    for (unsigned int i = 0; i < jsExprs->Length(); i++) {
+        Handle<Value> val = jsExprs->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MJValue* arg = ObjectWrap::Unwrap<MJValue>(object);
+        exprs[i] = arg->GetValue();
+    }
+
+    Handle<Array> jsBlocks = Handle<Array>::Cast(info[2]);
+    std::vector<llvm::Value*> blocks(jsBlocks->Length());
+    for (unsigned int i = 0; i < jsBlocks->Length(); i++) {
+        Handle<Value> val = jsBlocks->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MJValue* arg = ObjectWrap::Unwrap<MJValue>(object);
+        blocks[i] = arg->GetValue();
+    }
+    
+    llvm::Value* phi = bridge->compiler->CompilePHI(phiType, exprs, blocks);
+    info.GetReturnValue().Set(MJValue::Create(phi));
 }
 
 void MJCompiler::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {
