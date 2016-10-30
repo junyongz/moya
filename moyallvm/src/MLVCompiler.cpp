@@ -133,10 +133,12 @@ optimizeModule(std::unique_ptr<Module> M) {
     }
 
     auto FPM = llvm::make_unique<legacy::FunctionPassManager>(M.get());
+    FPM->add(createPromoteMemoryToRegisterPass());
     FPM->add(createInstructionCombiningPass());
     FPM->add(createReassociatePass());
     FPM->add(createGVNPass());
     FPM->add(createCFGSimplificationPass());
+    FPM->add(createReassociatePass());
     FPM->doInitialization();
 
     for (auto &F : *M) {
