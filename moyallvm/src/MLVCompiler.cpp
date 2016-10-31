@@ -95,6 +95,12 @@ doubleToString(double num) {
     return buf;
 }
 
+extern "C" char*
+newObject(int size) {
+    char* buf = (char*)malloc(size);
+    return buf;
+}
+
 static TargetMachine*
 InitMachine() {
     InitializeAllTargetInfos();
@@ -187,17 +193,45 @@ MLVCompiler::GetInsertBlock() {
 }
 
 void
-MLVCompiler::SetInsertBlock(llvm::Value* block) {
-    builder.SetInsertPoint(static_cast<llvm::BasicBlock*>(block));
+MLVCompiler::SetInsertBlock(Value* block) {
+    builder.SetInsertPoint(static_cast<BasicBlock*>(block));
 }
 
-llvm::Value*
-MLVCompiler::CreateBlock(const std::string& name, llvm::Value* func) {
-    return BasicBlock::Create(context, name.c_str(), static_cast<llvm::Function*>(func));
+Value*
+MLVCompiler::CreateBlock(const std::string& name, Value* func) {
+    return BasicBlock::Create(context, name.c_str(), static_cast<Function*>(func));
+}
+
+Type*
+MLVCompiler::GetType(int code) {
+    if (code == 1) {
+        return Type::getInt1Ty(context);
+    } else if (code == 2) {
+        return Type::getInt8Ty(context);
+    } else if (code == 3) {
+        return Type::getInt16Ty(context);
+    } else if (code == 4) {
+        return Type::getInt32Ty(context);
+    } else if (code == 5) {
+        return Type::getInt64Ty(context);
+    } else if (code == 6) {
+        return Type::getFloatTy(context);
+    } else if (code == 7) {
+        return Type::getDoubleTy(context);
+    } else if (code == 8) {
+        return Type::getInt8Ty(context)->getPointerTo();
+    } else {
+        return Type::getVoidTy(context);
+    }
+}
+
+llvm::Type*
+MLVCompiler::CreateStruct(const std::string& name) {
+    return NULL;
 }
 
 void
-MLVCompiler::BeginModule(std::string& name) {
+MLVCompiler::BeginModule(const std::string& name) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(machine->createDataLayout());
 }
@@ -468,7 +502,12 @@ llvm::Value*
 MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name) {
     return builder.CreateLoad(alloca, name.c_str());
 }
-    
+
+llvm::Value*
+MLVCompiler::CompileGetPointer(llvm::Value* pointer, llvm::Value* index) {
+    return builder.CreateGEP(pointer, index);
+}
+
 int
 MLVCompiler::ExecuteMain() {
     if (auto sym = optimizeLayer.findSymbol(mangle("main", machine->createDataLayout()), false)) {

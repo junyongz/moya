@@ -27,7 +27,10 @@ public:
     
     llvm::LLVMContext& GetContext();
     
-    void BeginModule(std::string& name);
+    llvm::Type* GetType(int code);
+    llvm::Type* CreateStruct(const std::string& name);
+    
+    void BeginModule(const std::string& name);
     void EndModule();
 
     llvm::Value* GetInsertBlock();
@@ -44,7 +47,7 @@ public:
                                             const std::vector<llvm::Type*>& args,
                                             const std::vector<std::string>& argNames);
     void EndFunction();
-    
+
     llvm::Value* CompileInteger(size_t size, int value);
     llvm::Value* CompileFloat(float value);
     llvm::Value* CompileDouble(double value);
@@ -76,6 +79,8 @@ public:
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);
+
+    llvm::Value* CompileGetPointer(llvm::Value* pointer, llvm::Value* index);
 
     int ExecuteMain();
         

@@ -104,7 +104,8 @@ OBJS := \
 	$(obj).target/$(TARGET)/src/moyallvm.o \
 	$(obj).target/$(TARGET)/src/MLVCompiler.o \
 	$(obj).target/$(TARGET)/src/MJCompiler.o \
-	$(obj).target/$(TARGET)/src/MJValue.o
+	$(obj).target/$(TARGET)/src/MJValue.o \
+	$(obj).target/$(TARGET)/src/MJType.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)

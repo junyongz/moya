@@ -11,7 +11,8 @@
         "src/MLVCompiler.cpp",
 
         "src/MJCompiler.cpp",
-        "src/MJValue.cpp"
+        "src/MJValue.cpp",
+        "src/MJType.cpp"
        ],
       'conditions': [
         [ 'OS=="mac"', {

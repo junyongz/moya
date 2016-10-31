@@ -1,5 +1,6 @@
 #include "MJCompiler.h"
 #include "MJValue.h"
+#include "MJType.h"
 
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/APSInt.h"
@@ -25,6 +26,8 @@ void MJCompiler::Init(Local<Object> exports) {
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
+  Nan::SetPrototypeMethod(tpl, "getType", GetType);
+  Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
@@ -64,35 +67,32 @@ void MJCompiler::Init(Local<Object> exports) {
   exports->Set(Nan::New("CompilerBridge").ToLocalChecked(), tpl->GetFunction());
 }
 
-llvm::Type*
-MJCompiler::TypeForEnum(int num) {
-    if (num == 1) {
-        return llvm::Type::getInt1Ty(compiler->GetContext());
-    } else if (num == 2) {
-        return llvm::Type::getInt8Ty(compiler->GetContext());
-    } else if (num == 3) {
-        return llvm::Type::getInt16Ty(compiler->GetContext());
-    } else if (num == 4) {
-        return llvm::Type::getInt32Ty(compiler->GetContext());
-    } else if (num == 5) {
-        return llvm::Type::getInt64Ty(compiler->GetContext());
-    } else if (num == 6) {
-        return llvm::Type::getFloatTy(compiler->GetContext());
-    } else if (num == 7) {
-        return llvm::Type::getDoubleTy(compiler->GetContext());
-    } else if (num == 8) {
-        return llvm::Type::getInt8Ty(compiler->GetContext())->getPointerTo();
-    } else {
-        return llvm::Type::getVoidTy(compiler->GetContext());
-    }
-}
-
 void MJCompiler::New(const Nan::FunctionCallbackInfo<Value>& info) {
   if (info.IsConstructCall()) {
     MJCompiler* obj = new MJCompiler();
     obj->Wrap(info.This());
     info.GetReturnValue().Set(info.This());
   }
+}
+
+void MJCompiler::GetType(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    int typeCode = info[0]->NumberValue();
+    llvm::Type* retType = bridge->compiler->GetType(typeCode);
+
+    info.GetReturnValue().Set(MJType::Create(retType));
+}
+
+void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+
+    llvm::Type* retType = bridge->compiler->CreateStruct(name);
+
+    info.GetReturnValue().Set(MJType::Create(retType));
 }
 
 void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -154,18 +154,16 @@ void MJCompiler::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MJCompiler::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    int retEnum = info[1]->NumberValue();
-    llvm::Type* retType = bridge->TypeForEnum(retEnum);
+    llvm::Type* retType = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[1]))->GetType();
     
     std::vector<llvm::Type*> argTypes;
     Handle<Array> array1 = Handle<Array>::Cast(info[2]);
     for (unsigned int i = 0; i < array1->Length(); i++) {
-        Handle<Value> val = array1->Get(i);
-        int num = val->NumberValue();
-        llvm::Type* type = bridge->TypeForEnum(num);
+        llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(array1->Get(i)))->GetType();
         argTypes.push_back(type);
     }
 
@@ -178,15 +176,12 @@ void MJCompiler::BeginFunction(const Nan::FunctionCallbackInfo<Value>& info) {
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    int retEnum = info[1]->NumberValue();
-    llvm::Type* retType = bridge->TypeForEnum(retEnum);
+    llvm::Type* retType = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[1]))->GetType();
     
     std::vector<llvm::Type*> argTypes;
     Handle<Array> array1 = Handle<Array>::Cast(info[2]);
     for (unsigned int i = 0; i < array1->Length(); i++) {
-        Handle<Value> val = array1->Get(i);
-        int num = val->NumberValue();
-        llvm::Type* type = bridge->TypeForEnum(num);
+        llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(array1->Get(i)))->GetType();
         argTypes.push_back(type);
     }
 
@@ -249,8 +244,7 @@ void MJCompiler::CastNumber(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
     
     MJValue* numValue = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
-    int typeEnum = info[1]->NumberValue();
-    llvm::Type* type = bridge->TypeForEnum(typeEnum);
+    llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[1]))->GetType();
     
     llvm::Value* value = bridge->compiler->CastNumber(numValue->GetValue(), type);
 
@@ -259,11 +253,11 @@ void MJCompiler::CastNumber(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MJCompiler::CreateVariable(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    int typeEnum = info[1]->NumberValue();
-    llvm::Type* type = bridge->TypeForEnum(typeEnum);
+    llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[1]))->GetType();
     
     llvm::Value* value = bridge->compiler->CreateVariable(name, type);
 
@@ -465,8 +459,7 @@ void MJCompiler::CompileConditionalJump(const Nan::FunctionCallbackInfo<Value>& 
 void MJCompiler::CompilePhi(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
   
-    int typeCode = info[0]->NumberValue();
-    llvm::Type* phiType = bridge->TypeForEnum(typeCode);
+    llvm::Type* phiType = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]))->GetType();
 
     Handle<Array> jsExprs = Handle<Array>::Cast(info[1]);
     std::vector<llvm::Value*> exprs(jsExprs->Length());

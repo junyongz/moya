@@ -14,10 +14,10 @@ private:
     explicit MJCompiler();
     ~MJCompiler();
 
-    llvm::Type* TypeForEnum(int num);
-
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
+    static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateStruct(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);

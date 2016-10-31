@@ -7,7 +7,6 @@ MJValue::MJValue() {
 }
 
 MJValue::~MJValue() {
-    // delete compiler;
 }
 
 llvm::Value*
@@ -23,9 +22,6 @@ void MJValue::Init(v8::Local<v8::Object> exports) {
   tpl->SetClassName(Nan::New("Value").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  // Prototype
-  Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
-  
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("Value").ToLocalChecked(), tpl->GetFunction());
 }
@@ -49,13 +45,4 @@ void MJValue::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
     
     info.GetReturnValue().Set(info.This());
   }
-}
-
-void MJValue::BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-  MJValue* self = ObjectWrap::Unwrap<MJValue>(info.Holder());
-  // v8::String::Utf8Value _name(info[0]->ToString());
-  // std::string name = std::string(*_name);
-  // bridge->compiler->BeginModule(name);
-  //
-  // info.GetReturnValue().Set(Nan::New(3));
 }
