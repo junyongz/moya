@@ -198,8 +198,9 @@ MLVCompiler::SetInsertBlock(Value* block) {
 }
 
 Value*
-MLVCompiler::CreateBlock(const std::string& name, Value* func) {
-    return BasicBlock::Create(context, name.c_str(), static_cast<Function*>(func));
+MLVCompiler::CreateBlock(const std::string& name) {
+    Function* f = builder.GetInsertBlock()->getParent();
+    return BasicBlock::Create(context, name.c_str(), f);
 }
 
 Type*
@@ -227,7 +228,17 @@ MLVCompiler::GetType(int code) {
 
 llvm::Type*
 MLVCompiler::CreateStruct(const std::string& name) {
-    return NULL;
+    return StructType::create(context, name);
+}
+
+uint64_t
+MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body) {
+    type->setBody(body);
+
+    const llvm::DataLayout DL = module->getDataLayout();
+    
+    const llvm::StructLayout* layout = DL.getStructLayout(type);
+    return layout->getSizeInBytes();
 }
 
 void
@@ -284,14 +295,10 @@ MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vecto
     
     unsigned i = 0;
     for (auto &arg : func->args()) {
-        Type* argType = argTypes[i];
         std::string argName = argNames[i++];
         arg.setName(argName);
-        
-        AllocaInst* alloca = CreateEntryBlockAlloca(func, argName, argType);
-        builder.CreateStore(&arg, alloca);
-        
-        argsRet.push_back(alloca);
+                
+        argsRet.push_back(&arg);
     }
         
     return argsRet;
@@ -299,8 +306,7 @@ MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vecto
 
 void
 MLVCompiler::EndFunction() {
-    // XXXjoe Return void here
-    builder.CreateRet(ConstantInt::get(context, APInt(32, 0)));
+    builder.CreateRetVoid();
 }
 
 llvm::Value*
@@ -343,6 +349,11 @@ MLVCompiler::CastNumber(llvm::Value* num, llvm::Type* toType) {
         }
     }
     return num;
+}
+
+llvm::Value*
+MLVCompiler::CompileBitcast(llvm::Value* value, llvm::Type* type) {
+    return builder.CreateBitCast(value, type);
 }
 
 llvm::Value*
@@ -504,8 +515,8 @@ MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name) {
 }
 
 llvm::Value*
-MLVCompiler::CompileGetPointer(llvm::Value* pointer, llvm::Value* index) {
-    return builder.CreateGEP(pointer, index);
+MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets) {
+    return builder.CreateGEP(pointer, offsets);
 }
 
 int

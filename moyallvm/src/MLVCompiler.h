@@ -29,14 +29,15 @@ public:
     
     llvm::Type* GetType(int code);
     llvm::Type* CreateStruct(const std::string& name);
-    
+    uint64_t SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body);
+
     void BeginModule(const std::string& name);
     void EndModule();
 
     llvm::Value* GetInsertBlock();
     void SetInsertBlock(llvm::Value* block);
 
-    llvm::Value* CreateBlock(const std::string& name, llvm::Value* func);
+    llvm::Value* CreateBlock(const std::string& name);
     
     llvm::Value* DeclareString(const std::string& str);
     
@@ -53,6 +54,7 @@ public:
     llvm::Value* CompileDouble(double value);
 
     llvm::Value* CastNumber(llvm::Value* num, llvm::Type* type);
+    llvm::Value* CompileBitcast(llvm::Value* value, llvm::Type* type);
 
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
 
@@ -80,7 +82,7 @@ public:
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);
 
-    llvm::Value* CompileGetPointer(llvm::Value* pointer, llvm::Value* index);
+    llvm::Value* GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets);
 
     int ExecuteMain();
         
