@@ -61,9 +61,10 @@ Parameterized class declarations
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Class access="private">
-    <TypeId id="Foo">
+    <TypeArguments>
+        <TypeId id="Foo"/>
         <TypeId id="T"/>
-    </TypeId>
+    </TypeArguments>
 </Class>
 
 ----------------------------------------------------------------------------------------------------
@@ -75,10 +76,11 @@ Parameterized class declarations
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Class access="private">
-    <TypeId id="Foo">
+    <TypeArguments>
+        <TypeId id="Foo"/>
         <TypeId id="U"/>
         <TypeId id="T"/>
-    </TypeId>
+    </TypeArguments>
     <Id name="null"/>
 </Class>
 

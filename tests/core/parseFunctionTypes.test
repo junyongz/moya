@@ -120,6 +120,23 @@ Function with type parameters.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <FunctionDeclaration id="foo" access="private">
+    <typeArgs>
+        <TypeId id="T"/>
+    </typeArgs>
+    <Argument name="a"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
+- foo\T\G(a)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration id="foo" access="private">
+    <typeArgs>
+        <TypeId id="T"/>
+        <TypeId id="G"/>
+    </typeArgs>
     <Argument name="a"/>
 </FunctionDeclaration>
 

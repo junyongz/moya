@@ -35,10 +35,9 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "setInsertBlock", SetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "createBlock", CreateBlock);
-  Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
+  Nan::SetPrototypeMethod(tpl, "declareExternalFunction", DeclareExternalFunction);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
-  Nan::SetPrototypeMethod(tpl, "beginFunction", BeginFunction);
-  Nan::SetPrototypeMethod(tpl, "endFunction", EndFunction);
+  Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
   Nan::SetPrototypeMethod(tpl, "compileInteger", CompileInteger);
   Nan::SetPrototypeMethod(tpl, "compileFloat", CompileFloat);
   Nan::SetPrototypeMethod(tpl, "compileDouble", CompileDouble);
@@ -170,20 +169,17 @@ void MJCompiler::CreateBlock(const Nan::FunctionCallbackInfo<Value>& info) {
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    llvm::Value* value = bridge->compiler->CreateBlock(name);
+    llvm::Function* func = NULL;
+    if (info.Length() > 1) {
+        MJValue* funcWrapped = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[1]));
+        func = static_cast<llvm::Function*>(funcWrapped->GetValue());
+    }
+    
+    llvm::Value* value = bridge->compiler->CreateBlock(name, func);
     info.GetReturnValue().Set(MJValue::Create(value));
 }
 
-void MJCompiler::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
-    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-    String::Utf8Value _str(info[0]->ToString());
-    std::string str = std::string(*_str);
-
-    llvm::Value* ret = bridge->compiler->DeclareString(str);
-    info.GetReturnValue().Set(MJValue::Create(ret));
-}
-
-void MJCompiler::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
+void MJCompiler::DeclareExternalFunction(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
     
     String::Utf8Value _name(info[0]->ToString());
@@ -198,11 +194,11 @@ void MJCompiler::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
         argTypes.push_back(type);
     }
 
-    llvm::Value* ret = bridge->compiler->DeclareFunction(name, retType, argTypes);
+    llvm::Value* ret = bridge->compiler->DeclareExternalFunction(name, retType, argTypes);
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
-void MJCompiler::BeginFunction(const Nan::FunctionCallbackInfo<Value>& info) {
+void MJCompiler::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
@@ -225,7 +221,8 @@ void MJCompiler::BeginFunction(const Nan::FunctionCallbackInfo<Value>& info) {
         argNames.push_back(argName);
     }
     
-    std::vector<llvm::Value*> ret = bridge->compiler->BeginFunction(name, retType, argTypes, argNames);
+    std::vector<llvm::Value*> ret = bridge->compiler->DeclareFunction(name, retType, argTypes,
+                                                                      argNames);
 
     Isolate* isolate = info.GetIsolate();
     Local<Array> returns = Array::New(isolate);
@@ -239,11 +236,13 @@ void MJCompiler::BeginFunction(const Nan::FunctionCallbackInfo<Value>& info) {
     info.GetReturnValue().Set(returns);
 }
 
-void MJCompiler::EndFunction(const Nan::FunctionCallbackInfo<Value>& info) {
-  MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-  bridge->compiler->EndFunction();
+void MJCompiler::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    String::Utf8Value _str(info[0]->ToString());
+    std::string str = std::string(*_str);
 
-  info.GetReturnValue().Set(Nan::Undefined());
+    llvm::Value* ret = bridge->compiler->DeclareString(str);
+    info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
 void MJCompiler::CompileInteger(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -489,9 +488,13 @@ void MJCompiler::CompileMod(const Nan::FunctionCallbackInfo<Value>& info) {
 void MJCompiler::CompileReturn(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
   
-    MJValue* expr = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    if (info.Length()) {
+        MJValue* expr = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+        bridge->compiler->CompileReturn(expr->GetValue());
+    } else {
+        bridge->compiler->CompileReturn(NULL);
+    }
     
-    bridge->compiler->CompileReturn(expr->GetValue());
     info.GetReturnValue().Set(Nan::Undefined());
 }
 

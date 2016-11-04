@@ -26,9 +26,8 @@ private:
     static void SetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareString(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void DeclareExternalFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void BeginFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void EndFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileInteger(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileFloat(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileDouble(const Nan::FunctionCallbackInfo<v8::Value>& info);

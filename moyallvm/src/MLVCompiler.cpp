@@ -198,9 +198,11 @@ MLVCompiler::SetInsertBlock(Value* block) {
 }
 
 Value*
-MLVCompiler::CreateBlock(const std::string& name) {
-    Function* f = builder.GetInsertBlock()->getParent();
-    return BasicBlock::Create(context, name.c_str(), f);
+MLVCompiler::CreateBlock(const std::string& name, llvm::Function* func) {
+    if (!func) {
+        func = builder.GetInsertBlock()->getParent();
+    }
+    return BasicBlock::Create(context, name.c_str(), func);
 }
 
 Type*
@@ -271,25 +273,18 @@ MLVCompiler::EndModule() {
 }
 
 Value*
-MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes) {
+MLVCompiler::DeclareExternalFunction(std::string& name, Type* returnType,
+                                     const std::vector<Type*>& argTypes) {
     FunctionType* ft = FunctionType::get(returnType, argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
     return func;
 }
     
-Value*
-MLVCompiler::DeclareString(const std::string& str) {
-    return builder.CreateGlobalStringPtr(str.c_str());
-}
-
 std::vector<llvm::Value*>
-MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
+MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
     FunctionType* ft = FunctionType::get(returnType, argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
     
-    BasicBlock* bb = BasicBlock::Create(context, "entry", func);
-    builder.SetInsertPoint(bb);
-
     std::vector<llvm::Value*> argsRet;
     argsRet.push_back(func);
     
@@ -304,9 +299,9 @@ MLVCompiler::BeginFunction(std::string& name, Type* returnType, const std::vecto
     return argsRet;
 }
 
-void
-MLVCompiler::EndFunction() {
-    builder.CreateRetVoid();
+Value*
+MLVCompiler::DeclareString(const std::string& str) {
+    return builder.CreateGlobalStringPtr(str.c_str());
 }
 
 llvm::Value*
@@ -471,7 +466,11 @@ MLVCompiler::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
 
 void
 MLVCompiler::CompileReturn(llvm::Value* expr) {
-    builder.CreateRet(expr);
+    if (expr) {
+        builder.CreateRet(expr);
+    } else {
+        builder.CreateRetVoid();
+    }
 }
 
 void

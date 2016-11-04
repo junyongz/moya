@@ -22,10 +22,11 @@ foo as Foo\Bar\Baz
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Foo">
+    <TypeArguments>
+        <TypeId id="Foo"/>
         <TypeId id="Bar"/>
         <TypeId id="Baz"/>
-    </TypeId>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -36,9 +37,10 @@ foo as [Foo]
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="List">
+    <TypeArguments>
+        <TypeId id="List"/>
         <TypeId id="Foo"/>
-    </TypeId>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -49,10 +51,11 @@ foo as {| Foo = Bar |}
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Map">
+    <TypeArguments>
+        <TypeId id="Map"/>
         <TypeId id="Foo"/>
         <TypeId id="Bar"/>
-    </TypeId>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -63,7 +66,9 @@ foo as <>
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Channel"/>
+    <TypeArguments>
+        <TypeId id="Channel"/>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -74,9 +79,10 @@ foo as <Foo>
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Channel">
+    <TypeArguments>
+        <TypeId id="Channel"/>
         <TypeId id="Foo"/>
-    </TypeId>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -87,11 +93,12 @@ foo as >(Foo,Bar):Baz
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Function">
+    <TypeArguments>
+        <TypeId id="Function"/>
         <TypeId id="Baz"/>
         <TypeId id="Foo"/>
         <TypeId id="Bar"/>
-    </TypeId>
+    </TypeArguments>
 </Cast>
 
 ====================================================================================================
@@ -105,26 +112,32 @@ foo as Foo\(Foo\Bar\Baz)\([Foo])\({| Foo = Bar |})\(<Foo>)\(>(Foo): Bar)
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Foo">
-        <TypeId id="Foo">
+    <TypeArguments>
+        <TypeId id="Foo"/>
+        <TypeArguments>
+            <TypeId id="Foo"/>
             <TypeId id="Bar"/>
             <TypeId id="Baz"/>
-        </TypeId>
-        <TypeId id="List">
+        </TypeArguments>
+        <TypeArguments>
+            <TypeId id="List"/>
             <TypeId id="Foo"/>
-        </TypeId>
-        <TypeId id="Map">
+        </TypeArguments>
+        <TypeArguments>
+            <TypeId id="Map"/>
             <TypeId id="Foo"/>
             <TypeId id="Bar"/>
-        </TypeId>
-        <TypeId id="Channel">
+        </TypeArguments>
+        <TypeArguments>
+            <TypeId id="Channel"/>
             <TypeId id="Foo"/>
-        </TypeId>
-        <TypeId id="Function">
+        </TypeArguments>
+        <TypeArguments>
+            <TypeId id="Function"/>
             <TypeId id="Bar"/>
             <TypeId id="Foo"/>
-        </TypeId>
-    </TypeId>
+        </TypeArguments>
+    </TypeArguments>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------

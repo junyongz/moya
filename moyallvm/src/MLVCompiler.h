@@ -37,17 +37,16 @@ public:
     llvm::Value* GetInsertBlock();
     void SetInsertBlock(llvm::Value* block);
 
-    llvm::Value* CreateBlock(const std::string& name);
-    
-    llvm::Value* DeclareString(const std::string& str);
-    
-    llvm::Value* DeclareFunction(std::string& name, llvm::Type* returnType,
+    llvm::Value* CreateBlock(const std::string& name, llvm::Function* func);
+        
+    llvm::Value* DeclareExternalFunction(std::string& name, llvm::Type* returnType,
                                  const std::vector<llvm::Type*>& argTypes);
 
-    std::vector<llvm::Value*> BeginFunction(std::string& name, llvm::Type* returnType,
+    std::vector<llvm::Value*> DeclareFunction(std::string& name, llvm::Type* returnType,
                                             const std::vector<llvm::Type*>& args,
                                             const std::vector<std::string>& argNames);
-    void EndFunction();
+
+    llvm::Value* DeclareString(const std::string& str);
 
     llvm::Value* CompileInteger(size_t size, int value);
     llvm::Value* CompileFloat(float value);

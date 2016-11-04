@@ -340,34 +340,34 @@ declClassId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | declClassId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.appendId($3); }
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append(T.parseTypeId(@3, $3)); }
     ;
 
 declId:
     IDENTIFIER
-        { $$ = T.parseTypeId(@1, $1); }
+        { $$ = T.parseId(@1, $1); }
     | declId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.appendId($3); }
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append(T.parseTypeId(@3, $3)); }
     ;
 
 declTypeId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
     | GT LP declTypeIdList RP COLON declTypeId
-        { $$ = T.parseTypeId(@1, 'Function'); $$.append($6); $$.appendList($3); }
+        { $$ = T.parseTypeArguments(@1, T.parseTypeId(@1, 'Function')); $$.append($6); $$.appendList($3); }
     | LT GT
-        { $$ = T.parseTypeId(@1, 'Channel'); }
+        { $$ = T.parseTypeArguments(@1, T.parseTypeId(@1, 'Channel')); }
     | LT declTypeId GT
-        { $$ = T.parseTypeId(@1, 'Channel'); $$.append($2); }
+        { $$ = T.parseTypeArguments(@1, T.parseTypeId(@1, 'Channel')); $$.append($2); }
     | LB declTypeId RB
-        { $$ = T.parseTypeId(@1, 'List'); $$.append($2); }
+        { $$ = T.parseTypeArguments(@1, T.parseTypeId(@1, 'List')); $$.append($2); }
     | LCBP declTypeId EQ declTypeId RCBP
-        { $$ = T.parseTypeId(@1, 'Map'); $$.append($2); $$.append($4); }
+        { $$ = T.parseTypeArguments(@1, T.parseTypeId(@1, 'Map')); $$.append($2); $$.append($4); }
 
     | declTypeId BACKSLASH UIDENTIFIER
-        { $$ = $1; $1.appendId($3); }
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append(T.parseTypeId(@3, $3)); }
     | declTypeId BACKSLASH LP declTypeId RP
-        { $$ = $1; $1.append($4); }
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append($4); }
     ;
 
 declTypeIdList:
@@ -976,6 +976,10 @@ id:
         { $$ = T.parseId(@1, $1); }
     | UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
+    | id BACKSLASH UIDENTIFIER
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append(T.parseTypeId(@3, $3)); }
+    | id BACKSLASH LP id RP
+        { $$ = T.ensureTypeArguments(@1, $1); $$.append($4); }
     ;
 
 literal:
