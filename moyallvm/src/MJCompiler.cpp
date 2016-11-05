@@ -34,6 +34,8 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "setInsertBlock", SetInsertBlock);
+  Nan::SetPrototypeMethod(tpl, "isBlockEmpty", IsBlockEmpty);
+  Nan::SetPrototypeMethod(tpl, "eraseBlock", EraseBlock);
   Nan::SetPrototypeMethod(tpl, "createBlock", CreateBlock);
   Nan::SetPrototypeMethod(tpl, "declareExternalFunction", DeclareExternalFunction);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
@@ -159,6 +161,26 @@ void MJCompiler::SetInsertBlock(const Nan::FunctionCallbackInfo<Value>& info) {
     MJValue* block = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
     
     bridge->compiler->SetInsertBlock(block->GetValue());
+    
+    info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::IsBlockEmpty(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+    MJValue* block = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    bool isEmpty = bridge->compiler->IsBlockEmpty(block->GetValue());
+    
+    info.GetReturnValue().Set(Nan::New<v8::Boolean>(isEmpty));
+}
+
+void MJCompiler::EraseBlock(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+    MJValue* block = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
+    bridge->compiler->EraseBlock(block->GetValue());
     
     info.GetReturnValue().Set(Nan::Undefined());
 }

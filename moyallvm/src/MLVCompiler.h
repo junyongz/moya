@@ -36,6 +36,8 @@ public:
 
     llvm::Value* GetInsertBlock();
     void SetInsertBlock(llvm::Value* block);
+    bool IsBlockEmpty(llvm::Value* block);
+    void EraseBlock(llvm::Value* block);
 
     llvm::Value* CreateBlock(const std::string& name, llvm::Function* func);
         

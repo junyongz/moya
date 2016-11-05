@@ -197,6 +197,16 @@ MLVCompiler::SetInsertBlock(Value* block) {
     builder.SetInsertPoint(static_cast<BasicBlock*>(block));
 }
 
+bool
+MLVCompiler::IsBlockEmpty(Value* block) {
+    return static_cast<BasicBlock*>(block)->empty();
+}
+
+void
+MLVCompiler::EraseBlock(Value* block) {
+    static_cast<BasicBlock*>(block)->eraseFromParent();
+}
+
 Value*
 MLVCompiler::CreateBlock(const std::string& name, llvm::Function* func) {
     if (!func) {

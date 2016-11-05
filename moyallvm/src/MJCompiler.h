@@ -24,6 +24,8 @@ private:
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void IsBlockEmpty(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void EraseBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareString(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareExternalFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
