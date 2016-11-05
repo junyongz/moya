@@ -47,11 +47,18 @@ function compile(source, sourcePath, moduleName) {
     } catch (exc) {
         if (exc.hash) {
             var line = exc.hash.loc ? exc.hash.loc.first_line : '0';
-            console.log('Exception: syntax error\n<' + sourcePath + '>, line ' + line);
+            console.error('Exception: syntax error\n<' + sourcePath + '>, line ' + line);
             // D&&D(exc.message);
         } else if (exc.message) {
-            var line = exc.loc ? exc.loc.first_line : '0';
-            console.log('Exception: ' + exc.message + '\n<' + sourcePath + '>, line ' + line);
+            if (exc.loc) {
+                var lineNo = exc.loc ? exc.loc.first_line : '0';
+                var line = source.split('\n')[lineNo-1];
+                var indent = ' '.repeat(4+exc.loc.first_column);
+                var carets = '^'.repeat(exc.loc.last_column - exc.loc.first_column);
+                console.error('Exception: ' + exc.message + '\n<' + sourcePath + '>, line ' + lineNo + '\n    ' + line + '\n' + indent + carets);
+            } else {
+                console.error('Exception: ' + exc.message + '\n<' + sourcePath + '>');
+            }
             // throw exc;
         } else {
             throw exc;

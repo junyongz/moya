@@ -556,9 +556,9 @@ blockLeft:
         { $$ = T.parsePrint(@1, $2); }
     
     | tupleExpression writeOp assignmentExpression
-        { $$ = T.parseBinary(@1, $2, $1, $3); }
+        { $$ = T.parseBinary(@2, $2, $1, $3); }
     | tupleExpression writeOp blockRight
-        { $$ = T.parseBinary(@1, $2, $1, $3); }
+        { $$ = T.parseBinary(@2, $2, $1, $3); }
 
     | channelOp assignmentExpression
         { $$ = T.parseUnary(@1, $1, $2); }
@@ -761,7 +761,7 @@ assignmentExpressionSimple:
         { $$ = T.parsePrint(@1, $2); }
     
     | simpleExpression writeOp right
-        { $$ = T.parseBinary(@1, $2, $1, $3); }
+        { $$ = T.parseBinary(@2, $2, $1, $3); }
     
     | channelOp right
         { $$ = T.parseUnary(@1, $1, $2); }
@@ -813,13 +813,13 @@ binaryExpression:
 concatExpression:
     logicalOrExpression
     | concatExpression CONCATSTR logicalOrExpression
-        { $$ = T.parseBinary(@1, T.ConcatStringOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.ConcatStringOp, $1, $3); }
     ;
 
 logicalOrExpression:
     logicalAndExpression
     | logicalOrExpression PIPE logicalAndExpression
-        { $$ = T.parseBinary(@1, T.OrOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.OrOp, $1, $3); }
     | logicalOrExpression TO logicalAndExpression
         { $$ = T.parseRange(@1, $1, $3, null, false); }
     | logicalOrExpression TO logicalAndExpression BY logicalAndExpression
@@ -833,55 +833,55 @@ logicalOrExpression:
 logicalAndExpression:
     equalityExpression
     | logicalAndExpression AMPERSAND equalityExpression
-        { $$ = T.parseBinary(@1, T.AndOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.AndOp, $1, $3); }
     ;
 
 equalityExpression:
     relationalExpression
     | equalityExpression EQ2 relationalExpression
-        { $$ = T.parseBinary(@1, T.EqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.EqualsOp, $1, $3); }
     | equalityExpression NEQ relationalExpression
-        { $$ = T.parseBinary(@1, T.NotEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.NotEqualsOp, $1, $3); }
     ;
 
 relationalExpression:
     addExpression
     | relationalExpression LT addExpression
-        { $$ = T.parseBinary(@1, T.LessThanOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.LessThanOp, $1, $3); }
     | relationalExpression GT addExpression
-        { $$ = T.parseBinary(@1, T.GreaterThanOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.GreaterThanOp, $1, $3); }
     | relationalExpression LTE addExpression
-        { $$ = T.parseBinary(@1, T.LessThanEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.LessThanEqualsOp, $1, $3); }
     | relationalExpression GTE addExpression
-        { $$ = T.parseBinary(@1, T.GreaterThanEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.GreaterThanEqualsOp, $1, $3); }
     | relationalExpression ISNOT addExpression
-        { $$ = T.parseBinary(@1, T.IsNotOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.IsNotOp, $1, $3); }
     | relationalExpression ISIN addExpression
-        { $$ = T.parseBinary(@1, T.IsInOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.IsInOp, $1, $3); }
     | relationalExpression NOTIN addExpression
-        { $$ = T.parseBinary(@1, T.NotInOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.NotInOp, $1, $3); }
     ;
 
 addExpression:
     multiplyExpression
     | addExpression ADD multiplyExpression
-        { $$ = T.parseBinary(@1, T.AddOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.AddOp, $1, $3); }
     | addExpression SUBTRACT multiplyExpression
-        { $$ = T.parseBinary(@1, T.SubtractOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.SubtractOp, $1, $3); }
     ;
 
 multiplyExpression:
     unaryExpression
     | multiplyExpression STAR unaryExpression
-        { $$ = T.parseBinary(@1, T.MultiplyOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.MultiplyOp, $1, $3); }
     | multiplyExpression SLASH unaryExpression
-        { $$ = T.parseBinary(@1, T.DivideOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.DivideOp, $1, $3); }
     | multiplyExpression SLASH2 unaryExpression
-        { $$ = T.parseBinary(@1, T.ModOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.ModOp, $1, $3); }
     | multiplyExpression STAR2 unaryExpression
-        { $$ = T.parseBinary(@1, T.PowOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.PowOp, $1, $3); }
     | multiplyExpression CONCAT unaryExpression
-        { $$ = T.parseBinary(@1, T.ConcatOp, $1, $3); }
+        { $$ = T.parseBinary(@2, T.ConcatOp, $1, $3); }
     ;
 
 unaryExpression:
