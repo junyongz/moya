@@ -261,19 +261,27 @@ lineEnding:
         { $$ = null; }
     ;
 
-declaration:
-    importDirective lineEnding
-    | cCode lineEnding
-    | declarationBlock lineEnding
-    | block lineEnding
-    | lineEnding
-    ;
-
 declarationList:
     declaration
         { $$ = T.parseSet(@1, $1); }
-    | declarationList declaration
-        { $$ = $1; if ($2) {$1.append($2); } }
+    | declarationList lineEnding declaration
+        { $$ = $1; if ($3) $1.append($3); }
+    | declarationList lineEnding
+        { $$ = $1; }
+    ;
+
+declarationSet:
+    LCB declarationList RCB
+        { $$ = $2; }
+    | LCB RCB
+        { $$ = null; }
+    ;
+
+declaration:
+    importDirective
+    | cCode
+    | declarationBlock
+    | block
     ;
 
 declarationBlock:
@@ -293,9 +301,9 @@ declarationBlock:
         { $$ = T.parseClass(@1, $1, $2, null, null); }
     | accessMode declClassId COLON declTypeId
         { $$ = T.parseClass(@1, $1, $2, $3, null); }
-    | accessMode declClassId block
+    | accessMode declClassId declarationSet
         { $$ = T.parseClass(@1, $1, $2, null, $3); }
-    | accessMode declClassId COLON declTypeId block
+    | accessMode declClassId COLON declTypeId declarationSet
         { $$ = T.parseClass(@1, $1, $2, $4, $5); }
 
     | accessMode IDENTIFIER EQ blockOrRight
@@ -307,7 +315,7 @@ declarationBlock:
     | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight WHERE blockOrRight
         { $$ = T.parseProperty(@1, $1, $2, $4, $6, $8); }
     ;
-
+    
 blockOrRight:
     block
     | right

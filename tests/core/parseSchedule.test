@@ -9,7 +9,8 @@ Scheduling annotations.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public" schedule="parallel">
+<FunctionDeclaration access="public" schedule="parallel">
+    <Id name="foo"/>
     <Id name="null"/>
 </FunctionDeclaration>
 
@@ -21,7 +22,8 @@ Scheduling annotations.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public" schedule="parallel" imperative="true">
+<FunctionDeclaration access="public" schedule="parallel" imperative="true">
+    <Id name="foo"/>
     <Id name="null"/>
 </FunctionDeclaration>
 

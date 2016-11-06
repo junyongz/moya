@@ -204,7 +204,7 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Illegal type for negate operation
-<no file>, line 4
+<no file>, line 3
         -- -x
            ^
 
@@ -421,7 +421,7 @@ Exception: Illegal type for negate operation
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Illegal types for comparison
-<no file>, line 3
+<no file>, line 2
         -- 5 > "foo"
              ^
 

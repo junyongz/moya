@@ -11,7 +11,8 @@ Type declarations in function parameters.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <Argument name="f">
         <TypeId id="Foo"/>
     </Argument>
@@ -26,11 +27,13 @@ Type declarations in function parameters.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <Argument name="f">
-        <TypeId id="Foo">
+        <TypeArguments>
+            <TypeId id="Foo"/>
             <TypeId id="T"/>
-        </TypeId>
+        </TypeArguments>
     </Argument>
     <Id name="null"/>
 </FunctionDeclaration>
@@ -43,11 +46,13 @@ Type declarations in function parameters.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <Argument name="f">
-        <TypeId id="Foo">
+        <TypeArguments>
+            <TypeId id="Foo"/>
             <TypeId id="T"/>
-        </TypeId>
+        </TypeArguments>
     </Argument>
     <Argument name="b">
         <TypeId id="Bar"/>
@@ -63,11 +68,13 @@ Type declarations in function parameters.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <Argument name="f">
-        <TypeId id="Foo">
+        <TypeArguments>
+            <TypeId id="Foo"/>
             <TypeId id="T"/>
-        </TypeId>
+        </TypeArguments>
         <Integer value="1"/>
     </Argument>
     <Id name="null"/>
@@ -84,7 +91,8 @@ Type declarations in function returns.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <returns>
         <TypeId id="T"/>
     </returns>
@@ -99,13 +107,16 @@ Type declarations in function returns.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="public">
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
     <returns>
-        <TypeId id="Channel">
-            <TypeId id="T">
+        <TypeArguments>
+            <TypeId id="Channel"/>
+            <TypeArguments>
+                <TypeId id="T"/>
                 <TypeId id="G"/>
-            </TypeId>
-        </TypeId>
+            </TypeArguments>
+        </TypeArguments>
     </returns>
     <Id name="null"/>
 </FunctionDeclaration>
@@ -119,24 +130,25 @@ Function with type parameters.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="private">
-    <typeArgs>
+<FunctionDeclaration access="private">
+    <TypeArguments>
+        <Id name="foo"/>
         <TypeId id="T"/>
-    </typeArgs>
+    </TypeArguments>
     <Argument name="a"/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
-
-- foo\T\G(a)
+ - foo\T\G(a)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration id="foo" access="private">
-    <typeArgs>
+<FunctionDeclaration access="private">
+    <TypeArguments>
+        <Id name="foo"/>
         <TypeId id="T"/>
         <TypeId id="G"/>
-    </typeArgs>
+    </TypeArguments>
     <Argument name="a"/>
 </FunctionDeclaration>
 

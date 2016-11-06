@@ -192,9 +192,10 @@ foo: Bar\T = 1
 
 <AssignmentExpression op="=">
     <TypeAssignment name="foo">
-        <TypeId id="Bar">
+        <TypeArguments>
+            <TypeId id="Bar"/>
             <TypeId id="T"/>
-        </TypeId>
+        </TypeArguments>
     </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
@@ -207,12 +208,14 @@ foo: Bar\(S\G\V) = 1
 
 <AssignmentExpression op="=">
     <TypeAssignment name="foo">
-        <TypeId id="Bar">
-            <TypeId id="S">
+        <TypeArguments>
+            <TypeId id="Bar"/>
+            <TypeArguments>
+                <TypeId id="S"/>
                 <TypeId id="G"/>
                 <TypeId id="V"/>
-            </TypeId>
-        </TypeId>
+            </TypeArguments>
+        </TypeArguments>
     </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
@@ -225,13 +228,16 @@ foo: Bar\(S\(G\V)) = 1
 
 <AssignmentExpression op="=">
     <TypeAssignment name="foo">
-        <TypeId id="Bar">
-            <TypeId id="S">
-                <TypeId id="G">
+        <TypeArguments>
+            <TypeId id="Bar"/>
+            <TypeArguments>
+                <TypeId id="S"/>
+                <TypeArguments>
+                    <TypeId id="G"/>
                     <TypeId id="V"/>
-                </TypeId>
-            </TypeId>
-        </TypeId>
+                </TypeArguments>
+            </TypeArguments>
+        </TypeArguments>
     </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>
@@ -244,9 +250,10 @@ foo: [Foo] = 1
 
 <AssignmentExpression op="=">
     <TypeAssignment name="foo">
-        <TypeId id="List">
+        <TypeArguments>
+            <TypeId id="List"/>
             <TypeId id="Foo"/>
-        </TypeId>
+        </TypeArguments>
     </TypeAssignment>
     <Integer value="1"/>
 </AssignmentExpression>

@@ -63,7 +63,7 @@ foo3.500000
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Illegal types for binary operation
-<no file>, line 3
+<no file>, line 2
         -- "foo" - 4
                  ^
 

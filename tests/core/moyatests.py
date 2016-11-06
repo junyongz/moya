@@ -55,9 +55,10 @@ class MoyaTestFixture(TestFixture):
             extraArgs = []
             
         if isExpr:
-            source = '\n{ ' + source + '\n\n}\n'
-        else:
-            source = '\n' + source + '\n'
+            source = '{ ' + source + '}'
+        elif source[0] == '-':
+            source = ' ' + source
+
         escapedSource = source.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
         exePath = "%s %s %s -c $'%s'" % (moyaExePath, " ".join(args), " ".join(extraArgs), escapedSource)
 

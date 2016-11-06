@@ -55,7 +55,7 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Function "foo" not found
-<no file>, line 3
+<no file>, line 2
         foo()
         ^^^
 
@@ -68,7 +68,7 @@ Exception: Function "foo" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: "foo" not found
-<no file>, line 3
+<no file>, line 2
         -- foo
            ^^^
 
@@ -139,7 +139,7 @@ Exception: "foo" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Function "foo" not found
-<no file>, line 7
+<no file>, line 6
         foo(24)
         ^^^
 
@@ -241,9 +241,10 @@ Exception: Function "foo" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Default value required
-<no file>, line 2
+<no file>, line 1
     + foo(a, b=25, c) {
-                   ^
+                    ^
+
 ----------------------------------------------------------------------------------------------------
 
 + foo(a, b) {
@@ -257,9 +258,9 @@ Exception: Default value required
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Unknown type for argument
-<no file>, line 2
+<no file>, line 1
     + foo(a, b) {
-             ^
+              ^
 
 ----------------------------------------------------------------------------------------------------
 # Attempt to print void value
@@ -275,7 +276,7 @@ Exception: Unknown type for argument
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Unable to print value
-<no file>, line 7
+<no file>, line 6
         -- foo(2)
            ^^^
 

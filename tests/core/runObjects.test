@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    a = 42
-    b = 99
+    + a = 42
+    + b = 99
 }
 
 + main() {
@@ -20,8 +20,8 @@
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    a = b + 1
-    b = 42
+    + a = b + 1
+    + b = 42
 }
 
 + main() {
@@ -36,8 +36,8 @@
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    a = 42
-    b = a + 1
+    + a = 42
+    + b = a + 1
 }
 
 + main() {
@@ -53,8 +53,8 @@
 # Circular property reference
 
 + Thing {
-    a = b
-    b = a
+    + a = b
+    + b = a
 }
 
 + main() {
@@ -65,9 +65,9 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Circular reference to "a"
-<no file>, line 4
-        b = a
-            ^
+<no file>, line 3
+        + b = a
+              ^
 
 ----------------------------------------------------------------------------------------------------
 
@@ -82,7 +82,7 @@ Exception: Circular reference to "a"
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 %mode: ir
 Exception: Property "c" not found
-<no file>, line 7
+<no file>, line 6
         -- x.c
            ^
 
@@ -99,7 +99,7 @@ Exception: Property "c" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Property "c" not found
-<no file>, line 7
+<no file>, line 6
         x.c = 1
         ^^^
 
@@ -113,7 +113,7 @@ Exception: Property "c" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Property "c" not found
-<no file>, line 4
+<no file>, line 3
         -- x.c
            ^
 
@@ -127,14 +127,14 @@ Exception: Property "c" not found
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Property "c" not found
-<no file>, line 4
+<no file>, line 3
         x.c = 1
         ^^^
 
 ----------------------------------------------------------------------------------------------------
 
 + Thing\T1 {
-    a:T1 = 1.5
+    + a:T1 = 1.5
 }
 
 + main() {
@@ -153,8 +153,8 @@ Exception: Property "c" not found
 # Multiple type parameters
 
 + Foo\T1\T2 {
-    a:T1 = 1.5
-    b:T2 = 1.5
+    + a:T1 = 1.5
+    + b:T2 = 1.5
 }
 
 + main() {
@@ -171,7 +171,7 @@ Exception: Property "c" not found
 ----------------------------------------------------------------------------------------------------
 
 + Thing\T1 {
-    a:T1 = 0
+    + a:T1 = 0
 }
 
 + foo\T(j:Thing\T) {
@@ -195,15 +195,15 @@ Exception: Property "c" not found
 # Extract type of nested type parameters
 
 + Foo\T1 {
-    a = 0
+    + a = 0
 }
 
 + List\T1 {
-    b:T1 = 0
+    + b:T1 = 0
 }
 
 + Map\T1 {
-    b:T1 = 0
+    + b:T1 = 0
 }
 
 + foo\T(j:Foo\(List\T)) {
