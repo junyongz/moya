@@ -342,6 +342,11 @@ declFunc:
         { $$ = T.parseFuncDecl(@1, $1, $3, $6, null); }
     | declId LP declArgumentList RP COLON declTypeId AT IDENTIFIER
         { $$ = T.parseFuncDecl(@1, $1, $3, $6, $8); }
+
+    | declClassId LP RP
+        { $$ = T.parseFuncDecl(@1, $1, null, null, null); }
+    | declClassId LP declArgumentList RP
+        { $$ = T.parseFuncDecl(@1, $1, $3); }
     ;
 
 declClassId:
