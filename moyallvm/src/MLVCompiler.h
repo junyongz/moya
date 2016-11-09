@@ -48,6 +48,8 @@ public:
                                             const std::vector<llvm::Type*>& args,
                                             const std::vector<std::string>& argNames);
 
+    llvm::Value* CreateClassTable(const std::string& name, const std::vector<llvm::Value*> functions);
+
     llvm::Value* DeclareString(const std::string& str);
 
     llvm::Value* CompileInteger(size_t size, int value);
@@ -81,9 +83,9 @@ public:
     
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
-    llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name);
+    llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Type* type);
 
-    llvm::Value* GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets);
+    llvm::Value* GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type);
 
     int ExecuteMain();
         

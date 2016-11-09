@@ -27,6 +27,7 @@ void MJCompiler::Init(Local<Object> exports) {
 
   // Prototype
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
+  Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
   Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
   Nan::SetPrototypeMethod(tpl, "setStructBody", SetStructBody);
   Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
@@ -37,6 +38,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "isBlockEmpty", IsBlockEmpty);
   Nan::SetPrototypeMethod(tpl, "eraseBlock", EraseBlock);
   Nan::SetPrototypeMethod(tpl, "createBlock", CreateBlock);
+  Nan::SetPrototypeMethod(tpl, "createClassTable", CreateClassTable);
   Nan::SetPrototypeMethod(tpl, "declareExternalFunction", DeclareExternalFunction);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
   Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
@@ -87,6 +89,16 @@ void MJCompiler::GetType(const Nan::FunctionCallbackInfo<Value>& info) {
     llvm::Type* retType = bridge->compiler->GetType(typeCode);
 
     info.GetReturnValue().Set(MJType::Create(retType));
+}
+
+void MJCompiler::GetFunctionType(const Nan::FunctionCallbackInfo<Value>& info) {
+    // MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJValue* value = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    llvm::Function* function = static_cast<llvm::Function*>(value->GetValue());
+    llvm::Type* funcType = function->getFunctionType()->getPointerTo();
+    
+    info.GetReturnValue().Set(MJType::Create(funcType));
 }
 
 void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -199,6 +211,23 @@ void MJCompiler::CreateBlock(const Nan::FunctionCallbackInfo<Value>& info) {
     
     llvm::Value* value = bridge->compiler->CreateBlock(name, func);
     info.GetReturnValue().Set(MJValue::Create(value));
+}
+
+void MJCompiler::CreateClassTable(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+    
+    std::vector<llvm::Value*> functions;
+    Handle<Array> array1 = Handle<Array>::Cast(info[1]);
+    for (unsigned int i = 0; i < array1->Length(); i++) {
+        llvm::Value* value = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(array1->Get(i)))->GetValue();
+        functions.push_back(value);
+    }
+
+    llvm::Value* table = bridge->compiler->CreateClassTable(name, functions);
+    info.GetReturnValue().Set(MJValue::Create(table));
 }
 
 void MJCompiler::DeclareExternalFunction(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -341,10 +370,16 @@ void MJCompiler::LoadVariable(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
   
     MJValue* alloca = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    
     String::Utf8Value _name(info[1]->ToString());
     std::string name = std::string(*_name);
     
-    llvm::Value* ret = bridge->compiler->LoadVariable(alloca->GetValue(), name);
+    llvm::Type* type = NULL;
+    if (info.Length() > 2) {
+        type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[2]))->GetType();
+    }
+    
+    llvm::Value* ret = bridge->compiler->LoadVariable(alloca->GetValue(), name, type);
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
@@ -362,7 +397,12 @@ void MJCompiler::GetPointer(const Nan::FunctionCallbackInfo<Value>& info) {
         offsets[i] = offset->GetValue();
     }
 
-    llvm::Value* ret = bridge->compiler->GetPointer(obj->GetValue(), offsets);
+    llvm::Type* type = NULL;
+    if (info.Length() > 2) {
+        type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[2]))->GetType();
+    }
+
+    llvm::Value* ret = bridge->compiler->GetPointer(obj->GetValue(), offsets, type);
     info.GetReturnValue().Set(MJValue::Create(ret));
 }
 

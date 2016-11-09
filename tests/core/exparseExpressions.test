@@ -364,3 +364,19 @@ Bind expressions.
 </UnaryExpression>
 
 ----------------------------------------------------------------------------------------------------
+
+foo.bar.baz.biz()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<CallExpression>
+    <GetExpression name="biz">
+        <GetExpression name="baz">
+            <GetExpression name="bar">
+                <Id name="foo"/>
+            </GetExpression>
+        </GetExpression>
+    </GetExpression>
+</CallExpression>
+
+----------------------------------------------------------------------------------------------------

@@ -17,6 +17,7 @@ private:
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateStruct(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetStructBody(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetPointerType(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -27,6 +28,7 @@ private:
     static void IsBlockEmpty(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EraseBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateClassTable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareString(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareExternalFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);

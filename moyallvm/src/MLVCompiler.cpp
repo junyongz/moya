@@ -233,6 +233,8 @@ MLVCompiler::GetType(int code) {
         return Type::getDoubleTy(context);
     } else if (code == 8) {
         return Type::getInt8Ty(context)->getPointerTo();
+    } else if (code == 9) {
+        return Type::getInt8Ty(context)->getPointerTo()->getPointerTo();
     } else {
         return Type::getVoidTy(context);
     }
@@ -307,6 +309,29 @@ MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vec
     }
         
     return argsRet;
+}
+
+llvm::Value*
+MLVCompiler::CreateClassTable(const std::string& name, const std::vector<Value*> functions) {
+    Type* i8p = Type::getInt8Ty(context)->getPointerTo();
+    ArrayType* arrayType = ArrayType::get(i8p, functions.size());
+    
+    std::vector<Constant*> castFuncs;
+    for (auto value : functions) {
+        Value* val = builder.CreateBitCast(value, i8p);
+        Constant* con = static_cast<Constant*>(val);
+        castFuncs.push_back(con);
+    }
+    
+    Constant* array123 = ConstantArray::get(arrayType, castFuncs);
+    
+    module->getOrInsertGlobal(name, arrayType);
+    llvm::GlobalVariable* variable = module->getNamedGlobal(name);
+    variable->setConstant(true);
+    variable->setAlignment(8);
+    variable->setInitializer(array123);
+    
+    return variable;
 }
 
 Value*
@@ -519,13 +544,21 @@ MLVCompiler::StoreVariable(llvm::Value* lhs, llvm::Value* rhs) {
 }
     
 llvm::Value*
-MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name) {
-    return builder.CreateLoad(alloca, name.c_str());
+MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Type* type) {
+    if (type) {
+        return builder.CreateLoad(type, alloca, name.c_str());
+    } else {
+        return builder.CreateLoad(alloca, name.c_str());
+    }
 }
 
 llvm::Value*
-MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets) {
-    return builder.CreateGEP(pointer, offsets);
+MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type){
+    if (type) {
+        return builder.CreateInBoundsGEP(type, pointer, offsets);
+    } else {
+        return builder.CreateInBoundsGEP(pointer, offsets);
+    }
 }
 
 int
