@@ -31,6 +31,10 @@ if (argv.c) {
     }
 }
 
+exports.parseSource = function(source) {
+    return parser.parse(' ' + source + '\n');
+}
+
 function compile(source, sourcePath, moduleName) {
     try {
         if (argv.debug == "ast") {
