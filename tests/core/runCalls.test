@@ -243,7 +243,7 @@ Exception: Function "foo" not found
 Exception: Default value required
 <no file>, line 1
     + foo(a, b=25, c) {
-                    ^
+                   ^
 
 ----------------------------------------------------------------------------------------------------
 

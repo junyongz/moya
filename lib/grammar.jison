@@ -452,6 +452,8 @@ importDirective:
 moduleName:
     SLASH id
         { $$ = T.parseSet(@1, $2); }
+    | id
+        { $$ = T.parseSet(@1, T.parseId(@1, ".")); $$.append($1); }
     | moduleName SLASH id
         { $$ = $1; $1.append($3); }
     ;

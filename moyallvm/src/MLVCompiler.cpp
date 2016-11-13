@@ -567,7 +567,6 @@ MLVCompiler::ExecuteMain() {
         int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
         return FP();
     } else {
-        printf("main no found!\n");
-        return 1;
+        return -1;
     }
 }

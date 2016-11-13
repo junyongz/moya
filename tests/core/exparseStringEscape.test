@@ -80,6 +80,6 @@ As is traditional, a backslash before a character indicates that it is an escape
 Exception: Invalid syntax
 <no file>, line 1
     { "\B"}
-        ^
+       ^
 
 ----------------------------------------------------------------------------------------------------

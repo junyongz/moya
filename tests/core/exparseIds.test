@@ -58,8 +58,10 @@ a$
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: syntax error
+Exception: Syntax error
 <no file>, line 1
+    { a$}
+      ^
 
 ====================================================================================================
 Unrecognized Unicode characters
@@ -73,6 +75,6 @@ Unrecognized Unicode characters
 Exception: Invalid syntax
 <no file>, line 1
     { º}
-       ^
+      ^
 
 ----------------------------------------------------------------------------------------------------
