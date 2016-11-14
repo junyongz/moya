@@ -188,18 +188,18 @@ hex 0x[0-9A-Fa-f]+
 <ccode>"void"                  { return 'CPRIMITIVE'; }
 <ccode>"bool"                  { return 'CPRIMITIVE'; }
 <ccode>"char"                  { return 'CPRIMITIVE'; }
-<ccode>"unsigned char"         { return 'CPRIMITIVE'; }
 <ccode>"short"                 { return 'CPRIMITIVE'; }
+<ccode>"unsigned char"         { return 'CPRIMITIVE'; }
 <ccode>"unsigned short"        { return 'CPRIMITIVE'; }
-<ccode>"int"                   { return 'CPRIMITIVE'; }
 <ccode>"unsigned int"          { return 'CPRIMITIVE'; }
-<ccode>"long"                  { return 'CPRIMITIVE'; }
-<ccode>"unsigned long"         { return 'CPRIMITIVE'; }
-<ccode>"long long"             { return 'CPRIMITIVE'; }
 <ccode>"unsigned long long"    { return 'CPRIMITIVE'; }
+<ccode>"unsigned long"         { return 'CPRIMITIVE'; }
+<ccode>"int"                   { return 'CPRIMITIVE'; }
 <ccode>"float"                 { return 'CPRIMITIVE'; }
 <ccode>"double"                { return 'CPRIMITIVE'; }
+<ccode>"long long"             { return 'CPRIMITIVE'; }
 <ccode>"long double"           { return 'CPRIMITIVE'; }
+<ccode>"long"                  { return 'CPRIMITIVE'; }
 <ccode>{idLower}               { return 'IDENTIFIER'; }
 <ccode>{idUpper}               { return 'IDENTIFIER'; }
 

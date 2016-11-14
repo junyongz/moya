@@ -52,6 +52,8 @@ using namespace llvm::orc;
 
 static MLVDumpMode dumpMode = MLVDumpNothing;
 
+// *************************************************************************************************
+
 extern "C" void
 printString(const char* value) {
     printf("%s\n", value);

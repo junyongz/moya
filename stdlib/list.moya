@@ -1,0 +1,19 @@
+
+C"MoyaList* MoyaListCreate(int size)"
+C"void MoyaListAdd(MoyaList*, MoyaObject*)"
+C"MoyaObject* MoyaListGet(MoyaList*, int)"
+
++ List\T {
+    - internal = MoyaCreateList()
+    
+    + List\T() {
+    }
+    
+    + get(index:Int32):T {
+        = MoyaListGet(internal, index)
+    }
+
+    + add(item:T) {
+        MoyaListAdd(internal, item)
+    }
+}

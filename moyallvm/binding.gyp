@@ -8,8 +8,8 @@
       "target_name": "moyallvm",
       "sources": [
         "src/moyallvm.cpp",
+        "src/tests.cpp",
         "src/MLVCompiler.cpp",
-
         "src/MJCompiler.cpp",
         "src/MJValue.cpp",
         "src/MJType.cpp"

@@ -28,9 +28,9 @@ void MJCompiler::Init(Local<Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
   Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
+  Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
   Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
   Nan::SetPrototypeMethod(tpl, "setStructBody", SetStructBody);
-  Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
@@ -101,6 +101,15 @@ void MJCompiler::GetFunctionType(const Nan::FunctionCallbackInfo<Value>& info) {
     info.GetReturnValue().Set(MJType::Create(funcType));
 }
 
+void MJCompiler::GetPointerType(const Nan::FunctionCallbackInfo<Value>& info) {
+    // MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJType* mjtype = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]));
+    llvm::Type* type = static_cast<llvm::StructType*>(mjtype->GetType());
+    
+    info.GetReturnValue().Set(MJType::Create(type->getPointerTo()));
+}
+
 void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
 
@@ -130,15 +139,6 @@ void MJCompiler::SetStructBody(const Nan::FunctionCallbackInfo<Value>& info) {
     uint64_t size = bridge->compiler->SetStructBody(structType, body);
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(size));
-}
-
-void MJCompiler::GetPointerType(const Nan::FunctionCallbackInfo<Value>& info) {
-    // MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-
-    MJType* mjtype = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]));
-    llvm::Type* type = static_cast<llvm::StructType*>(mjtype->GetType());
-    
-    info.GetReturnValue().Set(MJType::Create(type->getPointerTo()));
 }
 
 void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {

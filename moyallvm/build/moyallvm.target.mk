@@ -102,6 +102,7 @@ INCS_Release := \
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/moyallvm.o \
+	$(obj).target/$(TARGET)/src/tests.o \
 	$(obj).target/$(TARGET)/src/MLVCompiler.o \
 	$(obj).target/$(TARGET)/src/MJCompiler.o \
 	$(obj).target/$(TARGET)/src/MJValue.o \

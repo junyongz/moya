@@ -2,7 +2,7 @@
 require('dandy');
 
 var minimist = require('minimist');
-var Compiler = require('./lib/Compiler').Compiler;
+var Compiler = require('./lib/compiler').Compiler;
 
 // *************************************************************************************************
 
