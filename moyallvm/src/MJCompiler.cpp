@@ -29,6 +29,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
   Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
   Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
+  Nan::SetPrototypeMethod(tpl, "getTypeSize", GetTypeSize);
   Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
   Nan::SetPrototypeMethod(tpl, "setStructBody", SetStructBody);
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
@@ -108,6 +109,16 @@ void MJCompiler::GetPointerType(const Nan::FunctionCallbackInfo<Value>& info) {
     llvm::Type* type = static_cast<llvm::StructType*>(mjtype->GetType());
     
     info.GetReturnValue().Set(MJType::Create(type->getPointerTo()));
+}
+
+void MJCompiler::GetTypeSize(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJType* mjtype = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]));
+    llvm::Type* type = mjtype->GetType();
+    uint64_t size = bridge->compiler->GetTypeSize(type);
+    
+    info.GetReturnValue().Set(Nan::New<v8::Number>(size));
 }
 
 void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {

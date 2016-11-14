@@ -54,55 +54,6 @@ static MLVDumpMode dumpMode = MLVDumpNothing;
 
 // *************************************************************************************************
 
-extern "C" void
-printString(const char* value) {
-    printf("%s\n", value);
-}
-
-extern "C" double
-powerdd(double a, double b) {
-    return pow(a, b);
-}
-
-extern "C" char*
-concatString(const char* left, const char* right) {
-    size_t l1 = strlen(left);
-    size_t l2 = strlen(right);
-    char* buf = (char*)malloc(l1+l2+1);
-    strcpy(buf, left);
-    strcpy(buf+l1, right);
-    return buf;
-}
-
-extern "C" char*
-intToString(long long num) {
-    char nbuf[128];
-    snprintf(nbuf, 128, "%lld", num);
-    
-    size_t l = strlen(nbuf);
-    char* buf = (char*)malloc(l+1);
-    strcpy(buf, nbuf);
-    return buf;
-}
-
-
-extern "C" char*
-doubleToString(double num) {
-    char nbuf[128];
-    snprintf(nbuf, 128, "%lf", num);
-    
-    size_t l = strlen(nbuf);
-    char* buf = (char*)malloc(l+1);
-    strcpy(buf, nbuf);
-    return buf;
-}
-
-extern "C" char*
-newObject(int size) {
-    char* buf = (char*)malloc(size);
-    return buf;
-}
-
 static TargetMachine*
 InitMachine() {
     InitializeAllTargetInfos();
@@ -164,6 +115,7 @@ MLVCompiler::MLVCompiler():
     context(),
     builder(context),
     machine(InitMachine()),
+    dataLayout(machine->createDataLayout()),
     compileLayer(objectLayer, SimpleCompiler(*machine)),
     optimizeLayer(compileLayer,
         [this](std::unique_ptr<Module> M) {
@@ -251,16 +203,24 @@ uint64_t
 MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body) {
     type->setBody(body);
 
-    const llvm::DataLayout DL = module->getDataLayout();
-    
-    const llvm::StructLayout* layout = DL.getStructLayout(type);
+    const llvm::StructLayout* layout = dataLayout.getStructLayout(type);
     return layout->getSizeInBytes();
+}
+
+uint64_t
+MLVCompiler::GetTypeSize(llvm::Type* type) {
+    uint64_t size = dataLayout.getTypeSizeInBits(type);
+    if (size < 8) {
+        return 1;
+    } else {
+        return size / 8;
+    }
 }
 
 void
 MLVCompiler::BeginModule(const std::string& name) {
     module = make_unique<Module>(name, context);
-    module->setDataLayout(machine->createDataLayout());
+    module->setDataLayout(dataLayout);
 }
 
 void
@@ -565,7 +525,7 @@ MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets
 
 int
 MLVCompiler::ExecuteMain() {
-    if (auto sym = optimizeLayer.findSymbol(mangle("main", machine->createDataLayout()), false)) {
+    if (auto sym = optimizeLayer.findSymbol(mangle("main", dataLayout), false)) {
         int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
         return FP();
     } else {

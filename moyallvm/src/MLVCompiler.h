@@ -28,6 +28,7 @@ public:
     llvm::LLVMContext& GetContext();
     
     llvm::Type* GetType(int code);
+    uint64_t GetTypeSize(llvm::Type* type);
     llvm::Type* CreateStruct(const std::string& name);
     uint64_t SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body);
 
@@ -96,6 +97,7 @@ private:
     llvm::LLVMContext context;
     llvm::IRBuilder<> builder;
     llvm::TargetMachine* machine;
+    const llvm::DataLayout dataLayout;
     std::unique_ptr<llvm::Module> module;
     
     llvm::orc::ObjectLinkingLayer<> objectLayer;

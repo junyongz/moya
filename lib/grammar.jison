@@ -200,6 +200,7 @@ hex 0x[0-9A-Fa-f]+
 <ccode>"long long"             { return 'CPRIMITIVE'; }
 <ccode>"long double"           { return 'CPRIMITIVE'; }
 <ccode>"long"                  { return 'CPRIMITIVE'; }
+<ccode>"size_t"                { return 'CPRIMITIVE'; }
 <ccode>{idLower}               { return 'IDENTIFIER'; }
 <ccode>{idUpper}               { return 'IDENTIFIER'; }
 
