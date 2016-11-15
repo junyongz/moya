@@ -18,7 +18,7 @@ DEFS_Debug := \
 CFLAGS_Debug := \
 	-O0 \
 	-gdwarf-2 \
-	-mmacosx-version-min=10.11 \
+	-mmacosx-version-min=10.12 \
 	-arch x86_64 \
 	-Wall \
 	-Wendif-labels \
@@ -32,6 +32,7 @@ CFLAGS_C_Debug := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Debug := \
 	-std=gnu++0x \
+	-stdlib=libc++ \
 	-fno-rtti \
 	-fno-exceptions \
 	-fno-threadsafe-statics \
@@ -45,11 +46,11 @@ CFLAGS_OBJC_Debug :=
 CFLAGS_OBJCC_Debug :=
 
 INCS_Debug := \
-	-I/Users/joehewitt/.node-gyp/4.5.0/include/node \
-	-I/Users/joehewitt/.node-gyp/4.5.0/src \
-	-I/Users/joehewitt/.node-gyp/4.5.0/deps/uv/include \
-	-I/Users/joehewitt/.node-gyp/4.5.0/deps/v8/include \
-	-I$(srcdir)/node_modules/nan \
+	-I/Users/joehewitt/.node-gyp/7.1.0/include/node \
+	-I/Users/joehewitt/.node-gyp/7.1.0/src \
+	-I/Users/joehewitt/.node-gyp/7.1.0/deps/uv/include \
+	-I/Users/joehewitt/.node-gyp/7.1.0/deps/v8/include \
+	-I$(srcdir)/../../../../../../usr/local/lib/node_modules/nan \
 	-I/usr/local/include
 
 DEFS_Release := \
@@ -66,7 +67,7 @@ DEFS_Release := \
 CFLAGS_Release := \
 	-Os \
 	-gdwarf-2 \
-	-mmacosx-version-min=10.11 \
+	-mmacosx-version-min=10.12 \
 	-arch x86_64 \
 	-Wall \
 	-Wendif-labels \
@@ -80,6 +81,7 @@ CFLAGS_C_Release := \
 # Flags passed to only C++ files.
 CFLAGS_CC_Release := \
 	-std=gnu++0x \
+	-stdlib=libc++ \
 	-fno-rtti \
 	-fno-exceptions \
 	-fno-threadsafe-statics \
@@ -93,11 +95,11 @@ CFLAGS_OBJC_Release :=
 CFLAGS_OBJCC_Release :=
 
 INCS_Release := \
-	-I/Users/joehewitt/.node-gyp/4.5.0/include/node \
-	-I/Users/joehewitt/.node-gyp/4.5.0/src \
-	-I/Users/joehewitt/.node-gyp/4.5.0/deps/uv/include \
-	-I/Users/joehewitt/.node-gyp/4.5.0/deps/v8/include \
-	-I$(srcdir)/node_modules/nan \
+	-I/Users/joehewitt/.node-gyp/7.1.0/include/node \
+	-I/Users/joehewitt/.node-gyp/7.1.0/src \
+	-I/Users/joehewitt/.node-gyp/7.1.0/deps/uv/include \
+	-I/Users/joehewitt/.node-gyp/7.1.0/deps/v8/include \
+	-I$(srcdir)/../../../../../../usr/local/lib/node_modules/nan \
 	-I/usr/local/include
 
 OBJS := \
@@ -139,30 +141,36 @@ LDFLAGS_Debug := \
 	-stdlib=libc++ \
 	`llvm-config --cxxflags --ldflags --system-libs --libs all` \
 	-undefined dynamic_lookup \
+	-Wl,-no_pie \
 	-Wl,-search_paths_first \
-	-mmacosx-version-min=10.11 \
+	-mmacosx-version-min=10.12 \
 	-arch x86_64 \
-	-L$(builddir)
+	-L$(builddir) \
+	-stdlib=libc++
 
 LIBTOOLFLAGS_Debug := \
 	-stdlib=libc++ \
 	`llvm-config --cxxflags --ldflags --system-libs --libs all` \
 	-undefined dynamic_lookup \
+	-Wl,-no_pie \
 	-Wl,-search_paths_first
 
 LDFLAGS_Release := \
 	-stdlib=libc++ \
 	`llvm-config --cxxflags --ldflags --system-libs --libs all` \
 	-undefined dynamic_lookup \
+	-Wl,-no_pie \
 	-Wl,-search_paths_first \
-	-mmacosx-version-min=10.11 \
+	-mmacosx-version-min=10.12 \
 	-arch x86_64 \
-	-L$(builddir)
+	-L$(builddir) \
+	-stdlib=libc++
 
 LIBTOOLFLAGS_Release := \
 	-stdlib=libc++ \
 	`llvm-config --cxxflags --ldflags --system-libs --libs all` \
 	-undefined dynamic_lookup \
+	-Wl,-no_pie \
 	-Wl,-search_paths_first
 
 LIBS :=

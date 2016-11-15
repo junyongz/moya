@@ -1,2 +1,2 @@
 
-require('./lib/Moya');
+require('./lib/moya');

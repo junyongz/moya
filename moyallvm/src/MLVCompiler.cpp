@@ -205,12 +205,7 @@ MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*
 
 uint64_t
 MLVCompiler::GetTypeSize(llvm::Type* type) {
-    uint64_t size = dataLayout.getTypeSizeInBits(type);
-    if (size < 8) {
-        return 1;
-    } else {
-        return size / 8;
-    }
+    return dataLayout.getTypeSizeInBits(type);
 }
 
 void

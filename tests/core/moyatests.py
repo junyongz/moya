@@ -67,8 +67,9 @@ class MoyaTestFixture(TestFixture):
 
         moyaPath = ":".join([os.environ['MOYAPATH'], sharedLibPath, testLibPath])
         sysPath = os.environ['PATH']
-        env = {"MOYAPATH": moyaPath, "NODE_PATH": os.environ['HOME'] + "/local/lib/node_modules", "PATH": sysPath}
-
+        
+        env = {"MOYAPATH": moyaPath, "NODE_PATH": "/usr/local/lib/node_modules", "PATH": sysPath}
+        
         metaArgs = args + extraArgs + ['-c', source]
         
         self.metadata = {"command": moyaExePath, "args": metaArgs, "env": env}

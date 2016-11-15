@@ -21,7 +21,7 @@
         'xcode_settings': {
             'OTHER_CPLUSPLUSFLAGS' : ['-std=c++11','-stdlib=libc++'],
             'OTHER_LDFLAGS': ['-stdlib=libc++', '`llvm-config --cxxflags --ldflags --system-libs --libs all`'],
-             'MACOSX_DEPLOYMENT_TARGET': '10.11'
+             'MACOSX_DEPLOYMENT_TARGET': '10.12'
             },
         }],
         ],
