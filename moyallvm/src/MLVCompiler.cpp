@@ -185,10 +185,6 @@ MLVCompiler::GetType(int code) {
         return Type::getFloatTy(context);
     } else if (code == 7) {
         return Type::getDoubleTy(context);
-    } else if (code == 8) {
-        return Type::getInt8Ty(context)->getPointerTo();
-    } else if (code == 9) {
-        return Type::getInt8Ty(context)->getPointerTo()->getPointerTo();
     } else {
         return Type::getVoidTy(context);
     }
@@ -517,9 +513,9 @@ MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Ty
 llvm::Value*
 MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type){
     if (type) {
-        return builder.CreateInBoundsGEP(type, pointer, offsets);
+        return builder.CreateGEP(type, pointer, offsets);
     } else {
-        return builder.CreateInBoundsGEP(pointer, offsets);
+        return builder.CreateGEP(pointer, offsets);
     }
 }
 

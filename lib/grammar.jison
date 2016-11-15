@@ -36,7 +36,8 @@ hex 0x[0-9A-Fa-f]+
 {ws}+                                      { return null; }
 "\\"{ws}*{nl}                              { return null; }
 
-"`"[^\n\r]*        		                   { return null; }
+"`"[^\n\r]+{nl}       		               { return null; }
+"`"{nl}       		                       { return null; }
 "====="[=]+{nl}(.*?){nl}"====="[=]+{nl}    { return null; }
 "-----"[-]+{nl}                            { return null; }
 

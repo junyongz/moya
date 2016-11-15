@@ -1,0 +1,6 @@
+
+C"char* resizeBuffer(void*, int, int)"
+
++ resize\T(items:T, size:Int32, oldSize, newSize):T {
+    = resizeBuffer(items, size * oldSize, size * newSize) as T
+}

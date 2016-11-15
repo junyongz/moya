@@ -1,19 +1,57 @@
 
-C"MoyaList* MoyaListCreate(int size)"
-C"void MoyaListAdd(MoyaList*, MoyaObject*)"
-C"MoyaObject* MoyaListGet(MoyaList*, int)"
+> moya
 
 + List\T {
-    - internal = MoyaCreateList()
-    
-    + List\T() {
+    + length = 0
+    - capacity = 30
+    - items = T[30]
+
+    + This() {
     }
     
-    + get(index:Int32):T {
-        = MoyaListGet(internal, index)
+    ------------------------------------------------------------------------------------------------
+        
+    - grow(increment=30) {
+        oldSize = capacity
+        capacity = capacity + increment
+        items = resize(items, T, oldSize, capacity)
+    }
+    
+    - normalizeIndex(index) {
+        if index < 0 {
+            = length + index
+        } else {
+            = index
+        }
+    }
+    
+    ------------------------------------------------------------------------------------------------
+    
+    + add(item:T) {
+        if (length == capacity) {
+            grow()
+        }
+        
+        items[length] = item
+        length = length + 1
     }
 
-    + add(item:T) {
-        MoyaListAdd(internal, item)
+    + set(index:Int32, item:T) {
+        if (index >= capacity) {
+            grow(index)
+            length = index + 1
+        }
+        
+        items[index] = item
+    }
+
+    + get(index:Int32):T {
+        index = normalizeIndex(index)
+        if index < length {
+            = items[index]
+        } else {
+            = items[index]
+            `throw "List index %index out of range"
+        }
     }
 }

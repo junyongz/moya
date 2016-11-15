@@ -55,5 +55,21 @@ doubleToString(double num) {
 extern "C" char*
 newObject(int size) {
     char* buf = (char*)malloc(size);
+    memset(buf, 0, size);
+    return buf;
+}
+
+extern "C" char*
+newBuffer(int itemSize, int count) {
+    size_t size = count * itemSize;
+    char* buf = (char*)malloc(size);
+    memset(buf, 0, size);
+    return buf;
+}
+
+extern "C" char*
+resizeBuffer(char* buf, int oldSize, int newSize) {
+    buf = (char*)realloc(buf, newSize);
+    memset(buf + oldSize, 0, newSize - oldSize);
     return buf;
 }

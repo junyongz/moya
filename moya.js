@@ -16,12 +16,12 @@ var helpDocs =
 "    --dump         a path to write probes to\n";
 
 
-var compiler = new Compiler();
+var compiler = new Compiler(argv.debug);
 
 if (argv.c) {
-    compiler.compileProgram('__source__', null, argv.c, argv.debug);
+    compiler.compileProgram('__source__', null, argv.c);
 } else if (argv.m) {
-    compiler.compileProgram(argv.m, null, null, argv.debug);
+    compiler.compileProgram(argv.m, null, null);
 } else {
-    compiler.compileProgram(null, argv._[0], null, argv.debug);
+    compiler.compileProgram(null, argv._[0], null);
 }
