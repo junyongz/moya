@@ -1,4 +1,4 @@
-#include <cmath>
+
 #include <nan.h>
 
 #include "MJCompiler.h"

@@ -73,3 +73,8 @@ resizeBuffer(char* buf, int oldSize, int newSize) {
     memset(buf + oldSize, 0, newSize - oldSize);
     return buf;
 }
+
+extern "C" double
+moyaModf64(double n, double* rem) {
+    return modf(n, rem);
+}

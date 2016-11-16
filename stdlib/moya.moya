@@ -4,3 +4,8 @@ C"char* resizeBuffer(void*, int, int)"
 + resize\T(items:T, size:Int32, oldSize, newSize):T {
     = resizeBuffer(items, size * oldSize, size * newSize) as T
 }
+
+----------------------------------------------------------------------------------------------------
+
+` XXXjoe For when I support type constraints
+` + Number = Int1 | Int8 | Int16 | Int32 | Int64 | Float32 | Float64
