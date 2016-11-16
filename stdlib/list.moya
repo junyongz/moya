@@ -17,7 +17,7 @@
         items = resize(items, T, oldSize, capacity)
     }
     
-    - normalizeIndex(index) {
+    - normalizeIndex(index:Int32):Int32 {
         if index < 0 {
             = length + index
         } else {
