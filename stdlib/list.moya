@@ -13,7 +13,7 @@
         
     - grow(increment=30) {
         oldSize = capacity
-        capacity = capacity + increment
+        capacity += increment
         items = resize(items, T, oldSize, capacity)
     }
     
