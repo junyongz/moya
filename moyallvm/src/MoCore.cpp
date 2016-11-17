@@ -9,6 +9,16 @@
 
 // *************************************************************************************************
 
+static char*
+copyString(const char* nbuf) {
+    size_t l = strlen(nbuf);
+    char* buf = (char*)malloc(l+1);
+    strcpy(buf, nbuf);
+    return buf;
+}
+
+// *************************************************************************************************
+
 extern "C" void
 printString(const char* value) {
     printf("%s\n", value);
@@ -29,6 +39,22 @@ concatString(const char* left, const char* right) {
     return buf;
 }
 
+extern "C" const char*
+boolToString(bool num) {
+    if (num) {
+        return copyString("true");
+    } else {
+        return copyString("false");
+    }
+}
+
+extern "C" char*
+charToString(char c) {
+    char nbuf[2];
+    snprintf(nbuf, 2, "%c", c);
+    return copyString(nbuf);
+}
+
 extern "C" char*
 intToString(long long num) {
     char nbuf[128];
@@ -39,7 +65,6 @@ intToString(long long num) {
     strcpy(buf, nbuf);
     return buf;
 }
-
 
 extern "C" char*
 doubleToString(double num) {
