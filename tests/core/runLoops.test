@@ -2,7 +2,7 @@
 
 + main() {
     a = 3
-    while (a > 1) {
+    while a > 1 {
         -- a
         a = a - 1
     }

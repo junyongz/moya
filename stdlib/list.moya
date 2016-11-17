@@ -27,12 +27,27 @@
     
     ------------------------------------------------------------------------------------------------
 
+    + (!this) {
+        = length == 0
+    }
+    
     + ([index:Int32]):T {
-        = get(index)
+        index = normalizeIndex(index)
+        if index < length {
+            = items[index]
+        } else {
+            = items[index]
+            `throw "List index %index out of range"
+        }
     }
     
     + ([index:Int32] = item:T) {
-        set(index, item)
+        if (index >= capacity) {
+            grow(index)
+            length = index + 1
+        }
+        
+        items[index] = item
     }
     
     ------------------------------------------------------------------------------------------------
@@ -44,24 +59,5 @@
         
         items[length] = item
         length = length + 1
-    }
-
-    + set(index:Int32, item:T) {
-        if (index >= capacity) {
-            grow(index)
-            length = index + 1
-        }
-        
-        items[index] = item
-    }
-
-    + get(index:Int32):T {
-        index = normalizeIndex(index)
-        if index < length {
-            = items[index]
-        } else {
-            = items[index]
-            `throw "List index %index out of range"
-        }
     }
 }
