@@ -5,7 +5,7 @@
     + b = 99
 }
 
-+ main() {
+do {
     x = Thing()
     -- x.b
     x.b = 100
@@ -24,7 +24,7 @@
     + b = 42
 }
 
-+ main() {
+do {
     x = Thing()
     -- x.a
 }
@@ -40,7 +40,7 @@
     + b = a + 1
 }
 
-+ main() {
+do {
     x = Thing()
     -- x.b
 }
@@ -57,7 +57,7 @@
     + b = a
 }
 
-+ main() {
+do {
     x = Thing()
     -- x.b
 }
@@ -74,7 +74,7 @@ Exception: Circular reference to "a"
 + Thing {
 }
 
-+ main() {
+do {
     x = Thing()
     -- x.c
 }
@@ -91,7 +91,7 @@ Exception: Property "c" not found
 + Thing {
 }
 
-+ main() {
+do {
     x = Thing()
     x.c = 1
 }
@@ -105,7 +105,7 @@ Exception: Property "c" not found
 
 ----------------------------------------------------------------------------------------------------
 
-+ main() {
+do {
     x = 1
     -- x.c
 }
@@ -119,7 +119,7 @@ Exception: Property "c" not found
 
 ----------------------------------------------------------------------------------------------------
 
-+ main() {
+do {
     x = 1
     x.c = 1
 }
@@ -137,7 +137,7 @@ Exception: Property "c" not found
     + a:T1 = 1.5
 }
 
-+ main() {
+do {
     t1 = Thing\Double()
     -- t1.a
     t2 = Thing\Int32()
@@ -157,7 +157,7 @@ Exception: Property "c" not found
     + b:T2 = 1.5
 }
 
-+ main() {
+do {
     t = Foo\Double\Int32()
     -- t.a
     -- t.b
@@ -179,7 +179,7 @@ Exception: Property "c" not found
     -- x
 }
 
-+ main() {
+do {
     t1 = Thing\Double()
     foo(t1)
     t2 = Thing\Int32()
@@ -211,7 +211,7 @@ Exception: Property "c" not found
     -- x
 }
 
-+ main() {
+do {
     t = Foo\(List\Double)()
     foo(t)
 }
@@ -230,7 +230,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing(42)
     -- thing.a
 }
@@ -254,7 +254,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing(42, 1)
     -- thing.a
 }
@@ -274,7 +274,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing1 = Thing(42.5)
     -- thing1.a
     thing2 = Thing(42)
@@ -297,7 +297,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing(8)
     -- thing.a
 }
@@ -321,7 +321,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing\Double()
     -- thing.a
 }
@@ -340,7 +340,7 @@ Exception: Property "c" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing.a
 }
@@ -362,7 +362,7 @@ Exception: Function "Thing" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing\Int32()
     -- thing.a
 }
@@ -381,7 +381,7 @@ Exception: Function "Thing" not found
     }
 }
 
-+ main() {
+do {
     thing1 = Thing()
     -- thing1.a
     thing2 = Thing(5.5)
@@ -399,7 +399,7 @@ Exception: Function "Thing" not found
     + a = 0
 }
 
-+ main() {
+do {
     thing = Thing()
     -- "%thing"
 }
@@ -418,7 +418,7 @@ __source__:Thing
     + bling = Bling()
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing.bling.a
 }
@@ -441,7 +441,7 @@ __source__:Thing
     }
 }
 
-+ main() {
+do {
     t = Thing()
     -- t.a
     t = Thing(42)
@@ -464,7 +464,7 @@ __source__:Thing
     + bling:T = T()
 }
 
-+ main() {
+do {
     thing = Thing\Bling()
     -- thing.bling.a
 }
@@ -484,7 +484,7 @@ __source__:Thing
     + bling = T()
 }
 
-+ main() {
+do {
     thing = Thing\Bling()
     -- thing.bling.a
 }
@@ -503,7 +503,7 @@ __source__:Thing
     + bling = T\Double()
 }
 
-+ main() {
+do {
     thing = Thing\Bling()
     -- thing.bling.a
 }
@@ -522,7 +522,7 @@ __source__:Thing
     + bling = T\G()
 }
 
-+ main() {
+do {
     thing = Thing\Bling\Double()
     -- thing.bling.a
 }
@@ -542,7 +542,7 @@ __source__:Thing
     -- x.a
 }
 
-+ main() {
+do {
     thing = Bling\Double()
     -- thing.a
     foo(thing)
@@ -564,7 +564,7 @@ __source__:Thing
     -- x.a
 }
 
-+ main() {
+do {
     thing = Bling\Double()
     -- thing.a
     foo(thing)
@@ -581,7 +581,7 @@ __source__:Thing
     a:Bling = 0
 }
 
-+ main() {
+do {
     foo()
 }
 
@@ -598,7 +598,7 @@ Exception: Type not found
     a:Bling\T = 0
 }
 
-+ main() {
+do {
     foo()
 }
 
@@ -611,7 +611,7 @@ Exception: Type not found
 
 ----------------------------------------------------------------------------------------------------
 
-+ main() {
+do {
     a = Bling\T()
 }
 
@@ -629,7 +629,7 @@ Exception: Type not found
     + a = 10
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.a += 1
     -- thing.a
@@ -650,7 +650,7 @@ Exception: Type not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.add(1)
     -- thing.a
@@ -670,7 +670,7 @@ Exception: Type not found
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(20)
     -- a == b

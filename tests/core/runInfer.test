@@ -5,7 +5,7 @@
     = a
 }
 
-+ main() {
+do {
     -- foo(1)
     -- foo(1.5)
 }
@@ -30,7 +30,7 @@
     + a:T = 0
 }
 
-+ main() {
+do {
     thing = bar()
     -- foo(thing)
 }
@@ -49,7 +49,7 @@
     }
 }
 
-+ main() {
+do {
     -- foo(2)
     -- foo(0)
 }
@@ -67,7 +67,7 @@
     }
 }
 
-+ main() {
+do {
     -- foo(2)
 }
 
@@ -88,7 +88,7 @@ Exception: Return required
     }
 }
 
-+ main() {
+do {
     -- foo(2)
 }
 
@@ -109,7 +109,7 @@ Exception: Return types don't match
     }
 }
 
-+ main() {
+do {
     -- foo(2)
 }
 
@@ -128,7 +128,7 @@ Exception: Return types don't match
     = 2
 }
 
-+ main() {
+do {
     -- foo(2)
     -- foo(0)
 }
@@ -147,7 +147,7 @@ Exception: Return types don't match
     }
 }
 
-+ main() {
+do {
     -- foo(2)
     -- foo(0)
 }

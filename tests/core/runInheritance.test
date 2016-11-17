@@ -7,7 +7,7 @@
 + Bar: Foo {
 }
 
-+ main() {
+do {
     bar = Bar()
     thing:Foo = bar
     -- thing.a
@@ -27,7 +27,7 @@
     + b = 99
 }
 
-+ main() {
+do {
     bar = Bar()
     -- bar.b
     -- bar.a
@@ -53,7 +53,7 @@
     }
 }
 
-+ main() {
+do {
     bar = Bar()
     bar.bar()
 }
@@ -82,7 +82,7 @@
     }
 }
 
-+ main() {
+do {
     bar = Bar()
     bar.bar()
     bar.foo()
@@ -117,7 +117,7 @@ Foo.a = 42
     thing.foo()
 }
 
-+ main() {
+do {
     bar = Bar()
     act(bar)
 }
@@ -144,7 +144,7 @@ Foo.a = 42
     foo.f1()
 }
 
-+ main() {
+do {
     bar = Bar()
     bar.f1()
 }
@@ -167,7 +167,7 @@ Bar 1
     }
 }
 
-+ main() {
+do {
     bar = Bar()
     
     `Downcast still calls method on subclass
@@ -197,7 +197,7 @@ Bar 1
     }
 }
 
-+ main() {
+do {
     bar = Bar()
     
     `Downcast still calls method on subclass
@@ -227,7 +227,7 @@ Foo 2
     foo.f1()
 }
 
-+ main() {
+do {
     bar = Bar()
     
     `Downcast in argument still calls method on subclass
@@ -253,7 +253,7 @@ Bar 1
     }
 }
 
-+ main() {
+do {
     bar = Bar()
     
     `Downcast still calls method on subclass

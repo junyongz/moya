@@ -15,7 +15,7 @@ Binary operators
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing + 1
     -- thing + thing
@@ -39,7 +39,7 @@ Incremental assignment operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing += 1
     -- thing.a
@@ -64,7 +64,7 @@ Incremental assignment operators.
     + member = Member()
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.member += 1
     -- thing.member.a
@@ -87,7 +87,7 @@ Concat operator
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- "%thing you"
 }
@@ -113,7 +113,7 @@ Comparison operators.
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(20)
     -- a == b
@@ -139,7 +139,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(10)
     -- a == b
@@ -166,7 +166,7 @@ false
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(10)
     -- a == b
@@ -192,7 +192,7 @@ false
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(15)
     -- a > b
@@ -212,7 +212,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing()
     -- a > a
 }
@@ -236,7 +236,7 @@ Exception: Function returned non-boolean type
     }
 }
 
-+ main() {
+do {
     a = Thing()
     b = Thing()
     -- a is in a
@@ -268,7 +268,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing(10)
     b = Thing(10)
     -- a is in b
@@ -288,7 +288,7 @@ false
     }
 }
 
-+ main() {
+do {
     a = Thing()
     b = Thing()
     -- a not in b
@@ -313,7 +313,7 @@ Prefix operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- !thing
 }
@@ -337,7 +337,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing(1)
     b = Thing(11)
     -- a & true
@@ -368,7 +368,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing(1)
     b = Thing(11)
     -- a | false
@@ -399,7 +399,7 @@ true
     }
 }
 
-+ main() {
+do {
     a = Thing(1)
     b = Thing(11)
     if (a) {
@@ -430,7 +430,7 @@ oh
     }
 }
 
-+ main() {
+do {
     a = Thing(1)
     b = Thing(11)
     -- if a -> "hi a" else "bye a"
@@ -453,7 +453,7 @@ hi b
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     while (thing) {
         -- thing.a
@@ -476,7 +476,7 @@ hi b
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- !thing
 }
@@ -484,7 +484,7 @@ hi b
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Operator must return Bool
-<no file>, line 9
+<no file>, line 10
         -- !thing
            ^
 
@@ -500,7 +500,7 @@ Exception: Operator must return Bool
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     nthing = -thing
     -- nthing.a
@@ -518,7 +518,7 @@ Exception: Operator must return Bool
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- in thing
 }
@@ -538,7 +538,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing[10]
 }
@@ -557,7 +557,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing[10] = 5
     -- thing.a
@@ -577,7 +577,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -= thing[1]
     -- thing.a
@@ -598,7 +598,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing[10 to 100 by 1]
 }
@@ -615,7 +615,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing[10 to 100]
 }
@@ -634,7 +634,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing[10 to 100 by 1] = 5
     -- thing.a
@@ -654,7 +654,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing[10 to 100] = 5
     -- thing.a
@@ -674,7 +674,7 @@ Index operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -= thing[10 to 100 by 1]
     -- thing.a
@@ -695,7 +695,7 @@ Lookup operators.
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing.["foo"]
 }
@@ -714,7 +714,7 @@ found foo
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.["foo"] = "bar"
     -- thing.a
@@ -734,7 +734,7 @@ got foo = bar
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -= thing.["foo"]
     -- thing.a

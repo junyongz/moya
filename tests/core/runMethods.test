@@ -10,7 +10,7 @@
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo(5)
     thing.bar(5)
@@ -34,7 +34,7 @@ bar5
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     -- thing.foo()
 }
@@ -57,7 +57,7 @@ bar5
     = thing.foo()
 }
 
-+ main() {
+do {
     -- plop()
 }
 
@@ -70,7 +70,7 @@ bar5
 + Thing {
 }
 
-+ main() {
+do {
     thing = Thing()
     = thing.foo()
 }
@@ -92,7 +92,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -111,7 +111,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -134,7 +134,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -157,7 +157,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -180,7 +180,7 @@ Exception: Function "foo" not found
     + bling = Bling()
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.bling.foo()
 }
@@ -206,7 +206,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -233,7 +233,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo()
 }
@@ -252,7 +252,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing()
     thing.foo(42.5)
 }
@@ -270,7 +270,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing\Double()
     thing.foo(5, 42.5)
 }
@@ -288,7 +288,7 @@ Exception: Function "foo" not found
     }
 }
 
-+ main() {
+do {
     thing = Thing\Double()
     thing.foo(42.5)
 }

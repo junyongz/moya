@@ -2,7 +2,7 @@
 
 > foo
 
-+ main() {
+do {
     
 }
 
@@ -17,7 +17,7 @@ Exception: File not found
 
 > lib/foo
 
-+ main() {
+do {
     -- foo()
 }
 
@@ -36,7 +36,7 @@ Exception: File not found
 
 > lib/foo
 
-+ main() {
+do {
     -- foo()
 }
 
@@ -58,7 +58,7 @@ Exception: Function "foo" not found
 
 > lib/foo
 
-+ main() {
+do {
     -- foo()
 }
 
@@ -81,7 +81,7 @@ Exception: Function "foo" not found
 
 > lib/foo, lib/foo/bar
 
-+ main() {
+do {
     -- foo()
     -- bar()
 }
@@ -113,7 +113,7 @@ Exception: Function "foo" not found
     = 1
 }
 
-+ main() {
+do {
     -- foo()
 }
 

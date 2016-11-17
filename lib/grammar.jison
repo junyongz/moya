@@ -318,6 +318,9 @@ declarationBlock:
         { $$ = T.parseProperty(@1, $1, $2, $4, $6); }
     | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight WHERE blockOrRight
         { $$ = T.parseProperty(@1, $1, $2, $4, $6, $8); }
+    
+    | DO block
+        { $$ = T.parseFuncBlock(@1, T.PrivateAccess, T.parseFuncDecl(@1, T.parseId(@1, '@main')), $2); }
     ;
     
 blockOrRight:

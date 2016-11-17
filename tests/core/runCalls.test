@@ -4,7 +4,7 @@
     = i + 2
 }
 
-+ main() {
+do {
     x = 1
     -- foo(x)
 }
@@ -19,7 +19,7 @@
     = b + 2.5
 }
 
-+ main() {
+do {
     -- bar(1)
     -- bar(1.0)
 }
@@ -36,7 +36,7 @@
     = a
 }
 
-+ main() {
+do {
     -- bar(1)
     -- bar(1.0)
 }
@@ -48,7 +48,7 @@
 
 ----------------------------------------------------------------------------------------------------
 
-+ main() {
+do {
     foo()
 }
 
@@ -61,7 +61,7 @@ Exception: Function "foo" not found
 
 ----------------------------------------------------------------------------------------------------
 
-+ main() {
+do {
     -- foo
 }
 
@@ -79,7 +79,7 @@ Exception: "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24, 26)
 }
@@ -98,7 +98,7 @@ Exception: "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24, 26)
 }
@@ -117,7 +117,7 @@ Exception: "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(1, 2)
 }
 
@@ -132,7 +132,7 @@ Exception: "foo" not found
     -- a
 }
 
-+ main() {
+do {
     foo(24)
 }
 
@@ -149,7 +149,7 @@ Exception: Function "foo" not found
     -- a + b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24.5)
 }
@@ -170,7 +170,7 @@ Exception: Function "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24, 26)
 }
@@ -193,7 +193,7 @@ Exception: Function "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24, 26)
 }
@@ -216,7 +216,7 @@ Exception: Function "foo" not found
     -- b
 }
 
-+ main() {
+do {
     foo(24)
     foo(24.5)
 }
@@ -234,7 +234,7 @@ Exception: Function "foo" not found
     -- a + b
 }
 
-+ main() {
+do {
     foo(24)
 }
 
@@ -251,7 +251,7 @@ Exception: Default value required
     -- a + b
 }
 
-+ main() {
+do {
     foo(24)
 }
 
@@ -269,7 +269,7 @@ Exception: Function "foo" not found
     x
 }
 
-+ main() {
+do {
     -- foo(2)
 }
 

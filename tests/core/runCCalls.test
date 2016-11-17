@@ -2,7 +2,7 @@
 
 C"void ctest1()"
 
-+ main() {
+do {
     ctest1()
 }
 
@@ -14,7 +14,7 @@ received!
 
 C"void ctest2a(int)"
 
-+ main() {
+do {
     ctest2a(42)
 }
 
@@ -26,7 +26,7 @@ received 42
 
 C"void ctest2a(int)"
 
-+ main() {
+do {
     ctest2a(true)
 }
 
@@ -38,7 +38,7 @@ received 1
 
 C"void ctest2a(int)"
 
-+ main() {
+do {
     ctest2a("shit")
 }
 
@@ -53,7 +53,7 @@ Exception: Function "ctest2a" not found
 
 C"void ctest2a(long)"
 
-+ main() {
+do {
     ctest2a(42)
 }
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,7 +64,7 @@ received 42
 
 C"void ctest2b(bool)"
 
-+ main() {
+do {
     ctest2b(true)
 }
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -75,7 +75,7 @@ received 1
 
 C"void ctest2c(double)"
 
-+ main() {
+do {
     ctest2c(42.1234)
 }
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -86,7 +86,7 @@ received 42.123400
 
 C"void ctest2d(long long)"
 
-+ main() {
+do {
     ctest2d(9223372036854775807i64)
 }
 
@@ -99,7 +99,7 @@ received 9223372036854775807
 
 C"void ctest2e(char*)"
 
-+ main() {
+do {
     ctest2e("foo")
 }
 
@@ -115,7 +115,7 @@ C"void ctest2f(FakeType*)"
     + a = 48
 }
 
-+ main() {
+do {
     thing = Thing()
     ctest2f(thing)
 }
@@ -128,7 +128,7 @@ received 48
 
 C"int ctest4a()"
 
-+ main() {
+do {
     -- ctest4a()
 }
 
@@ -139,7 +139,7 @@ C"int ctest4a()"
 ----------------------------------------------------------------------------------------------------
 
 C"long long ctest4b()"
-+ main() {
+do {
     -- ctest4b()
 }
 
@@ -151,7 +151,7 @@ C"long long ctest4b()"
 ----------------------------------------------------------------------------------------------------
 
 C"double ctest4c()"
-+ main() {
+do {
     -- ctest4c()
 }
 
@@ -162,7 +162,7 @@ C"double ctest4c()"
 ----------------------------------------------------------------------------------------------------
 
 C"const char* ctest4d()"
-+ main() {
+do {
     -- ctest4d()
 }
 
