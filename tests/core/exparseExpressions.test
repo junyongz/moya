@@ -40,7 +40,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="del">
+<UnaryExpression op="-=del">
     <Id name="a"/>
 </UnaryExpression>
 

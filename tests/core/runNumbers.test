@@ -203,7 +203,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Illegal type for negate operation
+Exception: Illegal type for operation
 <no file>, line 3
         -- -x
            ^

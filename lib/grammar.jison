@@ -139,6 +139,8 @@ hex 0x[0-9A-Fa-f]+
 "by"                { return 'BY'; }
 "where"             { return 'WHERE'; }
 
+"this"              { return 'THIS'; }
+
 {nl}{ws}+                           { return 'NEWLINE'; }
 {nl}                                { return 'NEWLINE'; }
 
@@ -244,7 +246,7 @@ hex 0x[0-9A-Fa-f]+
 %left ADD SUBTRACT STAR SLASH SLASH2 STAR2
 %left DOT DOT2 DOT3 EXCLAMATION QUESTION COMMA DASHDASH TILDE AMPERSAND PIPE PIPE2
 %left OPEN_OPERATOR OPEN_OPERATORQ CLOSE_OPERATOR OPERATOR OPERATORQ
-%left BACKSLASH BULLET TO THROUGH BY WHERE
+%left BACKSLASH BULLET TO THROUGH BY WHERE THIS
 %left LP LB LCB LCBP
 %left RP RB RCB RCBP
 %left CONST STRUCT
@@ -349,8 +351,75 @@ declFunc:
         { $$ = T.parseFuncDecl(@1, $1, null, null, null); }
     | declClassId LP declArgumentList RP
         { $$ = T.parseFuncDecl(@1, $1, $3); }
+
+    | LP operatorArgs RP
+        { $$ = T.parseFuncDecl(@1, null, $2, null, null); }
+    | LP operatorArgs RP AT identifier
+        { $$ = T.parseFuncDecl(@1, null, $2, null, $5); }
+    | LP operatorArgs RP COLON declTypeId
+        { $$ = T.parseFuncDecl(@1, null, $2, $5, null); }
+    | LP operatorArgs RP COLON declTypeId AT IDENTIFIER
+        { $$ = T.parseFuncDecl(@1, null, $2, $5, $7); }
     ;
 
+operatorArgs:
+    SUBTRACT THIS
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "-neg")); }
+    | EXCLAMATION THIS
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "!")); }
+    | IN THIS
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "in")); }
+
+    | THIS op declArgument
+        { $$ = T.parseFuncDecl(@1, T.parseId(@2, $2), T.parseSet(@3, $3)); }
+
+    | LB declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "[]"), T.parseSet(@2, $2)); }
+    | LB declArgument RB EQ declArgument
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "[]="), T.parseSet(@2, $2).append($5)); }
+    | SUBTRACT_EQ LB declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "-=[]"), T.parseSet(@3, $3)); }
+
+    | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "[to]"), T.parseSet(@2, $2).append($4).append($6)); }
+    | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB EQ declArgument
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "[to]="), T.parseSet(@2, $9).append($2).append($4).append($6)); }
+    | SUBTRACT_EQ LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "-=[to]"), T.parseSet(@3, $3).append($5).append($7)); }
+
+    | DOT LB declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, ".[]"), T.parseSet(@3, $3)); }
+    | DOT LB declArgument RB EQ declArgument
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, ".[]="), T.parseSet(@3, $3).append($6)); }
+    | SUBTRACT_EQ DOT LB declArgument RB
+        { $$ = T.parseFuncDecl(@1, T.parseId(@1, "-=.[]"), T.parseSet(@4, $4)); }
+    ;
+    
+op:
+    ADD { $$ = $1; }
+    | SUBTRACT { $$ = $1; }
+    | STAR { $$ = $1; }
+    | SLASH { $$ = $1; }
+    | SLASH2 { $$ = $1; }
+    | STAR2 { $$ = $1; }
+    | CONCAT { $$ = $1; }
+    | ADD_EQ { $$ = $1; }
+    | SUBTRACT_EQ { $$ = $1; }
+    | STAR_EQ { $$ = $1; }
+    | SLASH_EQ { $$ = $1; }
+    | SLASH2_EQ { $$ = $1; }
+    | STAR2_EQ { $$ = $1; }
+    | CONCAT_EQ { $$ = $1; }
+    | EQ2 { $$ = $1; }
+    | NEQ { $$ = $1; }
+    | GT { $$ = $1; }
+    | GTE { $$ = $1; }
+    | LT { $$ = $1; }
+    | LTE { $$ = $1; }
+    | ISIN { $$ = $1; }
+    | NOTIN { $$ = $1; }
+    ;
+    
 declClassId:
     UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
@@ -408,7 +477,7 @@ declArgumentPair:
         { $$ = T.parseTypeAssignment(@1, $1, $3); }
     ;
 
-declArgument:
+declArgumentNoDefault:
     declArgumentPair
         { $$ = T.parseArgDecl(@1, $1, null, false); }
     | BIDENTIFIER declArgumentPair
@@ -417,6 +486,10 @@ declArgument:
         { $$ = T.parseArgDecl(@1, null, $1, false); }
     | DOT3 declArgumentPair
         { $$ = T.parseArgDecl(@1, $2, null, true); }
+    ;
+
+declArgument:
+    declArgumentNoDefault
     | declArgument EQ simpleExpression
         { $$ = $1; $1.defaultValue = $3; }
     ;
@@ -993,6 +1066,8 @@ id:
         { $$ = T.parseId(@1, $1); }
     | UIDENTIFIER
         { $$ = T.parseTypeId(@1, $1); }
+    | THIS
+        { $$ = T.parseId(@1, 'this'); }
     | id BACKSLASH UIDENTIFIER
         { $$ = T.ensureTypeArguments(@1, $1); $$.append(T.parseTypeId(@3, $3)); }
     | id BACKSLASH LP id RP

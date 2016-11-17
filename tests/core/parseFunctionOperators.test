@@ -7,124 +7,509 @@ Functions can be declared for various operators.
 Prefix operators.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 + (!this) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <UnaryExpression op="!">
-        <Id name="this"/>
-    </UnaryExpression>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="!"/>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + (!this):T {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <Subtype>
-        <UnaryExpression op="!">
-            <Id name="this"/>
-        </UnaryExpression>
-        <TypeId name="T"/>
-    </Subtype>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="!"/>
+    <returns>
+        <TypeId id="T"/>
+    </returns>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (-this) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="-neg"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (in this) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="in"/>
+</FunctionDeclaration>
 
 ====================================================================================================
 Infix operators.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-+ (this + that) {
-    _
-}
++ (this + that)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <BinaryExpression op="+">
-        <Id name="this"/>
-        <Id name="that"/>
-    </BinaryExpression>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="+"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
-+ (this + that:T) {
-    _
-}
-
++ (this + that:T)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <BinaryExpression op="+">
-        <Id name="this"/>
-        <Subtype>
-            <Id name="that"/>
-            <TypeId name="T"/>
-        </Subtype>
-    </BinaryExpression>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="+"/>
+    <Argument name="that">
+        <TypeId id="T"/>
+    </Argument>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + (this + that):T
-    _
-
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <Subtype>
-        <BinaryExpression op="+">
-            <Id name="this"/>
-            <Id name="that"/>
-        </BinaryExpression>
-        <TypeId name="T"/>
-    </Subtype>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="+"/>
+    <Argument name="that"/>
+    <returns>
+        <TypeId id="T"/>
+    </returns>
+</FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + (this + that:T):T
-    _
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Declaration access="public">
-    <Subtype>
-        <BinaryExpression op="+">
-            <Id name="this"/>
-            <Subtype>
-                <Id name="that"/>
-                <TypeId name="T"/>
-            </Subtype>
-        </BinaryExpression>
-        <TypeId name="T"/>
-    </Subtype>
-    <Id name="null"/>
-</Declaration>
+<FunctionDeclaration access="public">
+    <Id name="+"/>
+    <Argument name="that">
+        <TypeId id="T"/>
+    </Argument>
+    <returns>
+        <TypeId id="T"/>
+    </returns>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this - that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="-"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this * that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="*"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this / that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="/"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this // that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="//"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this ** that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="**"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this ++ that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="++"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this += that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="+="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this -= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="-="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this *= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="*="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this /= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="/="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this //= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="//="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this **= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="**="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this ++= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="++="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this == that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="=="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this != that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="!="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this > that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name=">"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this >= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name=">="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this < that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="<"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this <= that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="<="/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (this is in that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="is in"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
+
+
+----------------------------------------------------------------------------------------------------
+
++ (this not in that)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="not in"/>
+    <Argument name="that"/>
+</FunctionDeclaration>
 
 ====================================================================================================
-Setters.
+Index Getters/Setters
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
-# Setter
 
-+ (bar = value) {
-    _
++ ([value]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]"/>
+    <Argument name="value"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([value:T]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]"/>
+    <Argument name="value">
+        <TypeId id="T"/>
+    </Argument>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([value:T]):T {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]"/>
+    <Argument name="value">
+        <TypeId id="T"/>
+    </Argument>
+    <returns>
+        <TypeId id="T"/>
+    </returns>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([index] = value) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]="/>
+    <Argument name="index"/>
+    <Argument name="value"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([index:T] = value:T) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]="/>
+    <Argument name="index">
+        <TypeId id="T"/>
+    </Argument>
+    <Argument name="value">
+        <TypeId id="T"/>
+    </Argument>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([index:T] = value:T):T {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[]="/>
+    <Argument name="index">
+        <TypeId id="T"/>
+    </Argument>
+    <Argument name="value">
+        <TypeId id="T"/>
+    </Argument>
+    <returns>
+        <TypeId id="T"/>
+    </returns>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (.[value]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name=".[]"/>
+    <Argument name="value"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (-= [value]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="-=[]"/>
+    <Argument name="value"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([a to b by c]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[to]"/>
+    <Argument name="a"/>
+    <Argument name="b"/>
+    <Argument name="c"/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ ([a to b by c=1]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="[to]"/>
+    <Argument name="a"/>
+    <Argument name="b"/>
+    <Argument name="c">
+        <Integer value="1"/>
+    </Argument>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+# Default values only allowed on "by" argument
+
++ ([a to b=1 by c=1]) {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Syntax error
+<no file>, line 1
+    + ([a to b=1 by c=1]) {
+             ^
+             
+====================================================================================================
+Getters.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
++ bar {
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -139,9 +524,43 @@ Setters.
 
 ----------------------------------------------------------------------------------------------------
 
-+ (bar = value) => {
-    _
++ bar:T {
 }
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Declaration access="public">
+    <AssignmentExpression op="=">
+        <Id name="bar"/>
+        <Function expression="true">
+            <head>
+                <Id name="value"/>
+            </head>
+            <Id name="null"/>
+        </Function>
+    </AssignmentExpression>
+</Declaration>
+
+====================================================================================================
+Setters.
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
++ (bar = value)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Declaration access="public">
+    <AssignmentExpression op="=">
+        <Id name="bar"/>
+        <Id name="value"/>
+    </AssignmentExpression>
+    <Id name="null"/>
+</Declaration>
+
+----------------------------------------------------------------------------------------------------
+
++ (bar = value)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

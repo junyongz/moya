@@ -81,7 +81,7 @@ a //= 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<AssignmentExpression op="%=">
+<AssignmentExpression op="//=">
     <Id name="a"/>
     <Integer value="1"/>
 </AssignmentExpression>
