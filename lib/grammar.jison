@@ -596,6 +596,7 @@ right:
 
 rightBlock:
     whereExpression
+    | block
     ;
 
 rightList:
