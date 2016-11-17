@@ -346,19 +346,19 @@ MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
 
 llvm::Value*
 MLVCompiler::CompileEquals(llvm::Value* lhs, llvm::Value* rhs) {
-    if (lhs->getType()->isIntegerTy()) {
-        return builder.CreateICmpEQ(lhs, rhs);
-    } else {
+    if (lhs->getType()->isFloatTy() || lhs->getType()->isDoubleTy()) {
         return builder.CreateFCmpUEQ(lhs, rhs);
+    } else {
+        return builder.CreateICmpEQ(lhs, rhs);
     }
 }
 
 llvm::Value*
 MLVCompiler::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
-    if (lhs->getType()->isIntegerTy()) {
-        return builder.CreateICmpNE(lhs, rhs);
-    } else {
+    if (lhs->getType()->isFloatTy() || lhs->getType()->isDoubleTy()) {
         return builder.CreateFCmpUNE(lhs, rhs);
+    } else {
+        return builder.CreateICmpNE(lhs, rhs);
     }
 }
 
