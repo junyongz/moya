@@ -41,6 +41,9 @@ public:
     void EraseBlock(llvm::Value* block);
 
     llvm::Value* CreateBlock(const std::string& name, llvm::Function* func);
+
+    llvm::Type* GetFunctionSignatureType(llvm::Type* returnType,
+                                         const std::vector<llvm::Type*>& argTypes);
         
     llvm::Value* DeclareExternalFunction(std::string& name, llvm::Type* returnType,
                                  const std::vector<llvm::Type*>& argTypes);

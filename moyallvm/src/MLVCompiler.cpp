@@ -237,6 +237,11 @@ MLVCompiler::EndModule() {
                                std::move(Resolver));
 }
 
+Type*
+MLVCompiler::GetFunctionSignatureType(Type* returnType, const std::vector<Type*>& argTypes) {
+    return FunctionType::get(returnType, argTypes, false);
+}
+
 Value*
 MLVCompiler::DeclareExternalFunction(std::string& name, Type* returnType,
                                      const std::vector<Type*>& argTypes) {

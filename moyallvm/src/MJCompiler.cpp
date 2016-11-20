@@ -28,6 +28,7 @@ void MJCompiler::Init(Local<Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
   Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
+  Nan::SetPrototypeMethod(tpl, "getFunctionSignatureType", GetFunctionSignatureType);
   Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
   Nan::SetPrototypeMethod(tpl, "getTypeSize", GetTypeSize);
   Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
@@ -90,6 +91,22 @@ void MJCompiler::GetType(const Nan::FunctionCallbackInfo<Value>& info) {
     llvm::Type* retType = bridge->compiler->GetType(typeCode);
 
     info.GetReturnValue().Set(MJType::Create(retType));
+}
+
+void MJCompiler::GetFunctionSignatureType(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    llvm::Type* retType = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]))->GetType();
+    
+    std::vector<llvm::Type*> argTypes;
+    Handle<Array> array1 = Handle<Array>::Cast(info[1]);
+    for (unsigned int i = 0; i < array1->Length(); i++) {
+        llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(array1->Get(i)))->GetType();
+        argTypes.push_back(type);
+    }
+
+    llvm::Type* funcType = bridge->compiler->GetFunctionSignatureType(retType, argTypes);
+    info.GetReturnValue().Set(MJType::Create(funcType));
 }
 
 void MJCompiler::GetFunctionType(const Nan::FunctionCallbackInfo<Value>& info) {

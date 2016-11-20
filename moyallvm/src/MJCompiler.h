@@ -18,6 +18,7 @@ private:
 
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetFunctionSignatureType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateStruct(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetTypeSize(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetStructBody(const Nan::FunctionCallbackInfo<v8::Value>& info);
