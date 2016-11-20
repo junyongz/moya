@@ -471,7 +471,7 @@ do {
 
 + Thing {
     + a = 0
-    + (!this) {
+    + (!this):Int32 {
         = 2
     }
 }
@@ -483,10 +483,66 @@ do {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Operator must return Bool
-<no file>, line 10
-        -- !thing
-           ^
+Exception: Comparison operators must return bool
+<no file>, line 3
+        + (!this):Int32 {
+        ^^^^^^^^^^^^^^^^^
+
+----------------------------------------------------------------------------------------------------
+# Auto-convert return of number in comparison op to a boolean value
+
++ Thing {
+    + a = 0
+    + (!this) {
+        = a
+    }
+}
+
+do {
+    thing = Thing()
+    -- !thing
+    thing.a = 5
+    -- !thing
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+false
+true
+
+----------------------------------------------------------------------------------------------------
+# Auto-convert return of an object in comparison op to a boolean value
+
++ State {
+    + truth = false
+    
+    + This(t) {
+        truth = t
+    }
+    
+    + (!this) {
+        = !truth
+    }
+}
+
++ Thing {
+    + state = State(true)
+    + (!this) {
+        = state
+    }
+}
+
+do {
+    thing = Thing()
+    -- !thing
+    thing.state = State(false)
+    -- !thing
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+true
+false
 
 ----------------------------------------------------------------------------------------------------
 
