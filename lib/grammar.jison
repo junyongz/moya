@@ -1,6 +1,7 @@
 %{
 
 var T = require('./syntax');
+var ops = require('./operator');
     
 %}
 
@@ -907,13 +908,13 @@ binaryExpression:
 concatExpression:
     logicalOrExpression
     | concatExpression CONCATSTR logicalOrExpression
-        { $$ = T.parseBinary(@2, T.ConcatStringOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Concat, $1, $3); }
     ;
 
 logicalOrExpression:
     logicalAndExpression
     | logicalOrExpression PIPE logicalAndExpression
-        { $$ = T.parseBinary(@2, T.OrOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Or, $1, $3); }
     | logicalOrExpression TO logicalAndExpression
         { $$ = T.parseRange(@$, $1, $3, null, false); }
     | logicalOrExpression TO logicalAndExpression BY logicalAndExpression
@@ -927,75 +928,75 @@ logicalOrExpression:
 logicalAndExpression:
     equalityExpression
     | logicalAndExpression AMPERSAND equalityExpression
-        { $$ = T.parseBinary(@2, T.AndOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.And, $1, $3); }
     ;
 
 equalityExpression:
     relationalExpression
     | equalityExpression EQ2 relationalExpression
-        { $$ = T.parseBinary(@2, T.EqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Equals, $1, $3); }
     | equalityExpression NEQ relationalExpression
-        { $$ = T.parseBinary(@2, T.NotEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.NotEquals, $1, $3); }
     ;
 
 relationalExpression:
     addExpression
     | relationalExpression LT addExpression
-        { $$ = T.parseBinary(@2, T.LessThanOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.LessThan, $1, $3); }
     | relationalExpression GT addExpression
-        { $$ = T.parseBinary(@2, T.GreaterThanOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.GreaterThan, $1, $3); }
     | relationalExpression LTE addExpression
-        { $$ = T.parseBinary(@2, T.LessThanEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.LessThanEquals, $1, $3); }
     | relationalExpression GTE addExpression
-        { $$ = T.parseBinary(@2, T.GreaterThanEqualsOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.GreaterThanEquals, $1, $3); }
     | relationalExpression ISNOT addExpression
-        { $$ = T.parseBinary(@2, T.IsNotOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.IsNot, $1, $3); }
     | relationalExpression ISIN addExpression
-        { $$ = T.parseBinary(@2, T.IsInOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.IsIn, $1, $3); }
     | relationalExpression NOTIN addExpression
-        { $$ = T.parseBinary(@2, T.NotInOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.NotIn, $1, $3); }
     ;
 
 addExpression:
     multiplyExpression
     | addExpression ADD multiplyExpression
-        { $$ = T.parseBinary(@2, T.AddOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Add, $1, $3); }
     | addExpression SUBTRACT multiplyExpression
-        { $$ = T.parseBinary(@2, T.SubtractOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Subtract, $1, $3); }
     ;
 
 multiplyExpression:
     unaryExpression
     | multiplyExpression STAR unaryExpression
-        { $$ = T.parseBinary(@2, T.MultiplyOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Multiply, $1, $3); }
     | multiplyExpression SLASH unaryExpression
-        { $$ = T.parseBinary(@2, T.DivideOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Divide, $1, $3); }
     | multiplyExpression SLASH2 unaryExpression
-        { $$ = T.parseBinary(@2, T.ModOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Mod, $1, $3); }
     | multiplyExpression STAR2 unaryExpression
-        { $$ = T.parseBinary(@2, T.PowOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Pow, $1, $3); }
     | multiplyExpression CONCAT unaryExpression
-        { $$ = T.parseBinary(@2, T.ConcatOp, $1, $3); }
+        { $$ = T.parseBinary(@2, ops.Concat, $1, $3); }
     ;
 
 unaryExpression:
     bindExpression
     | SUBTRACT_EQ unaryExpression
-        { $$ = T.parseUnary(@$, T.DeleteOp, $2); }
+        { $$ = T.parseUnary(@$, ops.Delete, $2); }
     | SUBTRACT unaryExpression
-        { $$ = T.parseUnary(@$, T.NegativeOp, $2); }
+        { $$ = T.parseUnary(@$, ops.Negative, $2); }
     | EXCLAMATION unaryExpression
-        { $$ = T.parseUnary(@$, T.NotOp, $2); }
+        { $$ = T.parseUnary(@$, ops.Not, $2); }
     | IN unaryExpression
-        { $$ = T.parseUnary(@$, T.InOp, $2); }
+        { $$ = T.parseUnary(@$, ops.In, $2); }
     ;
 
 bindExpression:
     callExpression
     | SEMICOLON bindList
-        { $$ = T.parseUnary(@$, T.BindOp, $2); }
+        { $$ = T.parseUnary(@$, ops.Bind, $2); }
     | SEMICOLON block
-        { $$ = T.parseUnary(@$, T.BindOp, $2); }
+        { $$ = T.parseUnary(@$, ops.Bind, $2); }
     ;
 
 bindList:
@@ -1018,14 +1019,14 @@ callExpression:
         { $$ = T.parseGet(@$, $1, $3); }
     
     | callExpression DOT LB right RB
-        { $$ = T.parseBinary(@$, T.LookupOp, $1, $4); }
+        { $$ = T.parseBinary(@$, ops.Lookup, $1, $4); }
     | callExpression DOT LB right PIPE2 right RB
-        { $$ = T.parseBinary(@$, T.LookupOp, $1, T.parseDefault(@4, $4, $6)); }
+        { $$ = T.parseBinary(@$, ops.Lookup, $1, T.parseDefault(@4, $4, $6)); }
     
     | callExpression LB right RB
-        { $$ = T.parseBinary(@$, T.IndexOp, $1, $3); }
+        { $$ = T.parseBinary(@$, ops.Index, $1, $3); }
     | callExpression LB right PIPE2 right RB
-        { $$ = T.parseBinary(@$, T.IndexOp, $1, T.parseDefault(@3, $3, $5)); }
+        { $$ = T.parseBinary(@$, ops.Index, $1, T.parseDefault(@3, $3, $5)); }
     ;
     
 basicExpression:
@@ -1120,39 +1121,39 @@ stringList:
     
 assignOp:
     EQ
-        { $$ = T.EqOp; }
+        { $$ = ops.Eq; }
     | LARROW2
-        { $$ = T.ReadOp; }
+        { $$ = ops.Read; }
     | ADD_EQ
-        { $$ = T.AddEqOp; }
+        { $$ = ops.AddEq; }
     | SUBTRACT_EQ
-        { $$ = T.SubtractEqOp; }
+        { $$ = ops.SubtractEq; }
     | STAR_EQ
-        { $$ = T.MultiplyEqOp; }
+        { $$ = ops.MultiplyEq; }
     | SLASH_EQ
-        { $$ = T.DivideEqOp; }
+        { $$ = ops.DivideEq; }
     | SLASH2_EQ
-        { $$ = T.ModEqOp; }
+        { $$ = ops.ModEq; }
     | STAR2_EQ
-        { $$ = T.PowEqOp; }
+        { $$ = ops.PowEq; }
     | CONCAT_EQ
-        { $$ = T.ConcatEqOp; }
+        { $$ = ops.ConcatEq; }
     ;
 
 channelOp:
     LARROW2
-        { $$ = T.ReadOp; }
+        { $$ = ops.Read; }
     | RARROW2
-        { $$ = T.WriteOp; }
+        { $$ = ops.Write; }
     | RARROW2MUL
-        { $$ = T.WriteAllOp; }
+        { $$ = ops.WriteAll; }
     ;
 
 writeOp:
     RARROW2
-        { $$ = T.WriteOp; }
+        { $$ = ops.Write; }
     | RARROW2MUL
-        { $$ = T.WriteAllOp; }
+        { $$ = ops.WriteAll; }
     ;
 
 funcOp:
@@ -1215,7 +1216,7 @@ mapTupleExpression:
 
 mapAssignmentExpression:
     simpleExpression EQ simpleExpression
-        { $$ = T.parseBinary(@$, T.EqOp, $1, $3); }
+        { $$ = T.parseBinary(@$, ops.Eq, $1, $3); }
     ;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
