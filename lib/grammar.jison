@@ -367,12 +367,14 @@ declFunc:
     ;
 
 operatorArgs:
-    SUBTRACT THIS
+    ADD THIS
+        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "+pos")); }
+    | SUBTRACT THIS
         { $$ = T.parseFuncDecl(@$, T.parseId(@1, "-neg")); }
     | EXCLAMATION THIS
         { $$ = T.parseFuncDecl(@$, T.parseId(@1, "!")); }
     | IN THIS
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "in")); }
+        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "in this")); }
 
     | THIS op declArgument
         { $$ = T.parseFuncDecl(@$, T.parseId(@2, $2), T.parseSet(@3, $3)); }

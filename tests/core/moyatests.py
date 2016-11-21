@@ -81,19 +81,19 @@ class ParseTests(MoyaTestFixture):
     order = 1
 
     def testParse(self, source, expected, mode="ast", **kwds):
-        return self.runTest(["--debug", mode], source, False, **kwds)
+        return self.runTest(["--debug", mode] if mode else [], source, False, **kwds)
 
 class ExparseTests(MoyaTestFixture):
     order = 1
 
     def testExparse(self, source, expected, mode="ast", **kwds):
-        return self.runTest(["--debug", mode], source, True, **kwds)
+        return self.runTest(["--debug", mode] if mode else [], source, True, **kwds)
 
 class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        return self.runTest(["--debug", mode], source, False, **kwds)
+        return self.runTest(["--debug", mode] if mode else [], source, False, **kwds)
 
 # **************************************************************************************************
 

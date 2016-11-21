@@ -4,7 +4,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="-">
+<UnaryExpression op="-neg">
     <Id name="a"/>
 </UnaryExpression>
 
@@ -14,7 +14,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="-">
+<UnaryExpression op="-neg">
     <Id name="a"/>
 </UnaryExpression>
 
