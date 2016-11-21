@@ -1,7 +1,10 @@
 %{
 
-var T = require('./syntax');
+var p = require('./parsing');
 var ops = require('./operator');
+var constants = require('./constants'),
+    PrivateAccess = constants.PrivateAccess,
+    PublicAccess = constants.PublicAccess;
     
 %}
 
@@ -268,7 +271,7 @@ lineEnding:
 
 declarationList:
     declaration
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | declarationList lineEnding declaration
         { $$ = $1; if ($3) $1.append($3); }
     | declarationList lineEnding
@@ -291,114 +294,117 @@ declaration:
 
 declarationBlock:
     accessMode declFunc
-        { $$ = T.parseFuncBlock(@$, $1, $2, null, null, false); }
+        { $$ = p.parseFuncBlock(@$, $1, $2, null, null, false); }
     | accessMode declFunc block
-        { $$ = T.parseFuncBlock(@$, $1, $2, $3, null, false); }
+        { $$ = p.parseFuncBlock(@$, $1, $2, $3, null, false); }
     | accessMode declFunc funcOp blockOrRight
-        { $$ = T.parseFuncBlock(@$, $1, $2, $4, null, $3); }
+        { $$ = p.parseFuncBlock(@$, $1, $2, $4, null, $3); }
 
     | accessMode declFunc block WHERE blockOrRight
-        { $$ = T.parseFuncBlock(@$, $1, $2, $3, $5, false); }
+        { $$ = p.parseFuncBlock(@$, $1, $2, $3, $5, false); }
     | accessMode declFunc funcOp blockOrRight WHERE blockOrRight
-        { $$ = T.parseFuncBlock(@$, $1, $2, $4, $6, $3); }
+        { $$ = p.parseFuncBlock(@$, $1, $2, $4, $6, $3); }
 
     | accessMode declClassId
-        { $$ = T.parseClass(@$, $1, $2, null, null); }
+        { $$ = p.parseClass(@$, $1, $2, null, null); }
     | accessMode declClassId COLON declTypeId
-        { $$ = T.parseClass(@$, $1, $2, $3, null); }
+        { $$ = p.parseClass(@$, $1, $2, $3, null); }
     | accessMode declClassId declarationSet
-        { $$ = T.parseClass(@$, $1, $2, null, $3); }
+        { $$ = p.parseClass(@$, $1, $2, null, $3); }
     | accessMode declClassId COLON declTypeId declarationSet
-        { $$ = T.parseClass(@$, $1, $2, $4, $5); }
+        { $$ = p.parseClass(@$, $1, $2, $4, $5); }
 
     | accessMode IDENTIFIER EQ blockOrRight
-        { $$ = T.parseProperty(@$, $1, $2, null, $4); }
+        { $$ = p.parseProperty(@$, $1, $2, null, $4); }
     | accessMode IDENTIFIER EQ blockOrRight WHERE blockOrRight
-        { $$ = T.parseProperty(@$, $1, $2, null, $4, $6); }
+        { $$ = p.parseProperty(@$, $1, $2, null, $4, $6); }
     | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight
-        { $$ = T.parseProperty(@$, $1, $2, $4, $6); }
+        { $$ = p.parseProperty(@$, $1, $2, $4, $6); }
     | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight WHERE blockOrRight
-        { $$ = T.parseProperty(@$, $1, $2, $4, $6, $8); }
+        { $$ = p.parseProperty(@$, $1, $2, $4, $6, $8); }
     
     | DO block
-        { $$ = T.parseFuncBlock(@$, T.PrivateAccess, T.parseFuncDecl(@$, T.parseId(@$, '@main')), $2); }
+        { $$ = p.parseFuncBlock(@$, PrivateAccess, p.parseFuncDecl(@$, p.parseId(@$, '@main')), $2); }
     ;
     
 blockOrRight:
     block
     | right
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     ;
 
 declFunc:
     declId
-        { $$ = T.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
     | declId LP RP
-        { $$ = T.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
     | declId LP RP AT IDENTIFIER
-        { $$ = T.parseFuncDecl(@$, $1, null, null, $5); }
+        { $$ = p.parseFuncDecl(@$, $1, null, null, $5); }
     | declId LP RP COLON declTypeId
-        { $$ = T.parseFuncDecl(@$, $1, null, $5, null); }
+        { $$ = p.parseFuncDecl(@$, $1, null, $5, null); }
     | declId LP RP COLON declTypeId AT IDENTIFIER
-        { $$ = T.parseFuncDecl(@$, $1, null, $5, $7); }
+        { $$ = p.parseFuncDecl(@$, $1, null, $5, $7); }
     
     | declId LP declArgumentList RP
-        { $$ = T.parseFuncDecl(@$, $1, $3); }
+        { $$ = p.parseFuncDecl(@$, $1, $3); }
     | declId LP declArgumentList RP AT IDENTIFIER
-        { $$ = T.parseFuncDecl(@$, $1, $3, null, $6); }
+        { $$ = p.parseFuncDecl(@$, $1, $3, null, $6); }
     | declId LP declArgumentList RP COLON declTypeId
-        { $$ = T.parseFuncDecl(@$, $1, $3, $6, null); }
+        { $$ = p.parseFuncDecl(@$, $1, $3, $6, null); }
     | declId LP declArgumentList RP COLON declTypeId AT IDENTIFIER
-        { $$ = T.parseFuncDecl(@$, $1, $3, $6, $8); }
+        { $$ = p.parseFuncDecl(@$, $1, $3, $6, $8); }
 
     | declClassId LP RP
-        { $$ = T.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
     | declClassId LP declArgumentList RP
-        { $$ = T.parseFuncDecl(@$, $1, $3); }
+        { $$ = p.parseFuncDecl(@$, $1, $3); }
 
     | LP operatorArgs RP
-        { $$ = T.parseFuncDecl(@$, null, $2, null, null); }
+        { $$ = p.parseFuncDecl(@$, null, $2, null, null); }
     | LP operatorArgs RP AT identifier
-        { $$ = T.parseFuncDecl(@$, null, $2, null, $5); }
+        { $$ = p.parseFuncDecl(@$, null, $2, null, $5); }
     | LP operatorArgs RP COLON declTypeId
-        { $$ = T.parseFuncDecl(@$, null, $2, $5, null); }
+        { $$ = p.parseFuncDecl(@$, null, $2, $5, null); }
     | LP operatorArgs RP COLON declTypeId AT IDENTIFIER
-        { $$ = T.parseFuncDecl(@$, null, $2, $5, $7); }
+        { $$ = p.parseFuncDecl(@$, null, $2, $5, $7); }
     ;
 
 operatorArgs:
     ADD THIS
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "+pos")); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "+pos")); }
     | SUBTRACT THIS
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "-neg")); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "-neg")); }
     | EXCLAMATION THIS
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "!")); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "!")); }
     | IN THIS
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "in this")); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "in this")); }
 
     | THIS op declArgument
-        { $$ = T.parseFuncDecl(@$, T.parseId(@2, $2), T.parseSet(@3, $3)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@2, $2), p.parseSet(@3, $3)); }
 
     | LB declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "[]"), T.parseSet(@2, $2)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Index.token), p.parseSet(@2, $2)); }
     | LB declArgument RB EQ declArgument
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "[]="), T.parseSet(@2, $2).append($5)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.IndexAssign.token),
+                               p.parseSet(@2, $2).append($5)); }
     | SUBTRACT_EQ LB declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "-=[]"), T.parseSet(@3, $3)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.IndexDelete.token), p.parseSet(@3, $3)); }
 
     | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "[to]"), T.parseSet(@2, $2).append($4).append($6)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Slice.token), p.parseSet(@2, $2).append($4).append($6)); }
     | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB EQ declArgument
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "[to]="), T.parseSet(@2, $9).append($2).append($4).append($6)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.SliceAssign.token),
+                               p.parseSet(@2, $9).append($2).append($4).append($6)); }
     | SUBTRACT_EQ LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "-=[to]"), T.parseSet(@3, $3).append($5).append($7)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.SliceDelete.token), p.parseSet(@3, $3).append($5).append($7)); }
 
     | DOT LB declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, ".[]"), T.parseSet(@3, $3)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Lookup.token), p.parseSet(@3, $3)); }
     | DOT LB declArgument RB EQ declArgument
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, ".[]="), T.parseSet(@3, $3).append($6)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.LookupAssign.token),
+                               p.parseSet(@3, $3).append($6)); }
     | SUBTRACT_EQ DOT LB declArgument RB
-        { $$ = T.parseFuncDecl(@$, T.parseId(@1, "-=.[]"), T.parseSet(@4, $4)); }
+        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.LookupDelete.token), p.parseSet(@4, $4)); }
     ;
     
 op:
@@ -428,36 +434,36 @@ op:
     
 declClassId:
     UIDENTIFIER
-        { $$ = T.parseTypeId(@$, $1); }
+        { $$ = p.parseTypeId(@$, $1); }
     | declClassId BACKSLASH UIDENTIFIER
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append(T.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
     ;
 
 declId:
     IDENTIFIER
-        { $$ = T.parseId(@$, $1); }
+        { $$ = p.parseId(@$, $1); }
     | declId BACKSLASH UIDENTIFIER
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append(T.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
     ;
 
 declTypeId:
     UIDENTIFIER
-        { $$ = T.parseTypeId(@$, $1); }
+        { $$ = p.parseTypeId(@$, $1); }
     | GT LP declTypeIdList RP COLON declTypeId
-        { $$ = T.parseTypeArguments(@$, T.parseTypeId(@$, 'Function')); $$.append($6); $$.appendList($3); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Function')); $$.append($6); $$.appendList($3); }
     | LT GT
-        { $$ = T.parseTypeArguments(@$, T.parseTypeId(@$, 'Channel')); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Channel')); }
     | LT declTypeId GT
-        { $$ = T.parseTypeArguments(@$, T.parseTypeId(@$, 'Channel')); $$.append($2); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Channel')); $$.append($2); }
     | LB declTypeId RB
-        { $$ = T.parseTypeArguments(@$, T.parseTypeId(@$, 'List')); $$.append($2); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'List')); $$.append($2); }
     | LCBP declTypeId EQ declTypeId RCBP
-        { $$ = T.parseTypeArguments(@$, T.parseTypeId(@$, 'Map')); $$.append($2); $$.append($4); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Map')); $$.append($2); $$.append($4); }
 
     | declTypeId BACKSLASH UIDENTIFIER
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append(T.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
     | declTypeId BACKSLASH LP declTypeId RP
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append($4); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append($4); }
     ;
 
 declTypeIdList:
@@ -469,7 +475,7 @@ declTypeIdList:
     
 declArgumentList:
     declArgument
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | declArgumentList COMMA
         { $$ = $1; }
     | declArgumentList COMMA declArgument
@@ -478,20 +484,20 @@ declArgumentList:
 
 declArgumentPair:
     IDENTIFIER
-        { $$ = T.parseTypeAssignment(@$, $1, null); }
+        { $$ = p.parseTypeAssignment(@$, $1, null); }
     | IDENTIFIER COLON declTypeId
-        { $$ = T.parseTypeAssignment(@$, $1, $3); }
+        { $$ = p.parseTypeAssignment(@$, $1, $3); }
     ;
 
 declArgumentNoDefault:
     declArgumentPair
-        { $$ = T.parseArgDecl(@$, $1, null, false); }
+        { $$ = p.parseArgDecl(@$, $1, null, false); }
     | BIDENTIFIER declArgumentPair
-        { $$ = T.parseArgDecl(@$, $2, $1, false); }
+        { $$ = p.parseArgDecl(@$, $2, $1, false); }
     | BIDENTIFIER
-        { $$ = T.parseArgDecl(@$, null, $1, false); }
+        { $$ = p.parseArgDecl(@$, null, $1, false); }
     | DOT3 declArgumentPair
-        { $$ = T.parseArgDecl(@$, $2, null, true); }
+        { $$ = p.parseArgDecl(@$, $2, null, true); }
     ;
 
 declArgument:
@@ -502,9 +508,9 @@ declArgument:
     
 accessMode:
     ADD
-        { $$ = T.PublicAccess; }
+        { $$ = PublicAccess; }
     | SUBTRACT
-        { $$ = T.PrivateAccess; }
+        { $$ = PrivateAccess; }
     ;
     
 statement:
@@ -518,7 +524,7 @@ statement:
 
 statementList:
     statement
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | statementList lineEnding statement
         { $$ = $1; if ($3) $1.append($3); }
     | statementList lineEnding
@@ -527,14 +533,14 @@ statementList:
 
 importDirective:
     GT moduleNameList
-        { $$ = T.parseImport(@$, $2); }
+        { $$ = p.parseImport(@$, $2); }
     ;
 
 moduleName:
     SLASH id
-        { $$ = T.parseSet(@$, $2); }
+        { $$ = p.parseSet(@$, $2); }
     | id
-        { $$ = T.parseSet(@$, T.parseId(@$, ".")); $$.append($1); }
+        { $$ = p.parseSet(@$, p.parseId(@$, ".")); $$.append($1); }
     | moduleName SLASH id
         { $$ = $1; $1.append($3); }
     ;
@@ -548,47 +554,47 @@ moduleNameList:
 
 controlFlowStatement:
     EQ rightBlock
-        { $$ = T.parseReturn(@$, $2); }
+        { $$ = p.parseReturn(@$, $2); }
     | EQ
-        { $$ = T.parseReturn(@$, T.parseUndefined(@$)); }
+        { $$ = p.parseReturn(@$, p.parseUndefined(@$)); }
     | CONTINUE
-        { $$ = T.parseContinue(@$); }
+        { $$ = p.parseContinue(@$); }
     | BREAK
-        { $$ = T.parseBreak(@$); }
+        { $$ = p.parseBreak(@$); }
     | THROW rightBlock
-        { $$ = T.parseThrow(@$, $2); }
+        { $$ = p.parseThrow(@$, $2); }
     | THROW
-        { $$ = T.parseThrow(@$, T.parseUndefined(@$)); }
+        { $$ = p.parseThrow(@$, p.parseUndefined(@$)); }
     ;
 
 whileBlock:
     WHILE right block
-        { $$ = T.parseWhile(@$, $2, $3); }
+        { $$ = p.parseWhile(@$, $2, $3); }
     | WHILE block
-        { $$ = T.parseWhile(@$, T.parseNumber(@$, '1'), $2); }
+        { $$ = p.parseWhile(@$, p.parseNumber(@$, '1'), $2); }
     ;
 
 tryBlock:
     TRY block catchBlockList
-        { $$ = T.parseTry(@$, $2, $3, null); }
+        { $$ = p.parseTry(@$, $2, $3, null); }
     | TRY block catchBlockList FINALLY block
-        { $$ = T.parseTry(@$, $2, $3, $5); }
+        { $$ = p.parseTry(@$, $2, $3, $5); }
     | TRY block FINALLY block
-        { $$ = T.parseTry(@$, $2, null, $4); }
+        { $$ = p.parseTry(@$, $2, null, $4); }
     ;
 
 catchBlock:
     CATCH block
-        { $$ = T.parseCatch(@$, null, $2); }
+        { $$ = p.parseCatch(@$, null, $2); }
     | CATCH callExpression lineEnding
-        { $$ = T.parseCatch(@$, $2, null); }
+        { $$ = p.parseCatch(@$, $2, null); }
     | CATCH callExpression block
-        { $$ = T.parseCatch(@$, $2, $3); }
+        { $$ = p.parseCatch(@$, $2, $3); }
     ;
 
 catchBlockList:
     catchBlock
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | catchBlockList catchBlock
         { $$ = $1; $1.append($2); }
     ;
@@ -605,7 +611,7 @@ rightBlock:
 rightList:
     right
     | rightList COMMA right
-        { $$ = T.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureSet(@$, $1); $$.append($3); }
     | rightList COMMA
         { $$ = $1; }
     ;
@@ -613,9 +619,9 @@ rightList:
 whereExpression:
     blockChain
     | blockChain WHERE blockLeft
-        { $$ = T.parseWhere(@$, $1, $3); }
+        { $$ = p.parseWhere(@$, $1, $3); }
     | blockChain WHERE block
-        { $$ = T.parseWhere(@$, $1, $3); }
+        { $$ = p.parseWhere(@$, $1, $3); }
     ;
 
 blockChain:
@@ -625,15 +631,15 @@ blockChain:
 callBlock:
     tupleExpression
     | tupleExpression block
-        { $$ = T.parseCallBlock(@$, $1); $$.addArg(T.parseArg(@2, $2, null)); }
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@2, $2, null)); }
     | callBlock BULLET block
-        { $$ = T.parseCallBlock(@$, $1); $$.addArg(T.parseArg(@3, $3, null)); }
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, null)); }
     | callBlock BULLET anonFunc
-        { $$ = T.parseCallBlock(@$, $1); $$.addArg(T.parseArg(@3, $3, null)); }
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, null)); }
     | callBlock BIDENTIFIER block
-        { $$ = T.parseCallBlock(@$, $1); $$.addArg(T.parseArg(@3, $3, $2)); }
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, $2)); }
     | callBlock BIDENTIFIER anonFunc
-        { $$ = T.parseCallBlock(@$, $1); $$.addArg(T.parseArg(@3, $3, $2)); }
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, $2)); }
     ;
     
 blockLeft:
@@ -641,70 +647,70 @@ blockLeft:
     | anonFunc
     
     // | tupleExpression assignOp assignmentExpression block
-    //     { $$ = PARSE_FUNCTION(@$, T.parseAssignment(@$, $2, $1, $3), $4, false); }
+    //     { $$ = PARSE_FUNCTION(@$, p.parseAssignment(@$, $2, $1, $3), $4, false); }
     | tupleExpression assignOp assignmentExpression
-        { $$ = T.parseAssignment(@$, $2, $1, $3); }
+        { $$ = p.parseAssignment(@$, $2, $1, $3); }
     | tupleExpression assignOp blockRight
-        { $$ = T.parseAssignment(@$, $2, $1, $3); }
+        { $$ = p.parseAssignment(@$, $2, $1, $3); }
     
     | DASHDASH tupleExpression
-        { $$ = T.parsePrint(@$, $2); }
+        { $$ = p.parsePrint(@$, $2); }
     | DASHDASH blockRight
-        { $$ = T.parsePrint(@$, $2); }
+        { $$ = p.parsePrint(@$, $2); }
     
     | tupleExpression writeOp assignmentExpression
-        { $$ = T.parseBinary(@2, $2, $1, $3); }
+        { $$ = p.parseBinary(@2, $2, $1, $3); }
     | tupleExpression writeOp blockRight
-        { $$ = T.parseBinary(@2, $2, $1, $3); }
+        { $$ = p.parseBinary(@2, $2, $1, $3); }
 
     | channelOp assignmentExpression
-        { $$ = T.parseUnary(@$, $1, $2); }
+        { $$ = p.parseUnary(@$, $1, $2); }
     | channelOp
-        { $$ = T.parseUnary(@$, $1, null); }
+        { $$ = p.parseUnary(@$, $1, null); }
     | channelOp blockRight
-        { $$ = T.parseUnary(@$, $1, $2); }
+        { $$ = p.parseUnary(@$, $1, $2); }
         
     | isBlock
     | ifBlock
     
     | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
-        { $$ = T.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     | STAR tupleExpression inOn tupleExpression RARROW blockRight
-        { $$ = T.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     | STAR tupleExpression inOn tupleExpression block
-        { $$ = T.parseIterator(@$, $2, $4, null, $5, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $5, $3, false); }
     | STAR tupleExpression block
-        { $$ = T.parseIterator(@$, $2, null, null, $3, 0, false); }
+        { $$ = p.parseIterator(@$, $2, null, null, $3, 0, false); }
     
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = T.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
-        { $$ = T.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = T.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
     | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = T.parseIterator(@$, $2, null, $4, $5, 0, $3); }
+        { $$ = p.parseIterator(@$, $2, null, $4, $5, 0, $3); }
     
     | STAR tupleExpression RARROW assignmentExpression
-        { $$ = T.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
     | STAR tupleExpression RARROW blockRight
-        { $$ = T.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
     
     | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = T.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
-        { $$ = T.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
 
 anonFunc:
     GT anonFuncArgs assignmentExpression
-        { $$ = T.parseAnonFunc(@$, $2, false, $3); }
+        { $$ = p.parseAnonFunc(@$, $2, false, $3); }
     | GT anonFuncArgs blockRight
-        { $$ = T.parseAnonFunc(@$, $2, false, $3); }
+        { $$ = p.parseAnonFunc(@$, $2, false, $3); }
     | GT anonFuncArgs DO assignmentExpression
-        { $$ = T.parseAnonFunc(@$, $2, true, $4); }
+        { $$ = p.parseAnonFunc(@$, $2, true, $4); }
     | GT anonFuncArgs DO blockRight
-        { $$ = T.parseAnonFunc(@$, $2, true, $4); }
+        { $$ = p.parseAnonFunc(@$, $2, true, $4); }
     ;
     
 anonFuncArgs:
@@ -716,36 +722,36 @@ anonFuncArgs:
 
 isBlock:
     tupleExpression IS matchExpr
-        { $$ = T.parseIs(@$, $1, $3); }
+        { $$ = p.parseIs(@$, $1, $3); }
     | tupleExpression IS matchExpr ELSE blockOrRight
-        { $$ = T.parseIs(@$, $1, $3, $5); }
+        { $$ = p.parseIs(@$, $1, $3, $5); }
     | tupleExpression IS LCB matchList RCB
-        { $$ = T.parseIs(@$, $1, $4); }
+        { $$ = p.parseIs(@$, $1, $4); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
-        { $$ = T.parseIs(@$, $1, $4, $8); }
+        { $$ = p.parseIs(@$, $1, $4, $8); }
     ;
     
 ifBlock:
     IF elseIfChain
-        { $$ = T.parseIf(@$, $2, null); }
+        { $$ = p.parseIf(@$, $2, null); }
     | IF elseIfChain ELSE blockOrRight
-        { $$ = T.parseIf(@$, $2, $4); }
+        { $$ = p.parseIf(@$, $2, $4); }
     | IF LCB matchList RCB
-        { $$ = T.parseIf(@$, $3); }
+        { $$ = p.parseIf(@$, $3); }
     | IF LCB matchList lineEnding ELSE RARROW blockOrRight RCB
-        { $$ = T.parseIf(@$, $3, $7); }
+        { $$ = p.parseIf(@$, $3, $7); }
     ;
 
 elseIfChain:
     tupleExpression block
-        { $$ = T.parseTransform(@$, $1, $2); }
+        { $$ = p.parseTransform(@$, $1, $2); }
     | elseIfChain ELSE IF tupleExpression block
         { $$ = $1; $$.addPair($4, $5); }
     ;
 
 matchList:
     tupleExpression RARROW blockOrRight
-        { $$ = T.parseTransform(@$, $1, $3); }
+        { $$ = p.parseTransform(@$, $1, $3); }
     | matchList lineEnding tupleExpression RARROW blockOrRight
         { $$ = $1; $$.addPair($3, $5); }
     | matchList lineEnding
@@ -755,14 +761,14 @@ matchList:
 
 ifExpr:
     IF matchExpr
-        { $$ = T.parseIf(@$, $2, null);  }
+        { $$ = p.parseIf(@$, $2, null);  }
     | IF matchExpr ELSE binaryExpression
-        { $$ = T.parseIf(@$, $2, $4); }
+        { $$ = p.parseIf(@$, $2, $4); }
     ;
 
 matchExpr:
     binaryExpression RARROW binaryExpression
-        { $$ = T.parseTransform(@$, $1, $3); }
+        { $$ = p.parseTransform(@$, $1, $3); }
     | matchExpr OR binaryExpression RARROW binaryExpression
         { $$ = $1; $$.addPair($3, $5); }
     ;
@@ -770,64 +776,64 @@ matchExpr:
 blockRight:
     block
     // | tupleExpression assignOp blockRight
-    //     { $$ = T.parseAssignment(@$, $2, $1, $3); }
+    //     { $$ = p.parseAssignment(@$, $2, $1, $3); }
     
     // | tupleExpression BULLET blockRight
     //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
     
     | DASHDASH blockRight
-        { $$ = T.parsePrint(@$, $2); }
+        { $$ = p.parsePrint(@$, $2); }
     
     | tupleExpression writeOp blockRight
-        { $$ = T.parseBinary(@$, $2, $1, $3); }
+        { $$ = p.parseBinary(@$, $2, $1, $3); }
     | channelOp blockRight
-        { $$ = T.parseUnary(@$, $1, $2); }
+        { $$ = p.parseUnary(@$, $1, $2); }
     | channelOp
-        { $$ = T.parseUnary(@$, $1, null); }
+        { $$ = p.parseUnary(@$, $1, null); }
     
     | GT anonFuncArgs blockRight
-        { $$ = T.parseAnonFunc(@$, $2, false, $3); }
+        { $$ = p.parseAnonFunc(@$, $2, false, $3); }
     | GT anonFuncArgs DO blockRight
-        { $$ = T.parseAnonFunc(@$, $2, true, $4); }
+        { $$ = p.parseAnonFunc(@$, $2, true, $4); }
     
     | isBlock
     | ifBlock
 
     | STAR tupleExpression inOn tupleExpression RARROW blockRight
-        { $$ = T.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     | STAR tupleExpression inOn tupleExpression block
-        { $$ = T.parseIterator(@$, $2, $4, null, $5, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $5, $3, false); }
     | STAR tupleExpression block
-        { $$ = T.parseIterator(@$, $2, null, null, $3, 0, false); }
+        { $$ = p.parseIterator(@$, $2, null, null, $3, 0, false); }
     
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRight
-        { $$ = T.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = T.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
     | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = T.parseIterator(@$, $2, null, $4, $5, 0, $3); }
+        { $$ = p.parseIterator(@$, $2, null, $4, $5, 0, $3); }
     
     | STAR tupleExpression RARROW blockRight
-        { $$ = T.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
     | STAR tupleExpression ifWhile tupleExpression RARROW blockRight
-        { $$ = T.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
 
 assignmentExpression:
     tupleExpression
     | assignmentExpression assignOp tupleExpression
-        { $$ = T.parseAssignment(@$, $2, $1, $3); }
+        { $$ = p.parseAssignment(@$, $2, $1, $3); }
 
     // | tupleExpression BULLET assignmentExpression
     //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
 
     | DASHDASH assignmentExpression
-        { $$ = T.parsePrint(@$, $2); }
+        { $$ = p.parsePrint(@$, $2); }
 
     // | assignmentExpression writeOp tupleExpression
-    //     { $$ = T.parseBinary(@$, $2, $1, $3); }
+    //     { $$ = p.parseBinary(@$, $2, $1, $3); }
     | channelOp tupleExpression
-        { $$ = T.parseUnary(@$, $1, $2); }
+        { $$ = p.parseUnary(@$, $1, $2); }
     
     // | tupleExpression funcOp assignmentExpression
     //     { $$ = PARSE_FUNCTION(@$, $1, $3, $2); }
@@ -835,61 +841,61 @@ assignmentExpression:
     //     { $$ = PARSE_FUNCTION(@$, null, $2, $1); }
 
     | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
-        { $$ = T.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = T.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     
     | STAR tupleExpression RARROW assignmentExpression
-        { $$ = T.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
     | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = T.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
 
 assignmentExpressionSimple:
     simpleExpression
     | simpleExpression assignOp right
-        { $$ = T.parseAssignment(@$, $2, $1, $3); }
+        { $$ = p.parseAssignment(@$, $2, $1, $3); }
     
     // | simpleExpression BULLET right
     //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
     
     | DASHDASH right
-        { $$ = T.parsePrint(@$, $2); }
+        { $$ = p.parsePrint(@$, $2); }
     
     | simpleExpression writeOp right
-        { $$ = T.parseBinary(@2, $2, $1, $3); }
+        { $$ = p.parseBinary(@2, $2, $1, $3); }
     
     | channelOp right
-        { $$ = T.parseUnary(@$, $1, $2); }
+        { $$ = p.parseUnary(@$, $1, $2); }
     | channelOp
-        { $$ = T.parseUnary(@$, $1, null); }
+        { $$ = p.parseUnary(@$, $1, null); }
     
     | GT anonFuncArgs right
-        { $$ = T.parseAnonFunc(@$, $2, false, $3); }
+        { $$ = p.parseAnonFunc(@$, $2, false, $3); }
     | GT anonFuncArgs DO right
-        { $$ = T.parseAnonFunc(@$, $2, true, $4); }
+        { $$ = p.parseAnonFunc(@$, $2, true, $4); }
     
     | simpleExpression IS matchExpr
-        { $$ = T.parseIs(@$, $1, $3, null);  }
+        { $$ = p.parseIs(@$, $1, $3, null);  }
     | simpleExpression IS matchExpr ELSE right
-        { $$ = T.parseIs(@$, $1, $3, $5); }
+        { $$ = p.parseIs(@$, $1, $3, $5); }
 
     | STAR simpleExpression inOn simpleExpression RARROW right
-        { $$ = T.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     | STAR simpleExpression inOn simpleExpression ifWhile simpleExpression RARROW right
-        { $$ = T.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     
     | STAR simpleExpression RARROW right
-        { $$ = T.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
     | STAR simpleExpression ifWhile simpleExpression RARROW right
-        { $$ = T.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
 
 tupleExpression:
     simpleExpression
     | simpleExpression COMMA tupleExpression
-        { $$ = T.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureSet(@$, $1); $$.append($3); }
     ;
 
 simpleExpression:
@@ -904,131 +910,131 @@ conditionExpression:
 binaryExpression:
     concatExpression
     | concatExpression UNIDENTIFIER binaryExpression
-        { $$ = T.parseInfixOp(@$, $2, $1, $3); }
+        { $$ = p.parseInfixOp(@$, $2, $1, $3); }
     ;
 
 concatExpression:
     logicalOrExpression
     | concatExpression CONCATSTR logicalOrExpression
-        { $$ = T.parseBinary(@2, ops.Concat, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Concat, $1, $3); }
     ;
 
 logicalOrExpression:
     logicalAndExpression
     | logicalOrExpression PIPE logicalAndExpression
-        { $$ = T.parseBinary(@2, ops.Or, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Or, $1, $3); }
     | logicalOrExpression TO logicalAndExpression
-        { $$ = T.parseRange(@$, $1, $3, null, false); }
+        { $$ = p.parseRange(@$, $1, $3, null, false); }
     | logicalOrExpression TO logicalAndExpression BY logicalAndExpression
-        { $$ = T.parseRange(@$, $1, $3, $5, false); }
+        { $$ = p.parseRange(@$, $1, $3, $5, false); }
     | logicalOrExpression THROUGH logicalAndExpression
-        { $$ = T.parseRange(@$, $1, $3, null, true); }
+        { $$ = p.parseRange(@$, $1, $3, null, true); }
     | logicalOrExpression THROUGH logicalAndExpression BY logicalAndExpression
-        { $$ = T.parseRange(@$, $1, $3, $5, true); }
+        { $$ = p.parseRange(@$, $1, $3, $5, true); }
     ;
 
 logicalAndExpression:
     equalityExpression
     | logicalAndExpression AMPERSAND equalityExpression
-        { $$ = T.parseBinary(@2, ops.And, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.And, $1, $3); }
     ;
 
 equalityExpression:
     relationalExpression
     | equalityExpression EQ2 relationalExpression
-        { $$ = T.parseBinary(@2, ops.Equals, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Equals, $1, $3); }
     | equalityExpression NEQ relationalExpression
-        { $$ = T.parseBinary(@2, ops.NotEquals, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.NotEquals, $1, $3); }
     ;
 
 relationalExpression:
     addExpression
     | relationalExpression LT addExpression
-        { $$ = T.parseBinary(@2, ops.LessThan, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.LessThan, $1, $3); }
     | relationalExpression GT addExpression
-        { $$ = T.parseBinary(@2, ops.GreaterThan, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.GreaterThan, $1, $3); }
     | relationalExpression LTE addExpression
-        { $$ = T.parseBinary(@2, ops.LessThanEquals, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.LessThanEquals, $1, $3); }
     | relationalExpression GTE addExpression
-        { $$ = T.parseBinary(@2, ops.GreaterThanEquals, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.GreaterThanEquals, $1, $3); }
     | relationalExpression ISNOT addExpression
-        { $$ = T.parseBinary(@2, ops.IsNot, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.IsNot, $1, $3); }
     | relationalExpression ISIN addExpression
-        { $$ = T.parseBinary(@2, ops.IsIn, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.IsIn, $1, $3); }
     | relationalExpression NOTIN addExpression
-        { $$ = T.parseBinary(@2, ops.NotIn, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.NotIn, $1, $3); }
     ;
 
 addExpression:
     multiplyExpression
     | addExpression ADD multiplyExpression
-        { $$ = T.parseBinary(@2, ops.Add, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Add, $1, $3); }
     | addExpression SUBTRACT multiplyExpression
-        { $$ = T.parseBinary(@2, ops.Subtract, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Subtract, $1, $3); }
     ;
 
 multiplyExpression:
     unaryExpression
     | multiplyExpression STAR unaryExpression
-        { $$ = T.parseBinary(@2, ops.Multiply, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Multiply, $1, $3); }
     | multiplyExpression SLASH unaryExpression
-        { $$ = T.parseBinary(@2, ops.Divide, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Divide, $1, $3); }
     | multiplyExpression SLASH2 unaryExpression
-        { $$ = T.parseBinary(@2, ops.Mod, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Mod, $1, $3); }
     | multiplyExpression STAR2 unaryExpression
-        { $$ = T.parseBinary(@2, ops.Pow, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Pow, $1, $3); }
     | multiplyExpression CONCAT unaryExpression
-        { $$ = T.parseBinary(@2, ops.Concat, $1, $3); }
+        { $$ = p.parseBinary(@2, ops.Concat, $1, $3); }
     ;
 
 unaryExpression:
     bindExpression
     | SUBTRACT_EQ unaryExpression
-        { $$ = T.parseUnary(@$, ops.Delete, $2); }
+        { $$ = p.parseUnary(@$, ops.Delete, $2); }
     | SUBTRACT unaryExpression
-        { $$ = T.parseUnary(@$, ops.Negative, $2); }
+        { $$ = p.parseUnary(@$, ops.Negative, $2); }
     | EXCLAMATION unaryExpression
-        { $$ = T.parseUnary(@$, ops.Not, $2); }
+        { $$ = p.parseUnary(@$, ops.Not, $2); }
     | IN unaryExpression
-        { $$ = T.parseUnary(@$, ops.In, $2); }
+        { $$ = p.parseUnary(@$, ops.In, $2); }
     ;
 
 bindExpression:
     callExpression
     | SEMICOLON bindList
-        { $$ = T.parseUnary(@$, ops.Bind, $2); }
+        { $$ = p.parseUnary(@$, ops.Bind, $2); }
     | SEMICOLON block
-        { $$ = T.parseUnary(@$, ops.Bind, $2); }
+        { $$ = p.parseUnary(@$, ops.Bind, $2); }
     ;
 
 bindList:
     callExpression
     | bindList SEMICOLON callExpression
-        { $$ = T.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureSet(@$, $1); $$.append($3); }
     ;
 
 callExpression:
     basicExpression
     | IDENTIFIER COLON declTypeId
-        { $$ = T.parseTypeAssignment(@$, $1, $3); }
+        { $$ = p.parseTypeAssignment(@$, $1, $3); }
     | callExpression AS declTypeId
-        { $$ = T.parseCast(@$, $1, $3); }
+        { $$ = p.parseCast(@$, $1, $3); }
     
     | callExpression callArguments
-        { $$ = T.parseCall(@$, $1, $2); }
+        { $$ = p.parseCall(@$, $1, $2); }
     
     | callExpression DOT IDENTIFIER
-        { $$ = T.parseGet(@$, $1, $3); }
+        { $$ = p.parseGet(@$, $1, $3); }
     
     | callExpression DOT LB right RB
-        { $$ = T.parseBinary(@$, ops.Lookup, $1, $4); }
+        { $$ = p.parseBinary(@$, ops.Lookup, $1, $4); }
     | callExpression DOT LB right PIPE2 right RB
-        { $$ = T.parseBinary(@$, ops.Lookup, $1, T.parseDefault(@4, $4, $6)); }
+        { $$ = p.parseBinary(@$, ops.Lookup, $1, p.parseDefault(@4, $4, $6)); }
     
     | callExpression LB right RB
-        { $$ = T.parseBinary(@$, ops.Index, $1, $3); }
+        { $$ = p.parseBinary(@$, ops.Index, $1, $3); }
     | callExpression LB right PIPE2 right RB
-        { $$ = T.parseBinary(@$, ops.Index, $1, T.parseDefault(@3, $3, $5)); }
+        { $$ = p.parseBinary(@$, ops.Index, $1, p.parseDefault(@3, $3, $5)); }
     ;
     
 basicExpression:
@@ -1049,76 +1055,76 @@ parenExpression:
 
 listExpression:
     LB rightList RB
-        { $$ = T.parseList(@$, $2); }
+        { $$ = p.parseList(@$, $2); }
     | LB RB
-        { $$ = T.parseList(@$, null); }
+        { $$ = p.parseList(@$, null); }
     ;
 
 mapExpression:
     LCBP mapTupleExpression RCBP
-        { $$ = T.parseMap(@$, $2); }
+        { $$ = p.parseMap(@$, $2); }
     | LCBP RCBP
-        { $$ = T.parseMap(@$, null); }
+        { $$ = p.parseMap(@$, null); }
     ;
 
 channelExpression:
     LT GT
-        { $$ = T.parseChannel(@$, null); }
+        { $$ = p.parseChannel(@$, null); }
     | LT callExpression GT
-        { $$ = T.parseChannel(@$, $2); }
+        { $$ = p.parseChannel(@$, $2); }
     ;
 
 id:
     IDENTIFIER
-        { $$ = T.parseId(@$, $1); }
+        { $$ = p.parseId(@$, $1); }
     | UIDENTIFIER
-        { $$ = T.parseTypeId(@$, $1); }
+        { $$ = p.parseTypeId(@$, $1); }
     | THIS
-        { $$ = T.parseId(@$, 'this'); }
+        { $$ = p.parseId(@$, 'this'); }
     | id BACKSLASH UIDENTIFIER
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append(T.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
     | id BACKSLASH LP id RP
-        { $$ = T.ensureTypeArguments(@$, $1); $$.append($4); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.append($4); }
     ;
 
 literal:
     INTEGER
-        { $$ = T.parseNumber(@$, $1); }
+        { $$ = p.parseNumber(@$, $1); }
     | INTEGER_UNIT
-        { $$ = T.parseNumber(@$, $1); }
+        { $$ = p.parseNumber(@$, $1); }
     | FLOAT
-        { $$ = T.parseNumber(@$, $1); }
+        { $$ = p.parseNumber(@$, $1); }
     | FLOAT_UNIT
-        { $$ = T.parseNumber(@$, $1); }
+        { $$ = p.parseNumber(@$, $1); }
     | FLOAT_EXP
-        { $$ = T.parseFloatNumber(@$, $1); }
+        { $$ = p.parseFloatNumber(@$, $1); }
     | HEX
-        { $$ = T.parseHex(@$, $1); }
+        { $$ = p.parseHex(@$, $1); }
     | string
     | UNDERSCORE
-        { $$ = T.parseId(@$, "null"); }
+        { $$ = p.parseId(@$, "null"); }
     | QUESTION
-        { $$ = T.parseId(@$, "?"); }
+        { $$ = p.parseId(@$, "?"); }
     | STAR
-        { $$ = T.parseId(@$, "*"); }
+        { $$ = p.parseId(@$, "*"); }
     ;
 
 string:
     STRING_OPEN STRING_CLOSE
-        { $$ = T.parseQuotes(@$, $1, T.parseString(@$, '')); }
+        { $$ = p.parseQuotes(@$, $1, p.parseString(@$, '')); }
     | STRING_OPEN stringList STRING_CLOSE
-        { $$ = T.parseQuotes(@$, $1, $2); }
+        { $$ = p.parseQuotes(@$, $1, $2); }
     ;
 
 stringList:
     STRING
-        { $$ = T.parseString(@$, $1); }
+        { $$ = p.parseString(@$, $1); }
     | STRING_FORMAT
-        { $$ = T.parseStringFormat(@$, $1); }
+        { $$ = p.parseStringFormat(@$, $1); }
     | stringList STRING
-        { $$ = T.addString(@$, $1, T.parseString(@2, $2)); }
+        { $$ = p.addString(@$, $1, p.parseString(@2, $2)); }
     | stringList STRING_FORMAT
-        { $$ = T.addString(@$, $1, T.parseStringFormat(@2, $2)); }
+        { $$ = p.addString(@$, $1, p.parseStringFormat(@2, $2)); }
     ;
     
 assignOp:
@@ -1202,35 +1208,35 @@ argumentList:
 
 argument:
     right
-        { $$ = T.parseArg(@$, $1, null); }
+        { $$ = p.parseArg(@$, $1, null); }
     | BIDENTIFIER right
-        { $$ = T.parseArg(@$, $2, $1); }
+        { $$ = p.parseArg(@$, $2, $1); }
     ;
 
 mapTupleExpression:
     mapAssignmentExpression
-        { $$ = T.ensureSet(@$, $1); }
+        { $$ = p.ensureSet(@$, $1); }
     | mapTupleExpression COMMA mapAssignmentExpression
-        { $$ = T.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureSet(@$, $1); $$.append($3); }
     | mapTupleExpression COMMA
-        { $$ = T.ensureSet(@$, $1); }
+        { $$ = p.ensureSet(@$, $1); }
     ;
 
 mapAssignmentExpression:
     simpleExpression EQ simpleExpression
-        { $$ = T.parseBinary(@$, ops.Eq, $1, $3); }
+        { $$ = p.parseBinary(@$, ops.Eq, $1, $3); }
     ;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 cCode:
     CCODE_OPEN cDeclarations CCODE_CLOSE
-        { $$ = $2; T.setLibrary($2, $1); }
+        { $$ = $2; p.setLibrary($2, $1); }
     ;
     
 cDeclarations:
     cDeclaration
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | cDeclarations cDeclaration
         { $$ = $1; $1.append($2); }
     ;
@@ -1246,38 +1252,38 @@ cLine:
 
 cFunction:
     cType IDENTIFIER LP cArgs RP
-        { $$ = T.parseCFunction(@$, $1, $2, $4); }
+        { $$ = p.parseCFunction(@$, $1, $2, $4); }
     | cType IDENTIFIER LP RP
-        { $$ = T.parseCFunction(@$, $1, $2, null); }
+        { $$ = p.parseCFunction(@$, $1, $2, null); }
     ;
 
 cType:
     IDENTIFIER
-        { $$ = T.parseCType(@$, $1); }
+        { $$ = p.parseCType(@$, $1); }
     | STRUCT IDENTIFIER
-        { $$ = T.parseCType(@$, $2); }
+        { $$ = p.parseCType(@$, $2); }
     | CONST IDENTIFIER
-        { $$ = T.parseCType(@$, $2); }
+        { $$ = p.parseCType(@$, $2); }
     | CONST STRUCT IDENTIFIER
-        { $$ = T.parseCType(@$, $3); }
+        { $$ = p.parseCType(@$, $3); }
     | CPRIMITIVE
-        { $$ = T.parseCType(@$, $1); }
+        { $$ = p.parseCType(@$, $1); }
     | CONST CPRIMITIVE
-        { $$ = T.parseCType(@$, $2); }
+        { $$ = p.parseCType(@$, $2); }
     | cType STAR
         { $$ = $1; $1.addPointer(@$, $1); }
     ;
 
 cArgs:
     cArg
-        { $$ = T.parseSet(@$, $1); }
+        { $$ = p.parseSet(@$, $1); }
     | cArgs COMMA cArg
         { $$ = $1; $1.append($3); }
     ;
 
 cArg:
     cType
-        { $$ = T.parseCArgument(@$, $1, null); }
+        { $$ = p.parseCArgument(@$, $1, null); }
     | cType IDENTIFIER
-        { $$ = T.parseCArgument(@$, $1, $2); }
+        { $$ = p.parseCArgument(@$, $1, $2); }
     ;
