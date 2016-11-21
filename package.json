@@ -16,13 +16,10 @@
     "nan": "^2.4.0",
     "underscore": ""
   },
-  "main": "./lib/Moya",
+  "main": "./lib/moya",
   "directories": {},
   "engines": {
     "node": ">=4.5.0"
   },
-  "devDependencies": {},
-  "app.js": {
-    "static": "./static"
-  }
+  "devDependencies": {}
 }
