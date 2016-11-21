@@ -324,7 +324,7 @@ declarationBlock:
         { $$ = p.parseProperty(@$, $1, $2, $4, $6, $8); }
     
     | DO block
-        { $$ = p.parseFuncBlock(@$, PrivateAccess, p.parseFuncDecl(@$, p.parseId(@$, '@main')), $2); }
+        { $$ = p.parseFuncBlock(@$, PrivateAccess, p.parseFunc(@$, p.parseId(@$, '@main')), $2); }
     ;
     
 blockOrRight:
@@ -335,102 +335,76 @@ blockOrRight:
 
 declFunc:
     declId
-        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFunc(@$, $1, null, null, null); }
     | declId LP RP
-        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFunc(@$, $1, null, null, null); }
     | declId LP RP AT IDENTIFIER
-        { $$ = p.parseFuncDecl(@$, $1, null, null, $5); }
+        { $$ = p.parseFunc(@$, $1, null, null, $5); }
     | declId LP RP COLON declTypeId
-        { $$ = p.parseFuncDecl(@$, $1, null, $5, null); }
+        { $$ = p.parseFunc(@$, $1, null, $5, null); }
     | declId LP RP COLON declTypeId AT IDENTIFIER
-        { $$ = p.parseFuncDecl(@$, $1, null, $5, $7); }
+        { $$ = p.parseFunc(@$, $1, null, $5, $7); }
     
     | declId LP declArgumentList RP
-        { $$ = p.parseFuncDecl(@$, $1, $3); }
+        { $$ = p.parseFunc(@$, $1, $3); }
     | declId LP declArgumentList RP AT IDENTIFIER
-        { $$ = p.parseFuncDecl(@$, $1, $3, null, $6); }
+        { $$ = p.parseFunc(@$, $1, $3, null, $6); }
     | declId LP declArgumentList RP COLON declTypeId
-        { $$ = p.parseFuncDecl(@$, $1, $3, $6, null); }
+        { $$ = p.parseFunc(@$, $1, $3, $6, null); }
     | declId LP declArgumentList RP COLON declTypeId AT IDENTIFIER
-        { $$ = p.parseFuncDecl(@$, $1, $3, $6, $8); }
+        { $$ = p.parseFunc(@$, $1, $3, $6, $8); }
 
     | declClassId LP RP
-        { $$ = p.parseFuncDecl(@$, $1, null, null, null); }
+        { $$ = p.parseFunc(@$, $1, null, null, null); }
     | declClassId LP declArgumentList RP
-        { $$ = p.parseFuncDecl(@$, $1, $3); }
+        { $$ = p.parseFunc(@$, $1, $3); }
 
     | LP operatorArgs RP
-        { $$ = p.parseFuncDecl(@$, null, $2, null, null); }
+        { $$ = p.parseFunc(@$, null, $2, null, null); }
     | LP operatorArgs RP AT identifier
-        { $$ = p.parseFuncDecl(@$, null, $2, null, $5); }
+        { $$ = p.parseFunc(@$, null, $2, null, $5); }
     | LP operatorArgs RP COLON declTypeId
-        { $$ = p.parseFuncDecl(@$, null, $2, $5, null); }
+        { $$ = p.parseFunc(@$, null, $2, $5, null); }
     | LP operatorArgs RP COLON declTypeId AT IDENTIFIER
-        { $$ = p.parseFuncDecl(@$, null, $2, $5, $7); }
+        { $$ = p.parseFunc(@$, null, $2, $5, $7); }
     ;
 
 operatorArgs:
     ADD THIS
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "+pos")); }
+        { $$ = p.parseOpFunc(@$, ops.Positive); }
     | SUBTRACT THIS
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "-neg")); }
+        { $$ = p.parseOpFunc(@$, ops.Negative); }
     | EXCLAMATION THIS
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "!")); }
+        { $$ = p.parseOpFunc(@$, ops.Not); }
     | IN THIS
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, "in this")); }
+        { $$ = p.parseOpFunc(@$, ops.In); }
 
     | THIS op declArgument
-        { $$ = p.parseFuncDecl(@$, p.parseId(@2, $2), p.parseSet(@3, $3)); }
+        { $$ = p.parseOpFunc(@$, $2, p.parseSet(@3, $3)); }
 
     | LB declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Index.token), p.parseSet(@2, $2)); }
+        { $$ = p.parseOpFunc(@$, ops.Index, p.parseSet(@2, $2)); }
     | LB declArgument RB EQ declArgument
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.IndexAssign.token),
-                               p.parseSet(@2, $2).append($5)); }
+        { $$ = p.parseOpFunc(@$, ops.IndexAssign, p.parseSet(@2, $2).append($5)); }
     | SUBTRACT_EQ LB declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.IndexDelete.token), p.parseSet(@3, $3)); }
+        { $$ = p.parseOpFunc(@$, ops.IndexDelete, p.parseSet(@3, $3)); }
 
     | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Slice.token), p.parseSet(@2, $2).append($4).append($6)); }
+        { $$ = p.parseOpFunc(@$, ops.Slice, p.parseSet(@2, $2).append($4).append($6)); }
     | LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB EQ declArgument
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.SliceAssign.token),
+        { $$ = p.parseOpFunc(@$, ops.SliceAssign,
                                p.parseSet(@2, $9).append($2).append($4).append($6)); }
     | SUBTRACT_EQ LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.SliceDelete.token), p.parseSet(@3, $3).append($5).append($7)); }
+        { $$ = p.parseOpFunc(@$, ops.SliceDelete, p.parseSet(@3, $3).append($5).append($7)); }
 
     | DOT LB declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.Lookup.token), p.parseSet(@3, $3)); }
+        { $$ = p.parseOpFunc(@$, ops.Lookup, p.parseSet(@3, $3)); }
     | DOT LB declArgument RB EQ declArgument
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.LookupAssign.token),
-                               p.parseSet(@3, $3).append($6)); }
+        { $$ = p.parseOpFunc(@$, ops.LookupAssign, p.parseSet(@3, $3).append($6)); }
     | SUBTRACT_EQ DOT LB declArgument RB
-        { $$ = p.parseFuncDecl(@$, p.parseId(@1, ops.LookupDelete.token), p.parseSet(@4, $4)); }
+        { $$ = p.parseOpFunc(@$, ops.LookupDelete, p.parseSet(@4, $4)); }
     ;
-    
-op:
-    ADD { $$ = $1; }
-    | SUBTRACT { $$ = $1; }
-    | STAR { $$ = $1; }
-    | SLASH { $$ = $1; }
-    | SLASH2 { $$ = $1; }
-    | STAR2 { $$ = $1; }
-    | CONCAT { $$ = $1; }
-    | ADD_EQ { $$ = $1; }
-    | SUBTRACT_EQ { $$ = $1; }
-    | STAR_EQ { $$ = $1; }
-    | SLASH_EQ { $$ = $1; }
-    | SLASH2_EQ { $$ = $1; }
-    | STAR2_EQ { $$ = $1; }
-    | CONCAT_EQ { $$ = $1; }
-    | EQ2 { $$ = $1; }
-    | NEQ { $$ = $1; }
-    | GT { $$ = $1; }
-    | GTE { $$ = $1; }
-    | LT { $$ = $1; }
-    | LTE { $$ = $1; }
-    | ISIN { $$ = $1; }
-    | NOTIN { $$ = $1; }
-    ;
+
     
 declClassId:
     UIDENTIFIER
@@ -1125,6 +1099,31 @@ stringList:
         { $$ = p.addString(@$, $1, p.parseString(@2, $2)); }
     | stringList STRING_FORMAT
         { $$ = p.addString(@$, $1, p.parseStringFormat(@2, $2)); }
+    ;
+
+op:
+    ADD  { $$ = ops.Add; }
+    | SUBTRACT { $$ = ops.Subtract; }
+    | STAR { $$ = ops.Multiply; }
+    | SLASH { $$ = ops.Divide; }
+    | SLASH2 { $$ = ops.Mod; }
+    | STAR2 { $$ = ops.Pow; }
+    | CONCAT { $$ = ops.Concat; }
+    | ADD_EQ { $$ = ops.AddEq; }
+    | SUBTRACT_EQ { $$ = ops.SubtractEq; }
+    | STAR_EQ { $$ = ops.MultiplyEq; }
+    | SLASH_EQ { $$ = ops.DivideEq; }
+    | SLASH2_EQ { $$ = ops.ModEq; }
+    | STAR2_EQ { $$ = ops.PowEq; }
+    | CONCAT_EQ { $$ = ops.ConcatEq; }
+    | EQ2 { $$ = ops.Equals; }
+    | NEQ { $$ = ops.NotEquals; }
+    | GT { $$ = ops.GreaterThan; }
+    | GTE { $$ = ops.GreaterThanEquals; }
+    | LT { $$ = ops.LessThan; }
+    | LTE { $$ = ops.LessThanEquals; }
+    | ISIN { $$ = ops.IsIn; }
+    | NOTIN { $$ = ops.NotIn; }
     ;
     
 assignOp:

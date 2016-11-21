@@ -243,11 +243,8 @@ do {
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-Exception: Function returned non-boolean type
-<no file>, line 9
-        -- a > a
-             ^
+Exception: Invalid type for truth test
+<no file>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -508,7 +505,7 @@ do {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Comparison operators must return bool
+Exception: Operator must return Int1
 <no file>, line 3
         + (!this):Int32 {
         ^^^^^^^^^^^^^^^^^
