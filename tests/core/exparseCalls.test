@@ -162,7 +162,7 @@ foo\T()
 <CallExpression>
     <TypeArguments>
         <Id name="foo"/>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </TypeArguments>
 </CallExpression>
 

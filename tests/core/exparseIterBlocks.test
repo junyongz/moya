@@ -123,7 +123,7 @@ With type annotations.
 <Iterator>
     <left>
         <TypeAssignment name="a">
-            <TypeId id="T"/>
+            <TypeId name="T"/>
         </TypeAssignment>
     </left>
     <iterable>
@@ -143,10 +143,10 @@ With type annotations.
 <Iterator>
     <left>
         <TypeAssignment name="a">
-            <TypeId id="T"/>
+            <TypeId name="T"/>
         </TypeAssignment>
         <TypeAssignment name="b">
-            <TypeId id="T"/>
+            <TypeId name="T"/>
         </TypeAssignment>
     </left>
     <iterable>

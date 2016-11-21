@@ -27,7 +27,7 @@ Prefix operators.
 <FunctionDeclaration access="public">
     <Id name="!"/>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
 </FunctionDeclaration>
 
@@ -75,7 +75,7 @@ Infix operators.
 <FunctionDeclaration access="public">
     <Id name="+"/>
     <Argument name="that">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
 </FunctionDeclaration>
 
@@ -88,7 +88,7 @@ Infix operators.
     <Id name="+"/>
     <Argument name="that"/>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
 </FunctionDeclaration>
 
@@ -101,10 +101,10 @@ Infix operators.
 <FunctionDeclaration access="public">
     <Id name="+"/>
     <Argument name="that">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
 </FunctionDeclaration>
 
@@ -365,7 +365,7 @@ Index Getters/Setters
 <FunctionDeclaration access="public">
     <Id name="[]"/>
     <Argument name="value">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
 </FunctionDeclaration>
 
@@ -379,10 +379,10 @@ Index Getters/Setters
 <FunctionDeclaration access="public">
     <Id name="[]"/>
     <Argument name="value">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
 </FunctionDeclaration>
 
@@ -409,10 +409,10 @@ Index Getters/Setters
 <FunctionDeclaration access="public">
     <Id name="[]="/>
     <Argument name="index">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
     <Argument name="value">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
 </FunctionDeclaration>
 
@@ -426,13 +426,13 @@ Index Getters/Setters
 <FunctionDeclaration access="public">
     <Id name="[]="/>
     <Argument name="index">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
     <Argument name="value">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
 </FunctionDeclaration>
 

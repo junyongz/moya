@@ -294,7 +294,7 @@ Extra arguments.
 <FunctionDeclaration access="public">
     <Id name="foo"/>
     <Argument name="n">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </Argument>
 </FunctionDeclaration>
 
@@ -309,7 +309,7 @@ Extra arguments.
 <FunctionDeclaration access="public">
     <Id name="foo"/>
     <Argument name="n">
-        <TypeId id="T"/>
+        <TypeId name="T"/>
         <Integer value="1"/>
     </Argument>
 </FunctionDeclaration>

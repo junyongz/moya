@@ -73,7 +73,7 @@
 <Import>
     <module>
         <Id name="foo"/>
-        <TypeId id="Bar"/>
+        <TypeId name="Bar"/>
     </module>
 </Import>
 
@@ -112,7 +112,7 @@ List of imports.
     <module>
         <Id name="foo"/>
         <Id name="bar"/>
-        <TypeId id="Baz"/>
+        <TypeId name="Baz"/>
     </module>
 </Import>
 

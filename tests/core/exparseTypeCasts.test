@@ -11,7 +11,7 @@ foo as Bar
 
 <Cast>
     <Id name="foo"/>
-    <TypeId id="Bar"/>
+    <TypeId name="Bar"/>
 </Cast>
 
 ----------------------------------------------------------------------------------------------------
@@ -23,9 +23,9 @@ foo as Foo\Bar\Baz
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Foo"/>
-        <TypeId id="Bar"/>
-        <TypeId id="Baz"/>
+        <TypeId name="Foo"/>
+        <TypeId name="Bar"/>
+        <TypeId name="Baz"/>
     </TypeArguments>
 </Cast>
 
@@ -38,8 +38,8 @@ foo as [Foo]
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="List"/>
-        <TypeId id="Foo"/>
+        <TypeId name="List"/>
+        <TypeId name="Foo"/>
     </TypeArguments>
 </Cast>
 
@@ -52,9 +52,9 @@ foo as {| Foo = Bar |}
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Map"/>
-        <TypeId id="Foo"/>
-        <TypeId id="Bar"/>
+        <TypeId name="Map"/>
+        <TypeId name="Foo"/>
+        <TypeId name="Bar"/>
     </TypeArguments>
 </Cast>
 
@@ -67,7 +67,7 @@ foo as <>
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Channel"/>
+        <TypeId name="Channel"/>
     </TypeArguments>
 </Cast>
 
@@ -80,8 +80,8 @@ foo as <Foo>
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Channel"/>
-        <TypeId id="Foo"/>
+        <TypeId name="Channel"/>
+        <TypeId name="Foo"/>
     </TypeArguments>
 </Cast>
 
@@ -94,10 +94,10 @@ foo as >(Foo,Bar):Baz
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Function"/>
-        <TypeId id="Baz"/>
-        <TypeId id="Foo"/>
-        <TypeId id="Bar"/>
+        <TypeId name="Function"/>
+        <TypeId name="Baz"/>
+        <TypeId name="Foo"/>
+        <TypeId name="Bar"/>
     </TypeArguments>
 </Cast>
 
@@ -113,29 +113,29 @@ foo as Foo\(Foo\Bar\Baz)\([Foo])\({| Foo = Bar |})\(<Foo>)\(>(Foo): Bar)
 <Cast>
     <Id name="foo"/>
     <TypeArguments>
-        <TypeId id="Foo"/>
+        <TypeId name="Foo"/>
         <TypeArguments>
-            <TypeId id="Foo"/>
-            <TypeId id="Bar"/>
-            <TypeId id="Baz"/>
+            <TypeId name="Foo"/>
+            <TypeId name="Bar"/>
+            <TypeId name="Baz"/>
         </TypeArguments>
         <TypeArguments>
-            <TypeId id="List"/>
-            <TypeId id="Foo"/>
+            <TypeId name="List"/>
+            <TypeId name="Foo"/>
         </TypeArguments>
         <TypeArguments>
-            <TypeId id="Map"/>
-            <TypeId id="Foo"/>
-            <TypeId id="Bar"/>
+            <TypeId name="Map"/>
+            <TypeId name="Foo"/>
+            <TypeId name="Bar"/>
         </TypeArguments>
         <TypeArguments>
-            <TypeId id="Channel"/>
-            <TypeId id="Foo"/>
+            <TypeId name="Channel"/>
+            <TypeId name="Foo"/>
         </TypeArguments>
         <TypeArguments>
-            <TypeId id="Function"/>
-            <TypeId id="Bar"/>
-            <TypeId id="Foo"/>
+            <TypeId name="Function"/>
+            <TypeId name="Bar"/>
+            <TypeId name="Foo"/>
         </TypeArguments>
     </TypeArguments>
 </Cast>

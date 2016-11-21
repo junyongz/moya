@@ -40,7 +40,7 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <TypeId id="A"/>
+    <TypeId name="A"/>
     <Integer value="1"/>
 </Property>
 
@@ -53,7 +53,7 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <TypeId id="A"/>
+    <TypeId name="A"/>
     <Integer value="1"/>
 </Property>
 
@@ -68,7 +68,7 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <TypeId id="A"/>
+    <TypeId name="A"/>
     <clause>
         <Integer value="2"/>
     </clause>
@@ -84,7 +84,7 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <TypeId id="A"/>
+    <TypeId name="A"/>
     <clause>
         <Integer value="2"/>
     </clause>

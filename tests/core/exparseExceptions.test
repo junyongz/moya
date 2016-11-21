@@ -74,7 +74,7 @@ try {
     <Id name="null"/>
     <Catch>
         <TypeAssignment name="exc">
-            <TypeId id="Exception"/>
+            <TypeId name="Exception"/>
         </TypeAssignment>
         <Id name="null"/>
     </Catch>
@@ -96,13 +96,13 @@ try {
     <Id name="null"/>
     <Catch>
         <TypeAssignment name="exc">
-            <TypeId id="Exception"/>
+            <TypeId name="Exception"/>
         </TypeAssignment>
         <Id name="null"/>
     </Catch>
     <Catch>
         <TypeAssignment name="exc">
-            <TypeId id="OtherException"/>
+            <TypeId name="OtherException"/>
         </TypeAssignment>
         <Id name="null"/>
     </Catch>

@@ -14,7 +14,7 @@ Type declarations in function parameters.
 <FunctionDeclaration access="public">
     <Id name="foo"/>
     <Argument name="f">
-        <TypeId id="Foo"/>
+        <TypeId name="Foo"/>
     </Argument>
     <Id name="null"/>
 </FunctionDeclaration>
@@ -31,8 +31,8 @@ Type declarations in function parameters.
     <Id name="foo"/>
     <Argument name="f">
         <TypeArguments>
-            <TypeId id="Foo"/>
-            <TypeId id="T"/>
+            <TypeId name="Foo"/>
+            <TypeId name="T"/>
         </TypeArguments>
     </Argument>
     <Id name="null"/>
@@ -50,12 +50,12 @@ Type declarations in function parameters.
     <Id name="foo"/>
     <Argument name="f">
         <TypeArguments>
-            <TypeId id="Foo"/>
-            <TypeId id="T"/>
+            <TypeId name="Foo"/>
+            <TypeId name="T"/>
         </TypeArguments>
     </Argument>
     <Argument name="b">
-        <TypeId id="Bar"/>
+        <TypeId name="Bar"/>
     </Argument>
     <Id name="null"/>
 </FunctionDeclaration>
@@ -72,8 +72,8 @@ Type declarations in function parameters.
     <Id name="foo"/>
     <Argument name="f">
         <TypeArguments>
-            <TypeId id="Foo"/>
-            <TypeId id="T"/>
+            <TypeId name="Foo"/>
+            <TypeId name="T"/>
         </TypeArguments>
         <Integer value="1"/>
     </Argument>
@@ -94,7 +94,7 @@ Type declarations in function returns.
 <FunctionDeclaration access="public">
     <Id name="foo"/>
     <returns>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </returns>
     <Id name="null"/>
 </FunctionDeclaration>
@@ -111,10 +111,10 @@ Type declarations in function returns.
     <Id name="foo"/>
     <returns>
         <TypeArguments>
-            <TypeId id="Channel"/>
+            <TypeId name="Channel"/>
             <TypeArguments>
-                <TypeId id="T"/>
-                <TypeId id="G"/>
+                <TypeId name="T"/>
+                <TypeId name="G"/>
             </TypeArguments>
         </TypeArguments>
     </returns>
@@ -133,7 +133,7 @@ Function with type parameters.
 <FunctionDeclaration access="private">
     <TypeArguments>
         <Id name="foo"/>
-        <TypeId id="T"/>
+        <TypeId name="T"/>
     </TypeArguments>
     <Argument name="a"/>
 </FunctionDeclaration>
@@ -146,8 +146,8 @@ Function with type parameters.
 <FunctionDeclaration access="private">
     <TypeArguments>
         <Id name="foo"/>
-        <TypeId id="T"/>
-        <TypeId id="G"/>
+        <TypeId name="T"/>
+        <TypeId name="G"/>
     </TypeArguments>
     <Argument name="a"/>
 </FunctionDeclaration>

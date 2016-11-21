@@ -13,7 +13,7 @@ Basic class declarations
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Class access="public">
-    <TypeId id="Foo"/>
+    <TypeId name="Foo"/>
 </Class>
 
 ----------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ Basic class declarations
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Class access="private">
-    <TypeId id="Foo"/>
+    <TypeId name="Foo"/>
 </Class>
 
 ====================================================================================================
@@ -38,9 +38,9 @@ Subclass declarations
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Class access="private">
-    <TypeId id="Foo"/>
+    <TypeId name="Foo"/>
     <base>
-        <TypeId id="Bar"/>
+        <TypeId name="Bar"/>
     </base>
 </Class>
 
@@ -56,8 +56,8 @@ Parameterized class declarations
 
 <Class access="private">
     <TypeArguments>
-        <TypeId id="Foo"/>
-        <TypeId id="T"/>
+        <TypeId name="Foo"/>
+        <TypeId name="T"/>
     </TypeArguments>
 </Class>
 
@@ -70,9 +70,9 @@ Parameterized class declarations
 
 <Class access="private">
     <TypeArguments>
-        <TypeId id="Foo"/>
-        <TypeId id="U"/>
-        <TypeId id="T"/>
+        <TypeId name="Foo"/>
+        <TypeId name="U"/>
+        <TypeId name="T"/>
     </TypeArguments>
 </Class>
 
