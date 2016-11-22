@@ -289,9 +289,7 @@ do {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Unable to convert to string
-<no file>, line 6
-        -- foo(2)
-           ^^^^^^
+Exception: Illegal string conversion
+<no file>
 
 ----------------------------------------------------------------------------------------------------
