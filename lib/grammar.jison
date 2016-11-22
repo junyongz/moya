@@ -438,6 +438,8 @@ declTypeId:
         { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
     | declTypeId BACKSLASH LP declTypeId RP
         { $$ = p.ensureTypeArguments(@$, $1); $$.append($4); }
+    | declTypeId QUESTION
+        { $$ = p.ensureTypeArguments(@$, $1); $$.optionals++; }
     ;
 
 declTypeIdList:

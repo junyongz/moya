@@ -191,8 +191,22 @@ MLVCompiler::GetType(int code) {
 }
 
 llvm::Type*
-MLVCompiler::CreateStruct(const std::string& name) {
+MLVCompiler::CreateStructType(const std::string& name) {
     return StructType::create(context, name);
+}
+
+llvm::Value*
+MLVCompiler::InsertValue(llvm::Value* agg, unsigned int index, llvm::Value* value) {
+    std::vector<unsigned int> indices;
+    indices.push_back(index);
+    return builder.CreateInsertValue(agg, value, indices);
+}
+
+llvm::Value*
+MLVCompiler::ExtractValue(llvm::Value* agg, unsigned int index, const std::string& name) {
+    std::vector<unsigned int> indices;
+    indices.push_back(index);
+    return builder.CreateExtractValue(agg, indices, name);
 }
 
 uint64_t
@@ -201,6 +215,11 @@ MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*
 
     const llvm::StructLayout* layout = dataLayout.getStructLayout(type);
     return layout->getSizeInBytes();
+}
+
+llvm::Value*
+MLVCompiler::CreateStruct(llvm::StructType* type, const std::vector<llvm::Constant*>& values) {
+    return llvm::ConstantStruct::get(type, values);
 }
 
 uint64_t
@@ -513,9 +532,9 @@ MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Ty
 llvm::Value*
 MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type){
     if (type) {
-        return builder.CreateGEP(type, pointer, offsets);
+        return builder.CreateInBoundsGEP(type, pointer, offsets);
     } else {
-        return builder.CreateGEP(pointer, offsets);
+        return builder.CreateInBoundsGEP(pointer, offsets);
     }
 }
 

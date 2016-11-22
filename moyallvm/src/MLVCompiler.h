@@ -29,8 +29,15 @@ public:
     
     llvm::Type* GetType(int code);
     uint64_t GetTypeSize(llvm::Type* type);
-    llvm::Type* CreateStruct(const std::string& name);
+    
+    llvm::Type* CreateStructType(const std::string& name);
     uint64_t SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body);
+
+    llvm::Value* CreateStruct(llvm::StructType* type,
+                              const std::vector<llvm::Constant*>& values);
+    llvm::Value* InsertValue(llvm::Value* agg, unsigned int index, llvm::Value* value);
+    llvm::Value* ExtractValue(llvm::Value* agg, unsigned int index, const std::string& name);
+
 
     void BeginModule(const std::string& name);
     void EndModule();

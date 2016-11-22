@@ -19,9 +19,12 @@ private:
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionSignatureType(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void CreateStruct(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void GetTypeSize(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateStructType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetStructBody(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateStruct(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void ExtractValue(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void InsertValue(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetTypeSize(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetPointerType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);

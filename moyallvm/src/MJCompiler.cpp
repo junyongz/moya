@@ -31,8 +31,11 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "getFunctionSignatureType", GetFunctionSignatureType);
   Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
   Nan::SetPrototypeMethod(tpl, "getTypeSize", GetTypeSize);
-  Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
+  Nan::SetPrototypeMethod(tpl, "createStructType", CreateStructType);
   Nan::SetPrototypeMethod(tpl, "setStructBody", SetStructBody);
+  Nan::SetPrototypeMethod(tpl, "createStruct", CreateStruct);
+  Nan::SetPrototypeMethod(tpl, "extractValue", ExtractValue);
+  Nan::SetPrototypeMethod(tpl, "insertValue", InsertValue);
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
@@ -138,13 +141,13 @@ void MJCompiler::GetTypeSize(const Nan::FunctionCallbackInfo<Value>& info) {
     info.GetReturnValue().Set(Nan::New<v8::Number>(size));
 }
 
-void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {
+void MJCompiler::CreateStructType(const Nan::FunctionCallbackInfo<Value>& info) {
     MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
 
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    llvm::Type* retType = bridge->compiler->CreateStruct(name);
+    llvm::Type* retType = bridge->compiler->CreateStructType(name);
     info.GetReturnValue().Set(MJType::Create(retType));
 }
 
@@ -167,6 +170,52 @@ void MJCompiler::SetStructBody(const Nan::FunctionCallbackInfo<Value>& info) {
     uint64_t size = bridge->compiler->SetStructBody(structType, body);
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(size));
+}
+
+void MJCompiler::CreateStruct(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJType* mjtype = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[0]));
+    llvm::StructType* structType = static_cast<llvm::StructType*>(mjtype->GetType());
+
+    std::vector<llvm::Constant*> values;
+    Handle<Array> array1 = Handle<Array>::Cast(info[1]);
+    for (unsigned int i = 0; i < array1->Length(); i++) {
+        llvm::Value* value = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(array1->Get(i)))->GetValue();
+        values.push_back((llvm::Constant*)value);
+    }
+    
+    llvm::Value* structVal = bridge->compiler->CreateStruct(structType, values);
+    info.GetReturnValue().Set(MJValue::Create(structVal));
+}
+
+void MJCompiler::ExtractValue(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJValue* agg = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    int index = info[1]->NumberValue();
+
+    if (info.Length() > 2) {
+        String::Utf8Value _name(info[2]->ToString());
+        std::string name = std::string(*_name);
+        
+        llvm::Value* ret = bridge->compiler->ExtractValue(agg->GetValue(), index, name);
+        info.GetReturnValue().Set(MJValue::Create(ret));
+    } else {
+        llvm::Value* ret = bridge->compiler->ExtractValue(agg->GetValue(), index, "");
+        info.GetReturnValue().Set(MJValue::Create(ret));
+    }
+}
+
+void MJCompiler::InsertValue(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    MJValue* agg = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[0]));
+    int index = info[1]->NumberValue();
+    MJValue* value = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[2]));
+
+    llvm::Value* ret = bridge->compiler->InsertValue(agg->GetValue(), index, value->GetValue());
+    info.GetReturnValue().Set(MJValue::Create(ret));
 }
 
 void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
