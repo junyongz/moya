@@ -1,6 +1,7 @@
 #include "MJCompiler.h"
 #include "MJValue.h"
 #include "MJType.h"
+#include "MJDIScope.h"
 
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/APSInt.h"
@@ -26,6 +27,10 @@ void MJCompiler::Init(Local<Object> exports) {
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
+  Nan::SetPrototypeMethod(tpl, "createDebugModule", CreateDebugModule);
+  Nan::SetPrototypeMethod(tpl, "createDebugFunction", CreateDebugFunction);
+  Nan::SetPrototypeMethod(tpl, "setDebugLocation", SetDebugLocation);
+
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
   Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
   Nan::SetPrototypeMethod(tpl, "getFunctionSignatureType", GetFunctionSignatureType);
@@ -85,6 +90,50 @@ void MJCompiler::New(const Nan::FunctionCallbackInfo<Value>& info) {
     obj->Wrap(info.This());
     info.GetReturnValue().Set(info.This());
   }
+}
+
+void MJCompiler::CreateDebugModule(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+    
+    String::Utf8Value _dirPath(info[1]->ToString());
+    std::string dirPath = std::string(*_dirPath);
+
+    llvm::DIScope* scope = bridge->compiler->CreateDebugModule(name, dirPath);
+    info.GetReturnValue().Set(MJDIScope::Create(scope));
+}
+
+void MJCompiler::CreateDebugFunction(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+    MJDIScope* unitv = ObjectWrap::Unwrap<MJDIScope>(Handle<Object>::Cast(info[1]));
+    llvm::DIFile* unit = static_cast<llvm::DIFile*>(unitv->GetScope());
+    
+    MJValue* funcv = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[2]));
+    llvm::Function* func = static_cast<llvm::Function*>(funcv->GetValue());
+    int argCount = info[3]->NumberValue();
+    int lineNo = info[4]->NumberValue();
+    
+    llvm::DIScope* scope = bridge->compiler->CreateDebugFunction(name, unit, func, argCount,
+                                                                 lineNo);
+
+    info.GetReturnValue().Set(MJDIScope::Create(scope));
+}
+
+void MJCompiler::SetDebugLocation(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    int line = info[0]->NumberValue();
+    int col = info[1]->NumberValue();
+    MJDIScope* unitv = ObjectWrap::Unwrap<MJDIScope>(Handle<Object>::Cast(info[2]));
+
+    bridge->compiler->SetDebugLocation(line, col, unitv->GetScope());
+
+    info.GetReturnValue().Set(Nan::Undefined());
 }
 
 void MJCompiler::GetType(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -222,7 +271,7 @@ void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
   MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
   String::Utf8Value _name(info[0]->ToString());
   std::string name = std::string(*_name);
-  bridge->compiler->BeginModule(name);
+  bridge->compiler->BeginModule(name, info[1]->NumberValue());
 
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -230,10 +279,12 @@ void MJCompiler::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
 void MJCompiler::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
   MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
 
-  int mode = info[0]->NumberValue();
+  bool shouldOptimize = info[0]->NumberValue();
+  
+  int mode = info[1]->NumberValue();
   MLVCompiler::SetDumpMode((MLVDumpMode)mode);
 
-  bridge->compiler->EndModule();
+  bridge->compiler->EndModule(shouldOptimize);
 
   info.GetReturnValue().Set(Nan::Undefined());
 }

@@ -114,17 +114,20 @@ optimizeModule(std::unique_ptr<Module> M) {
 MLVCompiler::MLVCompiler():
     context(),
     builder(context),
+    dibuilder(NULL),
+    diunit(NULL),
     machine(InitMachine()),
     dataLayout(machine->createDataLayout()),
     compileLayer(objectLayer, SimpleCompiler(*machine)),
     optimizeLayer(compileLayer,
         [this](std::unique_ptr<Module> M) {
           return optimizeModule(std::move(M));
-        })
+    })
 {
 }
 
 MLVCompiler::~MLVCompiler() {
+    delete dibuilder;
 }
 
 void
@@ -228,13 +231,22 @@ MLVCompiler::GetTypeSize(llvm::Type* type) {
 }
 
 void
-MLVCompiler::BeginModule(const std::string& name) {
+MLVCompiler::BeginModule(const std::string& name, bool shouldDebug) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(dataLayout);
+    
+    if (shouldDebug) {
+        dibuilder = new DIBuilder(*module);
+        diunit = dibuilder->createCompileUnit(dwarf::DW_LANG_C, "moya", ".", "Moya", 0, "", 0);
+    }
 }
 
 void
-MLVCompiler::EndModule() {
+MLVCompiler::EndModule(bool shouldOptimize) {
+    if (dibuilder) {
+        dibuilder->finalize();
+    }
+
     auto Resolver = createLambdaResolver(
         [&](const std::string &Name) {
         //   if (auto Sym = IndirectStubsMgr->findStub(Name, false))
@@ -249,11 +261,42 @@ MLVCompiler::EndModule() {
             return RuntimeDyld::SymbolInfo(SymAddr, JITSymbolFlags::Exported);
           return RuntimeDyld::SymbolInfo(nullptr);
         });
-        
+    
     std::vector<std::unique_ptr<Module>> Ms;
     Ms.push_back(std::move(module));
+
     optimizeLayer.addModuleSet(std::move(Ms), make_unique<SectionMemoryManager>(),
                                std::move(Resolver));
+}
+
+DIScope* MLVCompiler::CreateDebugModule(const std::string& name, const std::string& dirPath) {
+    if (!dibuilder) return NULL;
+    
+    return dibuilder->createFile(name, dirPath);
+}
+
+DIScope* MLVCompiler::CreateDebugFunction(const std::string& name, DIFile* unit, Function* func,
+                                          int argCount, int lineNo) {
+    if (!dibuilder) return NULL;
+    
+    SmallVector<Metadata *, 8> argTypes;
+    // DIType *DblTy = KSDbgInfo.getDoubleTy();
+    // EltTys.push_back(DblTy);
+    
+    DITypeRefArray argTypesRef = dibuilder->getOrCreateTypeArray(argTypes);
+    DISubroutineType* ftype = dibuilder->createSubroutineType(argTypesRef);
+
+    DISubprogram* sp = dibuilder->createFunction(unit, name, StringRef(), unit, lineNo, ftype,
+                                                false, true, lineNo, DINode::FlagPrototyped, false);
+    func->setSubprogram(sp);
+    return sp;
+}
+
+void MLVCompiler::SetDebugLocation(int line, int col, DIScope* scope) {
+    if (dibuilder) {
+        // printf("loc %d:%d %d %d\n", line, col, scope, diunit); fflush(stdout);
+        builder.SetCurrentDebugLocation(DebugLoc::get(line, col, scope));
+    }
 }
 
 Type*

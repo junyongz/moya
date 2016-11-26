@@ -16,6 +16,9 @@ private:
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
+    static void CreateDebugModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateDebugFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void SetDebugLocation(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionSignatureType(const Nan::FunctionCallbackInfo<v8::Value>& info);

@@ -103,3 +103,8 @@ extern "C" double
 moyaModf64(double n, double* rem) {
     return modf(n, rem);
 }
+
+extern "C" void
+crashForFun() {
+    abort();
+}

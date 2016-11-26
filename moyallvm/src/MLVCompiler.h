@@ -3,8 +3,9 @@
 
 #include <nan.h>
 
-#include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/Target/TargetMachine.h"
@@ -24,7 +25,12 @@ public:
     ~MLVCompiler();
 
     static void SetDumpMode(MLVDumpMode);
-    
+
+    llvm::DIScope* CreateDebugModule(const std::string& name, const std::string& dirPath);
+    llvm::DIScope* CreateDebugFunction(const std::string& name, llvm::DIFile* unit,
+                                       llvm::Function* func, int argCount, int lineNo);
+    void SetDebugLocation(int line, int col, llvm::DIScope* scope);
+        
     llvm::LLVMContext& GetContext();
     
     llvm::Type* GetType(int code);
@@ -39,8 +45,8 @@ public:
     llvm::Value* ExtractValue(llvm::Value* agg, unsigned int index, const std::string& name);
 
 
-    void BeginModule(const std::string& name);
-    void EndModule();
+    void BeginModule(const std::string& name, bool shouldDebug);
+    void EndModule(bool shouldOptimize);
 
     llvm::Value* GetInsertBlock();
     void SetInsertBlock(llvm::Value* block);
@@ -106,9 +112,14 @@ protected:
 private:
     llvm::LLVMContext context;
     llvm::IRBuilder<> builder;
+
+    llvm::DIBuilder* dibuilder;
+    llvm::DICompileUnit* diunit;
+
     llvm::TargetMachine* machine;
     const llvm::DataLayout dataLayout;
     std::unique_ptr<llvm::Module> module;
+    
     
     llvm::orc::ObjectLinkingLayer<> objectLayer;
     llvm::orc::IRCompileLayer<decltype(objectLayer)> compileLayer;

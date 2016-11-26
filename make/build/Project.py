@@ -35,7 +35,11 @@ class Project(object):
     showCommands = False
     formatOutput = True
     installLink = False
-
+    
+    nodePath = None
+    moyaLib = None
+    moyaBin = None
+    
     platform = None
     device = None
     sdk = None

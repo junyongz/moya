@@ -9,7 +9,7 @@ outputPath = testOutputPath(__file__)
 testLibPath = os.path.abspath(os.path.join(outputPath, "lib"))
 sharedLibPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib"))
 
-moyaExePath = "/usr/bin/env moya"
+moyaExePath = "moya"
 
 # **************************************************************************************************
 
@@ -48,7 +48,7 @@ class MoyaTestFixture(TestFixture):
         else:
             return out
 
-    def runTest(self, args, source, isExpr=False, eventLoop=False, **kwds):
+    def runTest(self, args, source, isExpr=False, eventLoop=True, **kwds):
         if not eventLoop:
             extraArgs = ["--disableEventLoop"]
         else:
@@ -70,7 +70,7 @@ class MoyaTestFixture(TestFixture):
         
         env = {"MOYAPATH": moyaPath, "NODE_PATH": "/usr/local/lib/node_modules", "PATH": sysPath}
         
-        metaArgs = args + extraArgs + ['-c', source]
+        metaArgs = args + extraArgs + ['--debug', '--optimize', '-c', source]
         
         self.metadata = {"command": moyaExePath, "args": metaArgs, "env": env}
         return self.launch(exePath, env=env, args=args, source=source).strip()
@@ -81,19 +81,19 @@ class ParseTests(MoyaTestFixture):
     order = 1
 
     def testParse(self, source, expected, mode="ast", **kwds):
-        return self.runTest(["--debug", mode] if mode else [], source, False, **kwds)
+        return self.runTest(["--inspect", mode] if mode else [], source, False, **kwds)
 
 class ExparseTests(MoyaTestFixture):
     order = 1
 
     def testExparse(self, source, expected, mode="ast", **kwds):
-        return self.runTest(["--debug", mode] if mode else [], source, True, **kwds)
+        return self.runTest(["--inspect", mode] if mode else [], source, True, **kwds)
 
 class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        return self.runTest(["--debug", mode] if mode else [], source, False, **kwds)
+        return self.runTest(["--inspect", mode] if mode else [], source, False, **kwds)
 
 # **************************************************************************************************
 
@@ -101,7 +101,7 @@ class RunTests(MoyaTestFixture):
 #     order = 1
 #
 #     def testCompile(self, source, expected, **kwds):
-#         return self.runTest(["--debug", "compile"], source, **kwds)
+#         return self.runTest(["--inspect", "compile"], source, **kwds)
 #
 # # **************************************************************************************************
 #

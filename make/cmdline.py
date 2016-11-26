@@ -71,6 +71,18 @@ def parseArguments():
                         default=None,
                         help='Path of directory to write generated pages to.')
 
+    parser.add_argument('--nodePath', dest='nodePath', action='store',
+                        default=None,
+                        help='xxx')
+
+    parser.add_argument('--moyaLib', dest='moyaLib', action='store',
+                        default=None,
+                        help='xxx')
+
+    parser.add_argument('--moyaBin', dest='moyaBin', action='store',
+                        default=None,
+                        help='xxx')
+
     args = parser.parse_args()
 
     pairs = []

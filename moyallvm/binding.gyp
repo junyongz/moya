@@ -13,6 +13,7 @@
         "src/MJCompiler.cpp",
         "src/MJValue.cpp",
         "src/MJType.cpp",
+        "src/MJDIScope.cpp",
         "src/MoCore.cpp"
        ],
       'conditions': [

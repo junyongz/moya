@@ -50,7 +50,7 @@ INCS_Debug := \
 	-I/Users/joehewitt/.node-gyp/7.1.0/src \
 	-I/Users/joehewitt/.node-gyp/7.1.0/deps/uv/include \
 	-I/Users/joehewitt/.node-gyp/7.1.0/deps/v8/include \
-	-I$(srcdir)/../../../../../../usr/local/lib/node_modules/nan \
+	-I$(srcdir)/../node_modules/nan \
 	-I/usr/local/include
 
 DEFS_Release := \
@@ -99,7 +99,7 @@ INCS_Release := \
 	-I/Users/joehewitt/.node-gyp/7.1.0/src \
 	-I/Users/joehewitt/.node-gyp/7.1.0/deps/uv/include \
 	-I/Users/joehewitt/.node-gyp/7.1.0/deps/v8/include \
-	-I$(srcdir)/../../../../../../usr/local/lib/node_modules/nan \
+	-I$(srcdir)/../node_modules/nan \
 	-I/usr/local/include
 
 OBJS := \
@@ -109,6 +109,7 @@ OBJS := \
 	$(obj).target/$(TARGET)/src/MJCompiler.o \
 	$(obj).target/$(TARGET)/src/MJValue.o \
 	$(obj).target/$(TARGET)/src/MJType.o \
+	$(obj).target/$(TARGET)/src/MJDIScope.o \
 	$(obj).target/$(TARGET)/src/MoCore.o
 
 # Add to the list of files we specially track dependencies for.
