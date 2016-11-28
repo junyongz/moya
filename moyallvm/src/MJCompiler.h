@@ -18,6 +18,7 @@ private:
 
     static void CreateDebugModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateDebugFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CreateDebugVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetDebugLocation(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -31,6 +32,8 @@ private:
     static void GetPointerType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void EmitObject(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void ExecuteMain(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void IsBlockEmpty(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -66,7 +69,6 @@ private:
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void LoadVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetPointer(const Nan::FunctionCallbackInfo<v8::Value>& info);
-    static void ExecuteMain(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
     static Nan::Persistent<v8::Function> constructor;
 };

@@ -29,6 +29,7 @@ void MJCompiler::Init(Local<Object> exports) {
   // Prototype
   Nan::SetPrototypeMethod(tpl, "createDebugModule", CreateDebugModule);
   Nan::SetPrototypeMethod(tpl, "createDebugFunction", CreateDebugFunction);
+  Nan::SetPrototypeMethod(tpl, "createDebugVariable", CreateDebugVariable);
   Nan::SetPrototypeMethod(tpl, "setDebugLocation", SetDebugLocation);
 
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
@@ -43,6 +44,7 @@ void MJCompiler::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "insertValue", InsertValue);
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
+  Nan::SetPrototypeMethod(tpl, "emitObject", EmitObject);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "setInsertBlock", SetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "isBlockEmpty", IsBlockEmpty);
@@ -122,6 +124,28 @@ void MJCompiler::CreateDebugFunction(const Nan::FunctionCallbackInfo<Value>& inf
                                                                  lineNo);
 
     info.GetReturnValue().Set(MJDIScope::Create(scope));
+}
+
+void MJCompiler::CreateDebugVariable(const Nan::FunctionCallbackInfo<Value>& info) {
+    MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+    String::Utf8Value _name(info[0]->ToString());
+    std::string name = std::string(*_name);
+    
+    MJDIScope* unitv = ObjectWrap::Unwrap<MJDIScope>(Handle<Object>::Cast(info[1]));
+    llvm::DIFile* unit = static_cast<llvm::DIFile*>(unitv->GetScope());
+    
+    llvm::DIScope* scope = ObjectWrap::Unwrap<MJDIScope>(Handle<Object>::Cast(info[2]))->GetScope();
+
+    llvm::Value* alloca = ObjectWrap::Unwrap<MJValue>(Handle<Object>::Cast(info[3]))->GetValue();
+    llvm::Type* type = ObjectWrap::Unwrap<MJType>(Handle<Object>::Cast(info[4]))->GetType();
+    
+    int argNo = info[5]->NumberValue();
+    int lineNo = info[6]->NumberValue();
+    
+    bridge->compiler->CreateDebugVariable(name, unit, scope, alloca, type, argNo, lineNo);
+
+    info.GetReturnValue().Set(Nan::Undefined());
 }
 
 void MJCompiler::SetDebugLocation(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -286,6 +310,28 @@ void MJCompiler::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
 
   bridge->compiler->EndModule(shouldOptimize);
 
+  info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::EmitObject(const Nan::FunctionCallbackInfo<Value>& info) {
+  MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+
+  String::Utf8Value _path(info[0]->ToString());
+  std::string path = std::string(*_path);
+
+  int optLevel = info[1]->NumberValue();
+  MLVCompiler::SetOptimizeLevel((MLVOptimizeLevel)optLevel);
+  
+  bridge->compiler->EmitObject(path);
+
+  info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MJCompiler::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {
+  MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
+    
+  bridge->compiler->ExecuteMain();
+  
   info.GetReturnValue().Set(Nan::Undefined());
 }
 
@@ -733,12 +779,4 @@ void MJCompiler::CompilePhi(const Nan::FunctionCallbackInfo<Value>& info) {
     
     llvm::Value* phi = bridge->compiler->CompilePHI(phiType, exprs, blocks);
     info.GetReturnValue().Set(MJValue::Create(phi));
-}
-
-void MJCompiler::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {
-  MJCompiler* bridge = ObjectWrap::Unwrap<MJCompiler>(info.Holder());
-    
-  bridge->compiler->ExecuteMain();
-  
-  info.GetReturnValue().Set(Nan::Undefined());
 }

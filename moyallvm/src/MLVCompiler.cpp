@@ -51,6 +51,7 @@ using namespace llvm;
 using namespace llvm::orc;
 
 static MLVDumpMode dumpMode = MLVDumpNothing;
+static MLVOptimizeLevel optimizeLevel = MLVOptimizeNothing;
 
 // *************************************************************************************************
 
@@ -61,7 +62,7 @@ InitMachine() {
     InitializeAllTargetMCs();
     InitializeAllAsmParsers();
     InitializeAllAsmPrinters();
-    
+
     auto targetTriple = sys::getDefaultTargetTriple();
 
     std::string Error = "Error message";
@@ -83,34 +84,43 @@ mangle(const std::string &Name, DataLayout DL) {
     return MangledNameStream.str();
 }
 
+static void
+configurePasses(legacy::PassManagerBase& fpm) {
+    if (optimizeLevel == MLVOptimizeFull) {
+        fpm.add(createPromoteMemoryToRegisterPass());
+        fpm.add(createInstructionCombiningPass());
+        fpm.add(createReassociatePass());
+        fpm.add(createGVNPass());
+        fpm.add(createCFGSimplificationPass());
+        fpm.add(createReassociatePass());
+    }
+}
+    
 static std::unique_ptr<Module>
-optimizeModule(std::unique_ptr<Module> M) {
+optimizeModule(std::unique_ptr<Module> module) {
     llvm::sys::DynamicLibrary::LoadLibraryPermanently(nullptr);
 
     if (dumpMode == MLVDumpUnoptimized) {
-        M->dump();
+        module->dump();
     }
 
-    auto FPM = llvm::make_unique<legacy::FunctionPassManager>(M.get());
-    FPM->add(createPromoteMemoryToRegisterPass());
-    FPM->add(createInstructionCombiningPass());
-    FPM->add(createReassociatePass());
-    FPM->add(createGVNPass());
-    FPM->add(createCFGSimplificationPass());
-    FPM->add(createReassociatePass());
-    FPM->doInitialization();
+    legacy::FunctionPassManager fpm(module.get());
+    configurePasses(fpm);
+    fpm.doInitialization();
 
-    for (auto &F : *M) {
-        FPM->run(F);
+    for (auto &func : *module) {
+        fpm.run(func);
     }
 
     if (dumpMode == MLVDumpOptimized) {
-        M->dump();
+        module->dump();
     }
 
-    return M;
+    return module;
 }
-      
+
+// *************************************************************************************************
+
 MLVCompiler::MLVCompiler():
     context(),
     builder(context),
@@ -130,10 +140,33 @@ MLVCompiler::~MLVCompiler() {
     delete dibuilder;
 }
 
+// *************************************************************************************************
+
 void
 MLVCompiler::SetDumpMode(MLVDumpMode mode) {
     dumpMode = mode;
 }
+
+void
+MLVCompiler::SetOptimizeLevel(MLVOptimizeLevel level) {
+    optimizeLevel = level;
+}
+
+DIType*
+MLVCompiler::GetDITypeForType(Type* type) {
+    int size = dataLayout.getTypeSizeInBits(type);
+    if (type->isIntegerTy()) {
+        return dibuilder->createBasicType("int", size, size, dwarf::DW_ATE_signed);
+    } else if (type->isFloatTy()) {
+        return dibuilder->createBasicType("float", size, size, dwarf::DW_ATE_float);
+    } else if (type->isDoubleTy()) {
+        return dibuilder->createBasicType("double", size, size, dwarf::DW_ATE_float);
+    } else {
+        return NULL;
+    }
+}
+
+// *************************************************************************************************
 
 AllocaInst*
 MLVCompiler::CreateEntryBlockAlloca(Function* f, const std::string& name, Type* type) {
@@ -246,7 +279,42 @@ MLVCompiler::EndModule(bool shouldOptimize) {
     if (dibuilder) {
         dibuilder->finalize();
     }
+}
 
+void
+MLVCompiler::EmitObject(const std::string& path) {
+    std::error_code EC;
+    raw_fd_ostream dest(path, EC, sys::fs::F_None);
+
+    if (EC) {
+      errs() << "Could not open file: " << EC.message();
+      return;
+    }
+
+    legacy::PassManager fpm;
+    configurePasses(fpm);
+    
+    auto FileType = TargetMachine::CGFT_ObjectFile;
+    if (machine->addPassesToEmitFile(fpm, dest, FileType)) {
+      errs() << "TargetMachine can't emit a file of this type";
+      return;
+    }
+
+    if (dumpMode == MLVDumpUnoptimized) {
+        module->dump();
+    }
+
+    fpm.run(*module);
+
+    if (dumpMode == MLVDumpOptimized) {
+        module->dump();
+    }
+
+    dest.flush();
+}
+
+int
+MLVCompiler::ExecuteMain() {
     auto Resolver = createLambdaResolver(
         [&](const std::string &Name) {
         //   if (auto Sym = IndirectStubsMgr->findStub(Name, false))
@@ -264,10 +332,19 @@ MLVCompiler::EndModule(bool shouldOptimize) {
     
     std::vector<std::unique_ptr<Module>> Ms;
     Ms.push_back(std::move(module));
-
+    
     optimizeLayer.addModuleSet(std::move(Ms), make_unique<SectionMemoryManager>(),
                                std::move(Resolver));
+
+    if (auto sym = optimizeLayer.findSymbol(mangle("main", dataLayout), false)) {
+        int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
+        return FP();
+    } else {
+        return -1;
+    }
 }
+
+// *************************************************************************************************
 
 DIScope* MLVCompiler::CreateDebugModule(const std::string& name, const std::string& dirPath) {
     if (!dibuilder) return NULL;
@@ -292,6 +369,22 @@ DIScope* MLVCompiler::CreateDebugFunction(const std::string& name, DIFile* unit,
     return sp;
 }
 
+void MLVCompiler::CreateDebugVariable(const std::string& name, DIFile* unit, DIScope* scope,
+                                      Value* alloca, Type* type, int argNo, int lineNo) {
+    DIType* ditype = GetDITypeForType(type);
+    if (!ditype) return;
+    
+    DILocalVariable* pv;
+    if (argNo) {
+        pv = dibuilder->createParameterVariable(scope, name, argNo, unit, lineNo, ditype, true);
+    } else {
+        pv = dibuilder->createAutoVariable(scope, name, unit, lineNo, ditype, true);
+    }
+    dibuilder->insertDeclare(alloca, pv, dibuilder->createExpression(),
+                             DebugLoc::get(lineNo, 0, scope),
+                             builder.GetInsertBlock());
+}
+    
 void MLVCompiler::SetDebugLocation(int line, int col, DIScope* scope) {
     if (dibuilder) {
         // printf("loc %d:%d %d %d\n", line, col, scope, diunit); fflush(stdout);
@@ -578,15 +671,5 @@ MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets
         return builder.CreateInBoundsGEP(type, pointer, offsets);
     } else {
         return builder.CreateInBoundsGEP(pointer, offsets);
-    }
-}
-
-int
-MLVCompiler::ExecuteMain() {
-    if (auto sym = optimizeLayer.findSymbol(mangle("main", dataLayout), false)) {
-        int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
-        return FP();
-    } else {
-        return -1;
     }
 }

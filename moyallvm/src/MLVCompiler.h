@@ -19,16 +19,29 @@ typedef enum {
     MLVDumpOptimized = 2
 } MLVDumpMode;
 
+typedef enum {
+    MLVOptimizeNothing = 0,
+    MLVOptimizeFull = 1
+} MLVOptimizeLevel;
+
 class MLVCompiler {
 public:
     MLVCompiler();
     ~MLVCompiler();
 
+public:
     static void SetDumpMode(MLVDumpMode);
-
+    static void SetOptimizeLevel(MLVOptimizeLevel);
+    
+protected:
+    llvm::DIType* GetDITypeForType(llvm::Type*);
+    
+public:
     llvm::DIScope* CreateDebugModule(const std::string& name, const std::string& dirPath);
     llvm::DIScope* CreateDebugFunction(const std::string& name, llvm::DIFile* unit,
                                        llvm::Function* func, int argCount, int lineNo);
+    void CreateDebugVariable(const std::string& name, llvm::DIFile* unit, llvm::DIScope* scope,
+                             llvm::Value* alloca, llvm::Type* type, int argNo, int lineNo);
     void SetDebugLocation(int line, int col, llvm::DIScope* scope);
         
     llvm::LLVMContext& GetContext();
@@ -47,6 +60,9 @@ public:
 
     void BeginModule(const std::string& name, bool shouldDebug);
     void EndModule(bool shouldOptimize);
+
+    void EmitObject(const std::string& path);
+    int ExecuteMain();
 
     llvm::Value* GetInsertBlock();
     void SetInsertBlock(llvm::Value* block);
@@ -103,8 +119,6 @@ public:
     llvm::Value* LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Type* type);
 
     llvm::Value* GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type);
-
-    int ExecuteMain();
         
 protected:
     llvm::AllocaInst* CreateEntryBlockAlloca(llvm::Function*, const std::string&, llvm::Type*);
@@ -120,10 +134,8 @@ private:
     const llvm::DataLayout dataLayout;
     std::unique_ptr<llvm::Module> module;
     
-    
     llvm::orc::ObjectLinkingLayer<> objectLayer;
     llvm::orc::IRCompileLayer<decltype(objectLayer)> compileLayer;
-
     typedef std::function<std::unique_ptr<llvm::Module>(std::unique_ptr<llvm::Module>)> OptimizeFunction;
     llvm::orc::IRTransformLayer<decltype(compileLayer), OptimizeFunction> optimizeLayer;
 };
