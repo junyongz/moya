@@ -5,7 +5,7 @@
 
 #include "llvm/IR/DIBuilder.h"
 
-class MJDIScope : public Nan::ObjectWrap {
+class MoJDIScope : public Nan::ObjectWrap {
 public:
     static void Init(v8::Local<v8::Object> exports);
 
@@ -17,8 +17,8 @@ private:
     llvm::DIScope* scope;
     
 private:
-    MJDIScope();
-    ~MJDIScope();
+    MoJDIScope();
+    ~MoJDIScope();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
         

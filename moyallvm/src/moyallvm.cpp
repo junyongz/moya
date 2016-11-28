@@ -1,16 +1,16 @@
 
 #include <nan.h>
 
-#include "MJCompiler.h"
-#include "MJValue.h"
-#include "MJType.h"
-#include "MJDIScope.h"
+#include "MoJBridge.h"
+#include "MoJValue.h"
+#include "MoJType.h"
+#include "MoJDIScope.h"
 
 void Init(v8::Local<v8::Object> exports) {
-    MJValue::Init(exports);
-    MJType::Init(exports);
-    MJDIScope::Init(exports);
-    MJCompiler::Init(exports);
+    MoJValue::Init(exports);
+    MoJType::Init(exports);
+    MoJDIScope::Init(exports);
+    MoJBridge::Init(exports);
 }
 
 NODE_MODULE(moyallvm, Init)

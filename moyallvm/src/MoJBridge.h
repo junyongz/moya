@@ -2,17 +2,17 @@
 #define MJCOMPILER_H
 
 #include <nan.h>
-#include "MLVCompiler.h"
+#include "MoLLVMBridge.h"
 
-class MJCompiler : public Nan::ObjectWrap {
+class MoJBridge : public Nan::ObjectWrap {
 public:
     static void Init(v8::Local<v8::Object> exports);
 
 private:
-    MLVCompiler* compiler;
+    MoLLVMBridge* compiler;
     
-    explicit MJCompiler();
-    ~MJCompiler();
+    explicit MoJBridge();
+    ~MoJBridge();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 

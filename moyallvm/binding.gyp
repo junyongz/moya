@@ -9,11 +9,11 @@
       "sources": [
         "src/moyallvm.cpp",
         "src/tests.cpp",
-        "src/MLVCompiler.cpp",
-        "src/MJCompiler.cpp",
-        "src/MJValue.cpp",
-        "src/MJType.cpp",
-        "src/MJDIScope.cpp",
+        "src/MoLLVMBridge.cpp",
+        "src/MoJBridge.cpp",
+        "src/MoJValue.cpp",
+        "src/MoJType.cpp",
+        "src/MoJDIScope.cpp",
         "src/MoCore.cpp"
        ],
       'conditions': [

@@ -1,20 +1,20 @@
-#include "MJValue.h"
+#include "MoJValue.h"
 
-Nan::Persistent<v8::Function> MJValue::constructor;
+Nan::Persistent<v8::Function> MoJValue::constructor;
 
-MJValue::MJValue() {
+MoJValue::MoJValue() {
     value = NULL;
 }
 
-MJValue::~MJValue() {
+MoJValue::~MoJValue() {
 }
 
 llvm::Value*
-MJValue::GetValue() const {
+MoJValue::GetValue() const {
     return value;
 }
 
-void MJValue::Init(v8::Local<v8::Object> exports) {
+void MoJValue::Init(v8::Local<v8::Object> exports) {
   Nan::HandleScope scope;
 
   // Prepare constructor template
@@ -26,21 +26,21 @@ void MJValue::Init(v8::Local<v8::Object> exports) {
   exports->Set(Nan::New("Value").ToLocalChecked(), tpl->GetFunction());
 }
 
-v8::Local<v8::Object> MJValue::Create(llvm::Value* _value) {
+v8::Local<v8::Object> MoJValue::Create(llvm::Value* _value) {
     Nan::EscapableHandleScope scope;
 
     v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
     v8::Local<v8::Object> instance = cons->NewInstance();
 
-    MJValue* self = ObjectWrap::Unwrap<MJValue>(instance);
+    MoJValue* self = ObjectWrap::Unwrap<MoJValue>(instance);
     self->value = _value;
         
     return scope.Escape(instance);
 }
 
-void MJValue::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void MoJValue::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if (info.IsConstructCall()) {
-    MJValue* obj = new MJValue();
+    MoJValue* obj = new MoJValue();
     obj->Wrap(info.This());
     
     info.GetReturnValue().Set(info.This());

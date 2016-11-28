@@ -24,10 +24,10 @@ typedef enum {
     MLVOptimizeFull = 1
 } MLVOptimizeLevel;
 
-class MLVCompiler {
+class MoLLVMBridge {
 public:
-    MLVCompiler();
-    ~MLVCompiler();
+    MoLLVMBridge();
+    ~MoLLVMBridge();
 
 public:
     static void SetDumpMode(MLVDumpMode);

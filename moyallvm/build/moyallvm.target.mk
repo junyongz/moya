@@ -105,11 +105,11 @@ INCS_Release := \
 OBJS := \
 	$(obj).target/$(TARGET)/src/moyallvm.o \
 	$(obj).target/$(TARGET)/src/tests.o \
-	$(obj).target/$(TARGET)/src/MLVCompiler.o \
-	$(obj).target/$(TARGET)/src/MJCompiler.o \
-	$(obj).target/$(TARGET)/src/MJValue.o \
-	$(obj).target/$(TARGET)/src/MJType.o \
-	$(obj).target/$(TARGET)/src/MJDIScope.o \
+	$(obj).target/$(TARGET)/src/MoLLVMBridge.o \
+	$(obj).target/$(TARGET)/src/MoJBridge.o \
+	$(obj).target/$(TARGET)/src/MoJValue.o \
+	$(obj).target/$(TARGET)/src/MoJType.o \
+	$(obj).target/$(TARGET)/src/MoJDIScope.o \
 	$(obj).target/$(TARGET)/src/MoCore.o
 
 # Add to the list of files we specially track dependencies for.

@@ -1,20 +1,20 @@
-#include "MJDIScope.h"
+#include "MoJDIScope.h"
 
-Nan::Persistent<v8::Function> MJDIScope::constructor;
+Nan::Persistent<v8::Function> MoJDIScope::constructor;
 
-MJDIScope::MJDIScope() {
+MoJDIScope::MoJDIScope() {
     scope = NULL;
 }
 
-MJDIScope::~MJDIScope() {
+MoJDIScope::~MoJDIScope() {
 }
 
 llvm::DIScope*
-MJDIScope::GetScope() const {
+MoJDIScope::GetScope() const {
     return scope;
 }
 
-void MJDIScope::Init(v8::Local<v8::Object> exports) {
+void MoJDIScope::Init(v8::Local<v8::Object> exports) {
   Nan::HandleScope scope;
 
   // Prepare constructor template
@@ -26,21 +26,21 @@ void MJDIScope::Init(v8::Local<v8::Object> exports) {
   exports->Set(Nan::New("DIScope").ToLocalChecked(), tpl->GetFunction());
 }
 
-v8::Local<v8::Object> MJDIScope::Create(llvm::DIScope* _scope) {
+v8::Local<v8::Object> MoJDIScope::Create(llvm::DIScope* _scope) {
     Nan::EscapableHandleScope scope;
 
     v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
     v8::Local<v8::Object> instance = cons->NewInstance();
 
-    MJDIScope* self = ObjectWrap::Unwrap<MJDIScope>(instance);
+    MoJDIScope* self = ObjectWrap::Unwrap<MoJDIScope>(instance);
     self->scope = _scope;
         
     return scope.Escape(instance);
 }
 
-void MJDIScope::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+void MoJDIScope::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   if (info.IsConstructCall()) {
-    MJDIScope* obj = new MJDIScope();
+    MoJDIScope* obj = new MoJDIScope();
     obj->Wrap(info.This());
     
     info.GetReturnValue().Set(info.This());

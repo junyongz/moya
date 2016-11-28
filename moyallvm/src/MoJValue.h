@@ -5,7 +5,7 @@
 
 #include "llvm/IR/Metadata.h"
 
-class MJValue : public Nan::ObjectWrap {
+class MoJValue : public Nan::ObjectWrap {
 public:
     static void Init(v8::Local<v8::Object> exports);
 
@@ -17,8 +17,8 @@ private:
     llvm::Value* value;
     
 private:
-    MJValue();
-    ~MJValue();
+    MoJValue();
+    ~MoJValue();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
 

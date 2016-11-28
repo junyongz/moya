@@ -1,5 +1,5 @@
 
-#include "MLVCompiler.h"
+#include "MoLLVMBridge.h"
 
 #include "llvm/Pass.h"
 #include "llvm/ADT/APFloat.h"
@@ -121,7 +121,7 @@ optimizeModule(std::unique_ptr<Module> module) {
 
 // *************************************************************************************************
 
-MLVCompiler::MLVCompiler():
+MoLLVMBridge::MoLLVMBridge():
     context(),
     builder(context),
     dibuilder(NULL),
@@ -136,24 +136,24 @@ MLVCompiler::MLVCompiler():
 {
 }
 
-MLVCompiler::~MLVCompiler() {
+MoLLVMBridge::~MoLLVMBridge() {
     delete dibuilder;
 }
 
 // *************************************************************************************************
 
 void
-MLVCompiler::SetDumpMode(MLVDumpMode mode) {
+MoLLVMBridge::SetDumpMode(MLVDumpMode mode) {
     dumpMode = mode;
 }
 
 void
-MLVCompiler::SetOptimizeLevel(MLVOptimizeLevel level) {
+MoLLVMBridge::SetOptimizeLevel(MLVOptimizeLevel level) {
     optimizeLevel = level;
 }
 
 DIType*
-MLVCompiler::GetDITypeForType(Type* type) {
+MoLLVMBridge::GetDITypeForType(Type* type) {
     int size = dataLayout.getTypeSizeInBits(type);
     if (type->isIntegerTy()) {
         return dibuilder->createBasicType("int", size, size, dwarf::DW_ATE_signed);
@@ -169,36 +169,36 @@ MLVCompiler::GetDITypeForType(Type* type) {
 // *************************************************************************************************
 
 AllocaInst*
-MLVCompiler::CreateEntryBlockAlloca(Function* f, const std::string& name, Type* type) {
+MoLLVMBridge::CreateEntryBlockAlloca(Function* f, const std::string& name, Type* type) {
   IRBuilder<> TmpB(&f->getEntryBlock(), f->getEntryBlock().begin());
   return TmpB.CreateAlloca(type, 0, name.c_str());
 }
 
 LLVMContext&
-MLVCompiler::GetContext() { return context; }
+MoLLVMBridge::GetContext() { return context; }
 
 llvm::Value*
-MLVCompiler::GetInsertBlock() {
+MoLLVMBridge::GetInsertBlock() {
     return builder.GetInsertBlock();
 }
 
 void
-MLVCompiler::SetInsertBlock(Value* block) {
+MoLLVMBridge::SetInsertBlock(Value* block) {
     builder.SetInsertPoint(static_cast<BasicBlock*>(block));
 }
 
 bool
-MLVCompiler::IsBlockEmpty(Value* block) {
+MoLLVMBridge::IsBlockEmpty(Value* block) {
     return static_cast<BasicBlock*>(block)->empty();
 }
 
 void
-MLVCompiler::EraseBlock(Value* block) {
+MoLLVMBridge::EraseBlock(Value* block) {
     static_cast<BasicBlock*>(block)->eraseFromParent();
 }
 
 Value*
-MLVCompiler::CreateBlock(const std::string& name, llvm::Function* func) {
+MoLLVMBridge::CreateBlock(const std::string& name, llvm::Function* func) {
     if (!func) {
         func = builder.GetInsertBlock()->getParent();
     }
@@ -206,7 +206,7 @@ MLVCompiler::CreateBlock(const std::string& name, llvm::Function* func) {
 }
 
 Type*
-MLVCompiler::GetType(int code) {
+MoLLVMBridge::GetType(int code) {
     if (code == 1) {
         return Type::getInt1Ty(context);
     } else if (code == 2) {
@@ -227,26 +227,26 @@ MLVCompiler::GetType(int code) {
 }
 
 llvm::Type*
-MLVCompiler::CreateStructType(const std::string& name) {
+MoLLVMBridge::CreateStructType(const std::string& name) {
     return StructType::create(context, name);
 }
 
 llvm::Value*
-MLVCompiler::InsertValue(llvm::Value* agg, unsigned int index, llvm::Value* value) {
+MoLLVMBridge::InsertValue(llvm::Value* agg, unsigned int index, llvm::Value* value) {
     std::vector<unsigned int> indices;
     indices.push_back(index);
     return builder.CreateInsertValue(agg, value, indices);
 }
 
 llvm::Value*
-MLVCompiler::ExtractValue(llvm::Value* agg, unsigned int index, const std::string& name) {
+MoLLVMBridge::ExtractValue(llvm::Value* agg, unsigned int index, const std::string& name) {
     std::vector<unsigned int> indices;
     indices.push_back(index);
     return builder.CreateExtractValue(agg, indices, name);
 }
 
 uint64_t
-MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body) {
+MoLLVMBridge::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*>& body) {
     type->setBody(body);
 
     const llvm::StructLayout* layout = dataLayout.getStructLayout(type);
@@ -254,17 +254,17 @@ MLVCompiler::SetStructBody(llvm::StructType* type, const std::vector<llvm::Type*
 }
 
 llvm::Value*
-MLVCompiler::CreateStruct(llvm::StructType* type, const std::vector<llvm::Constant*>& values) {
+MoLLVMBridge::CreateStruct(llvm::StructType* type, const std::vector<llvm::Constant*>& values) {
     return llvm::ConstantStruct::get(type, values);
 }
 
 uint64_t
-MLVCompiler::GetTypeSize(llvm::Type* type) {
+MoLLVMBridge::GetTypeSize(llvm::Type* type) {
     return dataLayout.getTypeSizeInBits(type);
 }
 
 void
-MLVCompiler::BeginModule(const std::string& name, bool shouldDebug) {
+MoLLVMBridge::BeginModule(const std::string& name, bool shouldDebug) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(dataLayout);
     
@@ -275,14 +275,14 @@ MLVCompiler::BeginModule(const std::string& name, bool shouldDebug) {
 }
 
 void
-MLVCompiler::EndModule(bool shouldOptimize) {
+MoLLVMBridge::EndModule(bool shouldOptimize) {
     if (dibuilder) {
         dibuilder->finalize();
     }
 }
 
 void
-MLVCompiler::EmitObject(const std::string& path) {
+MoLLVMBridge::EmitObject(const std::string& path) {
     std::error_code EC;
     raw_fd_ostream dest(path, EC, sys::fs::F_None);
 
@@ -314,7 +314,7 @@ MLVCompiler::EmitObject(const std::string& path) {
 }
 
 int
-MLVCompiler::ExecuteMain() {
+MoLLVMBridge::ExecuteMain() {
     auto Resolver = createLambdaResolver(
         [&](const std::string &Name) {
         //   if (auto Sym = IndirectStubsMgr->findStub(Name, false))
@@ -346,13 +346,13 @@ MLVCompiler::ExecuteMain() {
 
 // *************************************************************************************************
 
-DIScope* MLVCompiler::CreateDebugModule(const std::string& name, const std::string& dirPath) {
+DIScope* MoLLVMBridge::CreateDebugModule(const std::string& name, const std::string& dirPath) {
     if (!dibuilder) return NULL;
     
     return dibuilder->createFile(name, dirPath);
 }
 
-DIScope* MLVCompiler::CreateDebugFunction(const std::string& name, DIFile* unit, Function* func,
+DIScope* MoLLVMBridge::CreateDebugFunction(const std::string& name, DIFile* unit, Function* func,
                                           int argCount, int lineNo) {
     if (!dibuilder) return NULL;
     
@@ -369,7 +369,7 @@ DIScope* MLVCompiler::CreateDebugFunction(const std::string& name, DIFile* unit,
     return sp;
 }
 
-void MLVCompiler::CreateDebugVariable(const std::string& name, DIFile* unit, DIScope* scope,
+void MoLLVMBridge::CreateDebugVariable(const std::string& name, DIFile* unit, DIScope* scope,
                                       Value* alloca, Type* type, int argNo, int lineNo) {
     DIType* ditype = GetDITypeForType(type);
     if (!ditype) return;
@@ -385,7 +385,7 @@ void MLVCompiler::CreateDebugVariable(const std::string& name, DIFile* unit, DIS
                              builder.GetInsertBlock());
 }
     
-void MLVCompiler::SetDebugLocation(int line, int col, DIScope* scope) {
+void MoLLVMBridge::SetDebugLocation(int line, int col, DIScope* scope) {
     if (dibuilder) {
         // printf("loc %d:%d %d %d\n", line, col, scope, diunit); fflush(stdout);
         builder.SetCurrentDebugLocation(DebugLoc::get(line, col, scope));
@@ -393,12 +393,12 @@ void MLVCompiler::SetDebugLocation(int line, int col, DIScope* scope) {
 }
 
 Type*
-MLVCompiler::GetFunctionSignatureType(Type* returnType, const std::vector<Type*>& argTypes) {
+MoLLVMBridge::GetFunctionSignatureType(Type* returnType, const std::vector<Type*>& argTypes) {
     return FunctionType::get(returnType, argTypes, false);
 }
 
 Value*
-MLVCompiler::DeclareExternalFunction(std::string& name, Type* returnType,
+MoLLVMBridge::DeclareExternalFunction(std::string& name, Type* returnType,
                                      const std::vector<Type*>& argTypes) {
     FunctionType* ft = FunctionType::get(returnType, argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
@@ -406,7 +406,7 @@ MLVCompiler::DeclareExternalFunction(std::string& name, Type* returnType,
 }
     
 std::vector<llvm::Value*>
-MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
+MoLLVMBridge::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
     FunctionType* ft = FunctionType::get(returnType, argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
     
@@ -425,7 +425,7 @@ MLVCompiler::DeclareFunction(std::string& name, Type* returnType, const std::vec
 }
 
 llvm::Value*
-MLVCompiler::CreateClassTable(const std::string& name, const std::vector<Value*> functions) {
+MoLLVMBridge::CreateClassTable(const std::string& name, const std::vector<Value*> functions) {
     Type* i8p = Type::getInt8Ty(context)->getPointerTo();
     ArrayType* arrayType = ArrayType::get(i8p, functions.size());
     
@@ -448,27 +448,27 @@ MLVCompiler::CreateClassTable(const std::string& name, const std::vector<Value*>
 }
 
 Value*
-MLVCompiler::DeclareString(const std::string& str) {
+MoLLVMBridge::DeclareString(const std::string& str) {
     return builder.CreateGlobalStringPtr(str.c_str());
 }
 
 llvm::Value*
-MLVCompiler::CompileInteger(size_t size, int value) {
+MoLLVMBridge::CompileInteger(size_t size, int value) {
     return ConstantInt::get(context, APInt(size, value));
 }
 
 llvm::Value*
-MLVCompiler::CompileFloat(float value) {
+MoLLVMBridge::CompileFloat(float value) {
     return ConstantFP::get(context, APFloat(value));
 }
 
 llvm::Value*
-MLVCompiler::CompileDouble(double value) {
+MoLLVMBridge::CompileDouble(double value) {
     return ConstantFP::get(context, APFloat(value));
 }
 
 llvm::Value*
-MLVCompiler::CastNumber(llvm::Value* num, llvm::Type* toType) {
+MoLLVMBridge::CastNumber(llvm::Value* num, llvm::Type* toType) {
     llvm::Type* fromType = num->getType();
     if (fromType->isIntegerTy()) {
         if (toType->isIntegerTy()) {
@@ -495,17 +495,17 @@ MLVCompiler::CastNumber(llvm::Value* num, llvm::Type* toType) {
 }
 
 llvm::Value*
-MLVCompiler::CompileBitcast(llvm::Value* value, llvm::Type* type) {
+MoLLVMBridge::CompileBitcast(llvm::Value* value, llvm::Type* type) {
     return builder.CreateBitCast(value, type);
 }
 
 llvm::Value*
-MLVCompiler::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
+MoLLVMBridge::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
     return builder.CreateCall(func, args);
 }
 
 llvm::Value*
-MLVCompiler::CompileEquals(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileEquals(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isFloatTy() || lhs->getType()->isDoubleTy()) {
         return builder.CreateFCmpUEQ(lhs, rhs);
     } else {
@@ -514,7 +514,7 @@ MLVCompiler::CompileEquals(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isFloatTy() || lhs->getType()->isDoubleTy()) {
         return builder.CreateFCmpUNE(lhs, rhs);
     } else {
@@ -523,7 +523,7 @@ MLVCompiler::CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileGreaterThan(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileGreaterThan(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateICmpSGT(lhs, rhs);
     } else {
@@ -532,7 +532,7 @@ MLVCompiler::CompileGreaterThan(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileGreaterThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileGreaterThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateICmpSGE(lhs, rhs);
     } else {
@@ -541,7 +541,7 @@ MLVCompiler::CompileGreaterThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileLessThan(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileLessThan(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateICmpSLT(lhs, rhs);
     } else {
@@ -550,7 +550,7 @@ MLVCompiler::CompileLessThan(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileLessThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileLessThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateICmpSLE(lhs, rhs);
     } else {
@@ -559,7 +559,7 @@ MLVCompiler::CompileLessThanEquals(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileNegate(llvm::Value* operand) {
+MoLLVMBridge::CompileNegate(llvm::Value* operand) {
     if (operand->getType()->isIntegerTy()) {
         return builder.CreateNeg(operand);
     } else {
@@ -568,7 +568,7 @@ MLVCompiler::CompileNegate(llvm::Value* operand) {
 }
 
 llvm::Value*
-MLVCompiler::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateAdd(lhs, rhs);
     } else {
@@ -577,7 +577,7 @@ MLVCompiler::CompileAdd(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileSubtract(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileSubtract(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateSub(lhs, rhs);
     } else {
@@ -586,7 +586,7 @@ MLVCompiler::CompileSubtract(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileMultiply(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileMultiply(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateMul(lhs, rhs);
     } else {
@@ -595,7 +595,7 @@ MLVCompiler::CompileMultiply(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileDivide(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileDivide(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateSDiv(lhs, rhs);
     } else {
@@ -604,7 +604,7 @@ MLVCompiler::CompileDivide(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 llvm::Value*
-MLVCompiler::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
     if (lhs->getType()->isIntegerTy()) {
         return builder.CreateSRem(lhs, rhs);
     } else {
@@ -613,7 +613,7 @@ MLVCompiler::CompileMod(llvm::Value* lhs, llvm::Value* rhs) {
 }
 
 void
-MLVCompiler::CompileReturn(llvm::Value* expr) {
+MoLLVMBridge::CompileReturn(llvm::Value* expr) {
     if (expr) {
         builder.CreateRet(expr);
     } else {
@@ -622,18 +622,18 @@ MLVCompiler::CompileReturn(llvm::Value* expr) {
 }
 
 void
-MLVCompiler::CompileJump(llvm::Value* label) {
+MoLLVMBridge::CompileJump(llvm::Value* label) {
     builder.CreateBr(static_cast<llvm::BasicBlock*>(label));
 }
 
 void
-MLVCompiler::CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2) {
+MoLLVMBridge::CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2) {
     builder.CreateCondBr(condition, static_cast<llvm::BasicBlock*>(label1),
                          static_cast<llvm::BasicBlock*>(label2));
 }
 
 llvm::Value*
-MLVCompiler::CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& values, const std::vector<llvm::Value*>& blocks) {
+MoLLVMBridge::CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& values, const std::vector<llvm::Value*>& blocks) {
     llvm::PHINode* phi = builder.CreatePHI(type, values.size());
     
     for(int i = 0, l = values.size(); i < l; ++i) {
@@ -645,19 +645,19 @@ MLVCompiler::CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& value
 }
 
 llvm::Value*
-MLVCompiler::CreateVariable(const std::string& name, llvm::Type* type) {
+MoLLVMBridge::CreateVariable(const std::string& name, llvm::Type* type) {
     Function* f = builder.GetInsertBlock()->getParent();
     AllocaInst* alloca = CreateEntryBlockAlloca(f, name, type);
     return alloca;
 }
 
 void
-MLVCompiler::StoreVariable(llvm::Value* lhs, llvm::Value* rhs) {
+MoLLVMBridge::StoreVariable(llvm::Value* lhs, llvm::Value* rhs) {
     builder.CreateStore(rhs, lhs);
 }
     
 llvm::Value*
-MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Type* type) {
+MoLLVMBridge::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Type* type) {
     if (type) {
         return builder.CreateLoad(type, alloca, name.c_str());
     } else {
@@ -666,7 +666,7 @@ MLVCompiler::LoadVariable(llvm::Value* alloca, const std::string& name, llvm::Ty
 }
 
 llvm::Value*
-MLVCompiler::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type){
+MoLLVMBridge::GetPointer(llvm::Value* pointer, std::vector<llvm::Value*>& offsets, llvm::Type* type){
     if (type) {
         return builder.CreateInBoundsGEP(type, pointer, offsets);
     } else {
