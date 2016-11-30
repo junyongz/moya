@@ -13,6 +13,7 @@ reLexFiles = re.compile(r"\.(lex)$")
 reBisonFiles = re.compile(r"\.(y)$")
 reCFiles = re.compile(r"\.(cpp|c|cxx|m|mm)$")
 reCPPFiles = re.compile(r"\.(cpp|cc)$")
+reGyp = re.compile("(^binding\.json)$")
 
 reExtraLine = re.compile(r"\s\s\s(.*?)\n")
 
@@ -433,6 +434,58 @@ class Link(MakerManyToOne):
 
         return args
 
+class CompileNodeGyp(Compile):
+    path = "node-gyp"
+
+    patterns = re.compile(r"""
+        (?P<Include>^In file included from \.(.*?):(\d*?),$)|
+        (?P<Unknown>^g\+\+:\s(.+?):\s(.+?)$)|
+        (?P<Problem>^\.([^\s]*?):(\d*?):(\d*?):\s(warning|error|note):\s(.*?)$)|
+        (?P<Problem2>^\.([^\s]*?):(\d*?):\s(warning|error|note):\s(.*?)$)|
+        (?P<Problem3>^\.([^\s]*?):\s(warning|error|note):\s(.*?)$)
+    """, re.M | re.VERBOSE)
+
+    def needsUpdate(self, project, source, target):
+        return True
+
+    def getTarget(self, project, source):
+        if reGyp.search(source.name):
+            return res(source.path)
+
+    def buildTarget(self, project, out, source, target):
+        f = open(project.path +  "/binding.json")
+        bj = f.read()
+        f.close()
+        gyp = json.loads(bj)
+
+        sources = gyp["targets"][0]["sources"]
+        for source in project.getSources():
+            if reCPPFiles.search(source.name):
+                sourcePath = source.path
+                sourcePath = sourcePath.replace(project.path, ".")
+                sources.append(sourcePath)
+        
+        flags = gyp["targets"][0]["conditions"][0][1]["xcode_settings"]["OTHER_CPLUSPLUSFLAGS"]
+        libs = gyp["targets"][0]["libraries"]
+        for dep in project.getDependencies():
+            dep.normalize()
+            flags.append("-I%s" % dep.buildPath)
+            if dep != project:
+                libs.append("-Wl,-force_load,%s" % dep.build.getTarget(dep))
+
+        
+        bj = json.dumps(gyp, indent=4)
+        
+        f = open(project.path +  "/binding.gyp", 'w')
+        f.write(bj)
+        f.close()
+            
+        out << command('node-gyp', source.path)
+        #c1 = time.time()
+        result = executeCommand('node-gyp build', project, out, self)
+        #c2 = time.time()
+        return result
+
 class LinkExecutable(Link):
     def getTarget(self, project):
         exePath = os.path.join(project.path, project.name)
@@ -650,12 +703,13 @@ def printFrom(m, extras, project, out):
 
 def printProblem(m, extras, project, out):
     fileName = os.path.basename(m[0])
+    p = os.path.abspath(os.path.join(project.path, m[0]))
     message = m[4] + extras
 
     if m[3] == "error":
-        out << error(message, m[0], int(m[1]), int(m[2]))
+        out << error(message, p, int(m[1]), int(m[2]))
     else:
-        out << warning(message, m[0], int(m[1]), int(m[2]))
+        out << warning(message, p, int(m[1]), int(m[2]))
 
 def printProblem2(m, extras, project, out):
     fileName = os.path.basename(m[0])

@@ -7,6 +7,8 @@
 #include <string>
 #include <math.h>
 
+#include "MoCore/MoCore.h"
+
 // *************************************************************************************************
 
 static char*
@@ -107,4 +109,9 @@ moyaModf64(double n, double* rem) {
 extern "C" void
 crashForFun() {
     abort();
+}
+
+extern "C" void
+moyaTerminate() {
+    std::terminate();
 }
