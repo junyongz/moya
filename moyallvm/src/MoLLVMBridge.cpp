@@ -8,6 +8,7 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/Analysis/Passes.h"
+#include "llvm/IR/IRPrintingPasses.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -93,6 +94,10 @@ configurePasses(legacy::PassManagerBase& fpm) {
         fpm.add(createGVNPass());
         fpm.add(createCFGSimplificationPass());
         fpm.add(createReassociatePass());
+
+        // if (dumpMode == MLVDumpOptimized) {
+        //     fpm.add(llvm::createPrintModulePass(outs()));
+        // }
     }
 }
     
@@ -107,14 +112,12 @@ optimizeModule(std::unique_ptr<Module> module) {
     legacy::FunctionPassManager fpm(module.get());
     configurePasses(fpm);
     fpm.doInitialization();
-
+    
     for (auto &func : *module) {
         fpm.run(func);
     }
 
-    if (dumpMode == MLVDumpOptimized) {
-        module->dump();
-    }
+    // fpm.doFinalization();
 
     return module;
 }
@@ -268,6 +271,10 @@ MoLLVMBridge::BeginModule(const std::string& name, bool shouldDebug) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(dataLayout);
     
+    FunctionType* ft = FunctionType::get(Type::getInt32Ty(context), true);
+    personality = Function::Create(ft, Function::ExternalLinkage,
+                                   "__gxx_personality_v0", module.get());
+    
     if (shouldDebug) {
         dibuilder = new DIBuilder(*module);
         diunit = dibuilder->createCompileUnit(dwarf::DW_LANG_C, "moya", ".", "Moya", 0, "", 0);
@@ -275,7 +282,7 @@ MoLLVMBridge::BeginModule(const std::string& name, bool shouldDebug) {
 }
 
 void
-MoLLVMBridge::EndModule(bool shouldOptimize) {
+MoLLVMBridge::EndModule() {
     if (dibuilder) {
         dibuilder->finalize();
     }
@@ -290,6 +297,8 @@ MoLLVMBridge::EmitObject(const std::string& path) {
       errs() << "Could not open file: " << EC.message();
       return;
     }
+
+    // llvm::verifyModule(*module.get());
 
     legacy::PassManager fpm;
     configurePasses(fpm);
@@ -329,12 +338,17 @@ MoLLVMBridge::ExecuteMain() {
             return RuntimeDyld::SymbolInfo(SymAddr, JITSymbolFlags::Exported);
           return RuntimeDyld::SymbolInfo(nullptr);
         });
+
+    // llvm::verifyModule(*module.get());
     
     std::vector<std::unique_ptr<Module>> Ms;
     Ms.push_back(std::move(module));
     
-    optimizeLayer.addModuleSet(std::move(Ms), make_unique<SectionMemoryManager>(),
-                               std::move(Resolver));
+    auto moduleSet = optimizeLayer.addModuleSet(std::move(Ms),
+                                        make_unique<SectionMemoryManager>(),
+                                        std::move(Resolver));
+
+    optimizeLayer.emitAndFinalize(moduleSet);
 
     if (auto sym = optimizeLayer.findSymbol(mangle("main", dataLayout), false)) {
         int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
@@ -400,15 +414,32 @@ MoLLVMBridge::GetFunctionSignatureType(Type* returnType, const std::vector<Type*
 Value*
 MoLLVMBridge::DeclareExternalFunction(std::string& name, Type* returnType,
                                      const std::vector<Type*>& argTypes) {
-    FunctionType* ft = FunctionType::get(returnType, argTypes, false);
+    FunctionType* ft = FunctionType::get(returnType ? returnType : Type::getVoidTy(context),
+                                         argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
+    // func->setDoesNotThrow();
+
+    if (!returnType) {
+        func->addFnAttr(Attribute::NoReturn);
+    }
+
     return func;
 }
     
 std::vector<llvm::Value*>
-MoLLVMBridge::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames) {
-    FunctionType* ft = FunctionType::get(returnType, argTypes, false);
+MoLLVMBridge::DeclareFunction(std::string& name, Type* returnType, const std::vector<Type*>& argTypes, const std::vector<std::string>& argNames, bool doesNotThrow) {
+    FunctionType* ft = FunctionType::get(returnType ? returnType : Type::getVoidTy(context),
+                                         argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
+    func->setPersonalityFn(personality);
+    
+    if (doesNotThrow) {
+        func->setDoesNotThrow();
+    }
+    
+    if (!returnType) {
+        func->addFnAttr(Attribute::NoReturn);
+    }
     
     std::vector<llvm::Value*> argsRet;
     argsRet.push_back(func);
@@ -447,7 +478,14 @@ MoLLVMBridge::CreateClassTable(const std::string& name, const std::vector<Value*
     return variable;
 }
 
-Value*
+llvm::Value*
+MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name) {
+ 	GlobalVariable* global = new GlobalVariable(*module, type, true,
+                                                GlobalValue::ExternalLinkage, 0, name);
+    return global;
+}
+
+llvm::Value*
 MoLLVMBridge::DeclareString(const std::string& str) {
     return builder.CreateGlobalStringPtr(str.c_str());
 }
@@ -477,18 +515,26 @@ MoLLVMBridge::CastNumber(llvm::Value* num, llvm::Type* toType) {
             return builder.CreateSIToFP(num, toType);
         } else if (toType->isDoubleTy()) {
             return builder.CreateSIToFP(num, toType);
+        } else if (toType->isPointerTy()) {
+            return builder.CreateIntToPtr(num, toType);
         }
     } else if (fromType->isFloatTy()) {
         if (toType->isIntegerTy()) {
             return builder.CreateFPToSI(num, toType);
         } else if (toType->isDoubleTy()) {
             return builder.CreateFPExt(num, toType);
+        } else if (toType->isPointerTy()) {
+            llvm::Value* i = builder.CreateFPToSI(num, Type::getInt64Ty(context));
+            return builder.CreateIntToPtr(i, toType);
         }
     } else if (fromType->isDoubleTy()) {
         if (toType->isIntegerTy()) {
             return builder.CreateFPToSI(num, toType);
         } else if (toType->isFloatTy()) {
             return builder.CreateFPTrunc(num, toType);
+        } else if (toType->isPointerTy()) {
+            llvm::Value* i = builder.CreateFPToSI(num, Type::getInt64Ty(context));
+            return builder.CreateIntToPtr(i, toType);
         }
     }
     return num;
@@ -496,12 +542,23 @@ MoLLVMBridge::CastNumber(llvm::Value* num, llvm::Type* toType) {
 
 llvm::Value*
 MoLLVMBridge::CompileBitcast(llvm::Value* value, llvm::Type* type) {
-    return builder.CreateBitCast(value, type);
+    llvm::Type* fromType = value->getType();
+    if (fromType->isPointerTy() && type->isIntegerTy()) {
+        return builder.CreatePtrToInt(value, type);
+    } else {
+        return builder.CreateBitCast(value, type);
+    }
 }
 
 llvm::Value*
 MoLLVMBridge::CompileCall(llvm::Value* func, std::vector<Value*>& args) {
     return builder.CreateCall(func, args);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileInvoke(Value* func, BasicBlock* normalDest,
+                            BasicBlock* unwindDest, std::vector<Value*>& args) {
+    return builder.CreateInvoke(func, normalDest, unwindDest, args);
 }
 
 llvm::Value*
@@ -642,6 +699,70 @@ MoLLVMBridge::CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& valu
         phi->addIncoming(val, block);
     }
     return phi;
+}
+
+llvm::Value*
+MoLLVMBridge::CompileLandingPad(llvm::Type* padType, bool isCleanup,
+                                const std::vector<llvm::Value*>& clauses) {
+    LandingPadInst* pad = builder.CreateLandingPad(padType, clauses.size());
+    
+    if (isCleanup) {
+        pad->setCleanup(true);
+    }
+    
+    for(int i = 0, l = clauses.size(); i < l; ++i) {
+        llvm::Constant* clause = static_cast<llvm::Constant*>(clauses[i]);
+        pad->addClause(clause);
+    }
+    
+    return pad;
+}
+
+void
+MoLLVMBridge::CompileResume(llvm::Value* landingPad) {
+    builder.CreateResume(landingPad);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileCatchSwitch(llvm::Value* parentPad, llvm::BasicBlock* unwindBB,
+                                 const std::vector<llvm::BasicBlock*>& handlers) {
+    CatchSwitchInst* csi = builder.CreateCatchSwitch(parentPad, unwindBB, handlers.size());
+    for(int i = 0, l = handlers.size(); i < l; ++i) {
+        llvm::BasicBlock* handler = handlers[i];
+        csi->addHandler(handler);
+    }
+    
+    return csi;
+}
+
+llvm::Value*
+MoLLVMBridge::CompileCatchPad(llvm::Value* parentPad, const std::vector<llvm::Value*>& args) {
+    return builder.CreateCatchPad(parentPad, args);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileCatchRet(llvm::CatchPadInst* catchPad, llvm::BasicBlock* afterBlock) {
+    return builder.CreateCatchRet(catchPad, afterBlock);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileCleanupPad(llvm::Value* parentPad, const std::vector<llvm::Value*>& args) {
+    return builder.CreateCleanupPad(parentPad, args);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileCleanupRet(llvm::CleanupReturnInst* cleanupPad, llvm::BasicBlock* unwindBB) {
+    return builder.CreateCatchPad(cleanupPad, unwindBB);
+}
+
+llvm::Value*
+MoLLVMBridge::CompileNone() {
+    return llvm::ConstantTokenNone::get(context);
+}
+
+void
+MoLLVMBridge::CompileUnreachable() {
+    builder.CreateUnreachable();
 }
 
 llvm::Value*

@@ -33,6 +33,7 @@ void MoJBridge::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "setDebugLocation", SetDebugLocation);
 
   Nan::SetPrototypeMethod(tpl, "getType", GetType);
+  Nan::SetPrototypeMethod(tpl, "getGlobal", GetGlobal);
   Nan::SetPrototypeMethod(tpl, "getFunctionType", GetFunctionType);
   Nan::SetPrototypeMethod(tpl, "getFunctionSignatureType", GetFunctionSignatureType);
   Nan::SetPrototypeMethod(tpl, "getPointerType", GetPointerType);
@@ -54,12 +55,14 @@ void MoJBridge::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "declareExternalFunction", DeclareExternalFunction);
   Nan::SetPrototypeMethod(tpl, "declareFunction", DeclareFunction);
   Nan::SetPrototypeMethod(tpl, "declareString", DeclareString);
+  Nan::SetPrototypeMethod(tpl, "compileNull", CompileNull);
   Nan::SetPrototypeMethod(tpl, "compileInteger", CompileInteger);
   Nan::SetPrototypeMethod(tpl, "compileFloat", CompileFloat);
   Nan::SetPrototypeMethod(tpl, "compileDouble", CompileDouble);
   Nan::SetPrototypeMethod(tpl, "castNumber", CastNumber);
   Nan::SetPrototypeMethod(tpl, "compileBitcast", CompileBitcast);
   Nan::SetPrototypeMethod(tpl, "compileCall", CompileCall);
+  Nan::SetPrototypeMethod(tpl, "compileInvoke", CompileInvoke);
   Nan::SetPrototypeMethod(tpl, "compileEquals", CompileEquals);
   Nan::SetPrototypeMethod(tpl, "compileNotEquals", CompileNotEquals);
   Nan::SetPrototypeMethod(tpl, "compileGreaterThan", CompileGreaterThan);
@@ -81,6 +84,14 @@ void MoJBridge::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "loadVariable", LoadVariable);
   Nan::SetPrototypeMethod(tpl, "getPointer", GetPointer);
   Nan::SetPrototypeMethod(tpl, "executeMain", ExecuteMain);
+  Nan::SetPrototypeMethod(tpl, "compileLandingPad", CompileLandingPad);
+  Nan::SetPrototypeMethod(tpl, "compileResume", CompileResume);
+  Nan::SetPrototypeMethod(tpl, "compileCatchSwitch", CompileCatchSwitch);
+  Nan::SetPrototypeMethod(tpl, "compileCatchPad", CompileCatchPad);
+  Nan::SetPrototypeMethod(tpl, "compileCatchRet", CompileCatchRet);
+  Nan::SetPrototypeMethod(tpl, "compileCleanupPad", CompileCleanupPad);
+  Nan::SetPrototypeMethod(tpl, "compileCleanupRet", CompileCleanupRet);
+  Nan::SetPrototypeMethod(tpl, "compileUnreachable", CompileUnreachable);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("CompilerBridge").ToLocalChecked(), tpl->GetFunction());
@@ -167,6 +178,18 @@ void MoJBridge::GetType(const Nan::FunctionCallbackInfo<Value>& info) {
     llvm::Type* retType = bridge->compiler->GetType(typeCode);
 
     info.GetReturnValue().Set(MoJType::Create(retType));
+}
+
+void MoJBridge::GetGlobal(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Type* type = ObjectWrap::Unwrap<MoJType>(Handle<Object>::Cast(info[0]))->GetType();
+
+    String::Utf8Value _name(info[1]->ToString());
+    std::string name = std::string(*_name);
+    
+    llvm::Value* val = bridge->compiler->GetGlobal(type, name);
+    info.GetReturnValue().Set(MoJValue::Create(val));
 }
 
 void MoJBridge::GetFunctionSignatureType(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -295,7 +318,16 @@ void MoJBridge::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
   MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
   String::Utf8Value _name(info[0]->ToString());
   std::string name = std::string(*_name);
-  bridge->compiler->BeginModule(name, info[1]->NumberValue());
+
+  bool shouldDebug = info[1]->NumberValue();
+
+  bool optLevel = info[2]->NumberValue();
+  MoLLVMBridge::SetOptimizeLevel((MLVOptimizeLevel)optLevel);
+  
+  int mode = info[3]->NumberValue();
+  MoLLVMBridge::SetDumpMode((MLVDumpMode)mode);
+  
+  bridge->compiler->BeginModule(name, shouldDebug);
 
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -303,12 +335,7 @@ void MoJBridge::BeginModule(const Nan::FunctionCallbackInfo<Value>& info) {
 void MoJBridge::EndModule(const Nan::FunctionCallbackInfo<Value>& info) {
   MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
 
-  bool shouldOptimize = info[0]->NumberValue();
-  
-  int mode = info[1]->NumberValue();
-  MoLLVMBridge::SetDumpMode((MLVDumpMode)mode);
-
-  bridge->compiler->EndModule(shouldOptimize);
+  bridge->compiler->EndModule();
 
   info.GetReturnValue().Set(Nan::Undefined());
 }
@@ -329,7 +356,7 @@ void MoJBridge::EmitObject(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MoJBridge::ExecuteMain(const Nan::FunctionCallbackInfo<Value>& info) {
   MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
-    
+
   bridge->compiler->ExecuteMain();
   
   info.GetReturnValue().Set(Nan::Undefined());
@@ -410,7 +437,9 @@ void MoJBridge::DeclareExternalFunction(const Nan::FunctionCallbackInfo<Value>& 
     String::Utf8Value _name(info[0]->ToString());
     std::string name = std::string(*_name);
 
-    llvm::Type* retType = ObjectWrap::Unwrap<MoJType>(Handle<Object>::Cast(info[1]))->GetType();
+    llvm::Type* retType = info[1] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJType>(Handle<Object>::Cast(info[1]))->GetType()
+        : NULL;
     
     std::vector<llvm::Type*> argTypes;
     Handle<Array> array1 = Handle<Array>::Cast(info[2]);
@@ -445,10 +474,12 @@ void MoJBridge::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
         std::string argName = std::string(*_argName);
         argNames.push_back(argName);
     }
+
+    int doesNotThrow = info[4]->NumberValue();
     
     std::vector<llvm::Value*> ret = bridge->compiler->DeclareFunction(name, retType, argTypes,
-                                                                      argNames);
-
+                                                                      argNames, doesNotThrow);
+    
     Isolate* isolate = info.GetIsolate();
     Local<Array> returns = Array::New(isolate);
 
@@ -468,6 +499,15 @@ void MoJBridge::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
 
     llvm::Value* ret = bridge->compiler->DeclareString(str);
     info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileNull(const Nan::FunctionCallbackInfo<Value>& info) {
+    // MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Type* type = ObjectWrap::Unwrap<MoJType>(Handle<Object>::Cast(info[0]))->GetType();
+    llvm::Value* null = llvm::Constant::getNullValue(type);
+    
+    info.GetReturnValue().Set(MoJValue::Create(null));
 }
 
 void MoJBridge::CompileInteger(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -595,6 +635,34 @@ void MoJBridge::CompileCall(const Nan::FunctionCallbackInfo<Value>& info) {
     }
         
     llvm::Value* ret = bridge->compiler->CompileCall(callable->GetValue(), args);
+    if (ret) {
+        info.GetReturnValue().Set(MoJValue::Create(ret));
+    } else {
+        info.GetReturnValue().Set(Nan::Undefined());
+    }
+}
+
+void MoJBridge::CompileInvoke(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+  
+    MoJValue* callable = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]));
+
+    Handle<Array> jsArray = Handle<Array>::Cast(info[1]);
+    std::vector<llvm::Value*> args(jsArray->Length());
+    for (unsigned int i = 0; i < jsArray->Length(); i++) {
+        Handle<Value> val = jsArray->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MoJValue* arg = ObjectWrap::Unwrap<MoJValue>(object);
+        args[i] = arg->GetValue();
+    }
+
+    MoJValue* block1v = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[2]));
+    llvm::BasicBlock* normalDest = static_cast<llvm::BasicBlock*>(block1v->GetValue());
+    MoJValue* block2v = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[3]));
+    llvm::BasicBlock* unwindDest = static_cast<llvm::BasicBlock*>(block2v->GetValue());
+        
+    llvm::Value* ret = bridge->compiler->CompileInvoke(callable->GetValue(), normalDest,
+                                                       unwindDest, args);
     if (ret) {
         info.GetReturnValue().Set(MoJValue::Create(ret));
     } else {
@@ -779,4 +847,132 @@ void MoJBridge::CompilePhi(const Nan::FunctionCallbackInfo<Value>& info) {
     
     llvm::Value* phi = bridge->compiler->CompilePHI(phiType, exprs, blocks);
     info.GetReturnValue().Set(MoJValue::Create(phi));
+}
+
+void MoJBridge::CompileLandingPad(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Type* padType = ObjectWrap::Unwrap<MoJType>(Handle<Object>::Cast(info[0]))->GetType();
+
+    bool isCleanup = info[1]->NumberValue();
+
+    Handle<Array> arg1 = Handle<Array>::Cast(info[2]);
+    std::vector<llvm::Value*> clauses(arg1->Length());
+    for (unsigned int i = 0; i < arg1->Length(); i++) {
+        Handle<Value> val = arg1->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MoJValue* arg = ObjectWrap::Unwrap<MoJValue>(object);
+        clauses[i] = static_cast<llvm::Value*>(arg->GetValue());
+    }
+    
+    llvm::Value* ret = bridge->compiler->CompileLandingPad(padType, isCleanup, clauses);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileResume(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Value* lpad = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]))->GetValue();
+    
+    bridge->compiler->CompileResume(lpad);
+    info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MoJBridge::CompileCatchSwitch(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Value* parentPad = info[0] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]))->GetValue()
+        : bridge->compiler->CompileNone();
+
+    MoJValue* ubv = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[1]));
+    llvm::BasicBlock* unwindBlock = ubv ? static_cast<llvm::BasicBlock*>(ubv->GetValue()) : NULL;
+
+    Handle<Array> jsBlocks = Handle<Array>::Cast(info[2]);
+    std::vector<llvm::BasicBlock*> handlers(jsBlocks->Length());
+    for (unsigned int i = 0; i < jsBlocks->Length(); i++) {
+        Handle<Value> val = jsBlocks->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MoJValue* arg = ObjectWrap::Unwrap<MoJValue>(object);
+        handlers[i] = static_cast<llvm::BasicBlock*>(arg->GetValue());
+    }
+    
+    llvm::Value* ret = bridge->compiler->CompileCatchSwitch(parentPad, unwindBlock, handlers);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileCatchPad(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Value* parentPad = info[0] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]))->GetValue()
+        : bridge->compiler->CompileNone();
+
+    Handle<Array> jsBlocks = Handle<Array>::Cast(info[1]);
+    std::vector<llvm::Value*> args(jsBlocks->Length());
+    for (unsigned int i = 0; i < jsBlocks->Length(); i++) {
+        Handle<Value> val = jsBlocks->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MoJValue* arg = ObjectWrap::Unwrap<MoJValue>(object);
+        args[i] = arg->GetValue();
+    }
+    
+    llvm::Value* ret = bridge->compiler->CompileCatchPad(parentPad, args);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileCatchRet(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    MoJValue* ppv = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]));
+    llvm::CatchPadInst* catchPad = ppv ? static_cast<llvm::CatchPadInst*>(ppv->GetValue()) : NULL;
+
+    MoJValue* ubv = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[1]));
+    llvm::BasicBlock* afterBlock = ubv ? static_cast<llvm::BasicBlock*>(ubv->GetValue()) : NULL;
+    
+    llvm::Value* ret = bridge->compiler->CompileCatchRet(catchPad, afterBlock);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileCleanupPad(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Value* parentPad = info[0] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]))->GetValue()
+        : bridge->compiler->CompileNone();
+
+    Handle<Array> jsBlocks = Handle<Array>::Cast(info[1]);
+    std::vector<llvm::Value*> args(jsBlocks->Length());
+    for (unsigned int i = 0; i < jsBlocks->Length(); i++) {
+        Handle<Value> val = jsBlocks->Get(i);
+        Handle<Object> object = Handle<Object>::Cast(val);
+        MoJValue* arg = ObjectWrap::Unwrap<MoJValue>(object);
+        args[i] = arg->GetValue();
+    }
+    
+    llvm::Value* ret = bridge->compiler->CompileCleanupPad(parentPad, args);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileCleanupRet(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+    llvm::Value* arg0 = info[0] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[0]))->GetValue()
+        : bridge->compiler->CompileNone();
+
+    llvm::CleanupReturnInst* cleanupPad = static_cast<llvm::CleanupReturnInst*>(arg0);
+    
+    MoJValue* ubv = ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[1]));
+    llvm::BasicBlock* unwindBlock = ubv ? static_cast<llvm::BasicBlock*>(ubv->GetValue()) : NULL;
+    
+    llvm::Value* ret = bridge->compiler->CompileCleanupRet(cleanupPad, unwindBlock);
+    info.GetReturnValue().Set(MoJValue::Create(ret));
+}
+
+void MoJBridge::CompileUnreachable(const Nan::FunctionCallbackInfo<Value>& info) {
+    MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+  
+    bridge->compiler->CompileUnreachable();
+    info.GetReturnValue().Set(Nan::Undefined());
 }

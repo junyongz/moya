@@ -58,7 +58,6 @@ hex 0x[0-9A-Fa-f]+
 
 "try"               { return 'TRY'; }
 "catch"             { return 'CATCH'; }
-"finally"           { return 'FINALLY'; }
 "throw"             { return 'THROW'; }
 
 "..."               { return 'DOT3'; }
@@ -238,7 +237,7 @@ hex 0x[0-9A-Fa-f]+
 
 %left NEWLINE
 %left INLINE_EXPR CFUNCTION
-%left TRY CATCH FINALLY THROW
+%left TRY CATCH THROW
 %left FOR ON WHILE BREAK CONTINUE DO
 %left IF ELSE OR
 %left POUND CARET AT UNDERSCORE
@@ -552,11 +551,7 @@ whileBlock:
 
 tryBlock:
     TRY block catchBlockList
-        { $$ = p.parseTry(@$, $2, $3, null); }
-    | TRY block catchBlockList FINALLY block
-        { $$ = p.parseTry(@$, $2, $3, $5); }
-    | TRY block FINALLY block
-        { $$ = p.parseTry(@$, $2, null, $4); }
+        { $$ = p.parseTry(@$, $2, $3); }
     ;
 
 catchBlock:

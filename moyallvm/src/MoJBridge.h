@@ -21,6 +21,7 @@ private:
     static void CreateDebugVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetDebugLocation(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetType(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void GetGlobal(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetFunctionSignatureType(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CreateStructType(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -43,12 +44,14 @@ private:
     static void DeclareString(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareExternalFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void DeclareFunction(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileNull(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileInteger(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileFloat(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileDouble(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CastNumber(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileBitcast(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileCall(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileInvoke(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileNotEquals(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void CompileGreaterThan(const Nan::FunctionCallbackInfo<v8::Value>& info);
@@ -69,6 +72,14 @@ private:
     static void StoreVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void LoadVariable(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetPointer(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileLandingPad(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileResume(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileCatchSwitch(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileCatchPad(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileCatchRet(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileCleanupPad(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileCleanupRet(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void CompileUnreachable(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
     static Nan::Persistent<v8::Function> constructor;
 };

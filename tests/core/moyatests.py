@@ -1,6 +1,6 @@
 
 from make.test import *
-import os, subprocess, re
+import os, os.path, subprocess, re
 
 # **************************************************************************************************
 # Constants
@@ -9,7 +9,8 @@ outputPath = testOutputPath(__file__)
 testLibPath = os.path.abspath(os.path.join(outputPath, "lib"))
 sharedLibPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib"))
 
-moyaExePath = "moya"
+codePath = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'lib', 'moya.js'))
+moyaExePath = "node %s" % codePath
 
 # **************************************************************************************************
 
@@ -61,17 +62,18 @@ class MoyaTestFixture(TestFixture):
 
         escapedSource = source.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
         exePath = "%s %s %s -c $'%s'" % (moyaExePath, " ".join(args), " ".join(extraArgs), escapedSource)
-
+        
         if self.buildOnly:
             raise TestAbortException(exePath)
 
         moyaPath = ":".join([os.environ['MOYAPATH'], sharedLibPath, testLibPath])
+        nodePath = "/usr/local/lib/node_modules"
         sysPath = os.environ['PATH']
         
-        env = {"MOYAPATH": moyaPath, "NODE_PATH": "/usr/local/lib/node_modules", "PATH": sysPath}
+        env = {"MOYAPATH": moyaPath, "NODE_PATH": nodePath, "PATH": sysPath}
         
-        metaArgs = args + extraArgs + ['--debug', '--optimize', '-c', source]
-        
+        metaArgs = args + extraArgs + ["-c", source]
+
         self.metadata = {"command": moyaExePath, "args": metaArgs, "env": env}
         return self.launch(exePath, env=env, args=args, source=source).strip()
 
@@ -93,7 +95,15 @@ class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        return self.runTest(["--inspect", mode] if mode else [], source, False, **kwds)
+        args = ["--debug", "--optimize"]
+        if mode:
+            args += ["--inspect", mode]
+            
+        exePath = "/Volumes/Moya/appmoya"
+        exePath = os.environ['MOYA_EXE_PATH']
+        if exePath:
+            args += ["-o", exePath]
+        return self.runTest(args, source, False, **kwds)
 
 # **************************************************************************************************
 

@@ -1,0 +1,506 @@
+----------------------------------------------------------------------------------------------------
+# Throw directly within catch
+
+do {
+    try {
+        throw "bar"
+    } catch {
+        -- "Caught"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw "bar"
+}
+    
+do {
+    try {
+        foo()
+    } catch {
+        -- "Caught"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw 42
+}
+
+do {
+    try {
+        foo()
+    } catch (exc) {
+        -- "Caught %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught 42
+
+
+----------------------------------------------------------------------------------------------------
+
++ bar(a) {
+    if a > 1 {
+        throw "bar"
+    } else {
+        -- "ok"
+    }
+}
+
++ foo(a) {
+    bar(a)
+}
+    
+do {
+    try {
+        foo(1)
+        foo(2)
+    } catch (exc:String) {
+        -- "Caught %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+ok
+Caught bar
+
+----------------------------------------------------------------------------------------------------
+
++ foo(a) {
+    if (a > 1) {
+        throw 42
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        foo(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch (exc2:Int32) {
+        -- "Caught int %exc2"
+    }
+}
+    
+do {
+    toss(1)
+    toss(2)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught str foo
+Caught int 42
+
+----------------------------------------------------------------------------------------------------
+
++ foo(a) {
+    if (a > 2) {
+        throw 42
+    } else if (a > 1) {
+        throw 1i8
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        foo(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch (exc:Int32) {
+        -- "Caught int %exc"
+    } catch (exc) {
+        -- "Caught all %exc"
+    }
+}
+    
+do {
+    toss(3)
+    toss(2)
+    toss(1)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught int 42
+Caught all 1
+Caught str foo
+
+----------------------------------------------------------------------------------------------------
+
++ foo(a) {
+    if (a > 2) {
+        throw 42
+    } else if (a > 1) {
+        throw 1i8
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        foo(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch (exc) {
+        -- "Caught all %exc"
+    }
+}
+    
+do {
+    toss(3)
+    toss(2)
+    toss(1)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught all 42
+Caught all 1
+Caught str foo
+
+
+----------------------------------------------------------------------------------------------------
+
++ foo(a) {
+    if (a > 2) {
+        throw 42
+    } else if (a > 1) {
+        throw 1i8
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        foo(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch {
+        -- "Caught all"
+    }
+}
+    
+do {
+    toss(3)
+    toss(2)
+    toss(1)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught all
+Caught all
+Caught str foo
+
+----------------------------------------------------------------------------------------------------
+
++ foo(a) {
+    if (a > 2) {
+        throw 42
+    } else if (a > 1) {
+        throw 1i8
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        toss2(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch {
+        -- "Caught all"
+    }
+}
+
++ toss2(a) {
+    try {
+        foo(a)
+    } catch (exc:Int32) {
+        -- "Caught int %exc"
+    }
+}
+    
+do {
+    toss(3)
+    toss(2)
+    toss(1)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught int 42
+Caught all
+Caught str foo
+
+----------------------------------------------------------------------------------------------------
+# throw after try
+
++ foo(a) {
+    if (a > 2) {
+        throw 42
+    } else if (a > 1) {
+        throw 1i8
+    } else {
+        throw "foo"
+    }
+}
+
++ toss(a) {
+    try {
+        toss2(a)
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    } catch {
+        -- "Caught all"
+    }
+}
+
++ toss2(a) {
+    try {
+        foo(a)
+    } catch (exc:Int32) {
+        -- "Caught int %exc"
+    }
+    throw "ok"
+}
+    
+do {
+    toss(3)
+    toss(2)
+    toss(1)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught int 42
+Caught str ok
+Caught all
+Caught str foo
+
+----------------------------------------------------------------------------------------------------
+# Throw within catch
+
++ toss2() {
+    throw 42
+}
+
++ toss() {
+    try {
+        toss2()
+    } catch (exc:Int32) {
+        -- "Caught int %exc"
+        throw "ok"
+    }
+}
+    
+do {
+    try {
+        toss()
+    } catch (exc:String) {
+        -- "Caught str %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught int 42
+Caught str ok
+
+
+----------------------------------------------------------------------------------------------------
+# Re-throw during catch
+
++ toss2() {
+    throw 42
+}
+
++ toss() {
+    try {
+        toss2()
+    } catch (exc:Int32) {
+        -- "Caught int %exc"
+        throw exc
+    }
+}
+    
+do {
+    try {
+        toss()
+    } catch (exc:Int32) {
+        -- "Re-caught int %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught int 42
+Re-caught int 42
+
+----------------------------------------------------------------------------------------------------
+# Re-throw during catch
+
++ foo(a) {
+    if a < 10 {
+        = a
+    } else if a == 10 {
+        throw "too much"
+    }
+}
+
++ toss(a) {
+    try {
+        -- foo(a)
+    } catch (exc) {
+        -- "Caught %exc"
+    }
+    -- "fine"
+}
+    
+do {
+    toss(5)
+    toss(10)
+    toss(11)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+5
+fine
+Caught too much
+fine
+unknown
+fine
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    -- "oops"
+}
+    
+do {
+    try {
+        foo()
+    } catch {
+        -- "Caught"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Try without possible exceptions
+<no file>, line 6
+        try {
+        ^^^^^
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw 42
+}
+
+do {
+    try {
+        foo()
+    } catch (exc:Int32) {
+        -- "Caught %exc"
+    } catch {
+        -- "Caught %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Nothing to catch here
+<no file>, line 10
+        } catch {
+          ^^^^^^^
+         
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw 42
+}
+
+do {
+    try {
+        foo()
+    } catch (exc) {
+        -- "Caught"
+    } catch {
+        -- "Caught"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Multiple catch-alls
+<no file>, line 10
+        } catch {
+          ^^^^^^^
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw 42
+}
+
+do {
+    try {
+        foo()
+    } catch (exc:String) {
+        -- "Caught %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Catch for type not thrown
+<no file>, line 8
+        } catch (exc:String) {
+          ^^^^^^^^^^^^^^^^^^^^
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+    throw 42.5
+}
+
+do {
+    try {
+        foo()
+    } catch (exc) {
+        -- "Caught %exc"
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Exception: Illegal to throw floating point numbers
+<no file>, line 2
+        throw 42.5
+        ^^^^^^^^^^
+
+----------------------------------------------------------------------------------------------------

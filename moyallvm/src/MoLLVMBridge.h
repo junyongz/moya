@@ -45,7 +45,9 @@ public:
     void SetDebugLocation(int line, int col, llvm::DIScope* scope);
         
     llvm::LLVMContext& GetContext();
-    
+
+    llvm::Value* GetGlobal(llvm::Type* type, const std::string& name);
+
     llvm::Type* GetType(int code);
     uint64_t GetTypeSize(llvm::Type* type);
     
@@ -59,7 +61,7 @@ public:
 
 
     void BeginModule(const std::string& name, bool shouldDebug);
-    void EndModule(bool shouldOptimize);
+    void EndModule();
 
     void EmitObject(const std::string& path);
     int ExecuteMain();
@@ -68,7 +70,7 @@ public:
     void SetInsertBlock(llvm::Value* block);
     bool IsBlockEmpty(llvm::Value* block);
     void EraseBlock(llvm::Value* block);
-
+    
     llvm::Value* CreateBlock(const std::string& name, llvm::Function* func);
 
     llvm::Type* GetFunctionSignatureType(llvm::Type* returnType,
@@ -79,7 +81,8 @@ public:
 
     std::vector<llvm::Value*> DeclareFunction(std::string& name, llvm::Type* returnType,
                                             const std::vector<llvm::Type*>& args,
-                                            const std::vector<std::string>& argNames);
+                                            const std::vector<std::string>& argNames,
+                                            bool doesNotThrow);
 
     llvm::Value* CreateClassTable(const std::string& name, const std::vector<llvm::Value*> functions);
 
@@ -93,6 +96,8 @@ public:
     llvm::Value* CompileBitcast(llvm::Value* value, llvm::Type* type);
 
     llvm::Value* CompileCall(llvm::Value* func, std::vector<llvm::Value*>& args);
+    llvm::Value* CompileInvoke(llvm::Value* func, llvm::BasicBlock* normalDest,
+                               llvm::BasicBlock* unwindDest, std::vector<llvm::Value*>& args);
 
     llvm::Value* CompileEquals(llvm::Value* lhs, llvm::Value* rhs);
     llvm::Value* CompileNotEquals(llvm::Value* lhs, llvm::Value* rhs);
@@ -113,6 +118,20 @@ public:
     void CompileJump(llvm::Value* label);
     void CompileConditionalJump(llvm::Value* condition, llvm::Value* label1, llvm::Value* label2);
     llvm::Value* CompilePHI(llvm::Type* type, const std::vector<llvm::Value*>& values, const std::vector<llvm::Value*>& blocks);
+
+    llvm::Value* CompileLandingPad(llvm::Type* padType, bool isCleanup,
+                                   const std::vector<llvm::Value*>& clauses);
+    void CompileResume(llvm::Value* landingPad);
+    
+    llvm::Value* CompileCatchSwitch(llvm::Value* parentPad, llvm::BasicBlock* unwindBB,
+                                    const std::vector<llvm::BasicBlock*>& handlers);
+    llvm::Value* CompileCatchPad(llvm::Value* parentPad, const std::vector<llvm::Value*>& args);
+    llvm::Value* CompileCatchRet(llvm::CatchPadInst* catchPad, llvm::BasicBlock* afterBlock);
+    llvm::Value* CompileCleanupPad(llvm::Value* parentPad, const std::vector<llvm::Value*>& args);
+    llvm::Value* CompileCleanupRet(llvm::CleanupReturnInst* cleanupPad, llvm::BasicBlock* unwindBB);
+
+    llvm::Value* CompileNone();
+    void CompileUnreachable();
     
     llvm::Value* CreateVariable(const std::string& name, llvm::Type* type);
     void StoreVariable(llvm::Value* lhs, llvm::Value* rhs);
@@ -132,7 +151,10 @@ private:
 
     llvm::TargetMachine* machine;
     const llvm::DataLayout dataLayout;
+
     std::unique_ptr<llvm::Module> module;
+
+    llvm::Function* personality;
     
     llvm::orc::ObjectLinkingLayer<> objectLayer;
     llvm::orc::IRCompileLayer<decltype(objectLayer)> compileLayer;
