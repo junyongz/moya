@@ -188,7 +188,14 @@ void MoJBridge::GetGlobal(const Nan::FunctionCallbackInfo<Value>& info) {
     String::Utf8Value _name(info[1]->ToString());
     std::string name = std::string(*_name);
     
-    llvm::Value* val = bridge->compiler->GetGlobal(type, name);
+    MoJValue* valv = info[2] != Nan::Null()
+        ? ObjectWrap::Unwrap<MoJValue>(Handle<Object>::Cast(info[2]))
+        : NULL;
+    llvm::Constant* value = valv
+        ? static_cast<llvm::Constant*>(valv->GetValue())
+        : NULL;
+    
+    llvm::Value* val = bridge->compiler->GetGlobal(type, name, value);
     info.GetReturnValue().Set(MoJValue::Create(val));
 }
 

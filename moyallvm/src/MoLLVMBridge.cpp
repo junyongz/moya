@@ -479,10 +479,12 @@ MoLLVMBridge::CreateClassTable(const std::string& name, const std::vector<Value*
 }
 
 llvm::Value*
-MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name) {
- 	GlobalVariable* global = new GlobalVariable(*module, type, true,
-                                                GlobalValue::ExternalLinkage, 0, name);
-    return global;
+MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value) {
+ 	if (value) {
+        return new GlobalVariable(*module, type, false, GlobalValue::PrivateLinkage, value, name);
+    } else {
+        return new GlobalVariable(*module, type, true, GlobalValue::ExternalLinkage, NULL, name);
+    }
 }
 
 llvm::Value*

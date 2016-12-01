@@ -46,7 +46,7 @@ public:
         
     llvm::LLVMContext& GetContext();
 
-    llvm::Value* GetGlobal(llvm::Type* type, const std::string& name);
+    llvm::Value* GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value);
 
     llvm::Type* GetType(int code);
     uint64_t GetTypeSize(llvm::Type* type);
