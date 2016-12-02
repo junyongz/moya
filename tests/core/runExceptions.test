@@ -96,6 +96,92 @@ Caught that ain't right
 
 ----------------------------------------------------------------------------------------------------
 
++ Error {
+    + message = "Error"
+}
+
++ BadError : Error {
+    + message = "Bad!"
+}
+
++ foo(a) {
+    if a < 10 {
+        throw BadError()
+    } else {
+        throw Error()
+    }
+}
+
++ toss(a) {
+    try {
+        foo(a)
+    } catch (exc:BadError) {
+        -- "Caught %exc.message"
+    } catch (exc:Error) {
+        -- "Caught %exc.message"
+    }
+}
+
+do {
+    toss(5)
+    toss(10)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught Bad!
+Caught Error
+
+----------------------------------------------------------------------------------------------------
+
++ BadError {
+    + message = "Bad!"
+}
+
++ WorseError {
+    + message = "Worse!"
+}
+
++ foo2(a) {
+    if a < 10 {
+        throw BadError()
+    } else if (a == 10) {
+        throw WorseError()
+    } else {
+        throw "ok"
+    }
+}
+
++ foo(a) {
+    throw "ok"
+}
+
++ toss(a) {
+    try {
+        foo2(a)
+    } catch (exc:BadError) {
+        -- "Caught %exc.message"
+    } catch (exc:WorseError) {
+        -- "Caught %exc.message"
+    } catch (exc:String) {
+        -- "Caught s %exc"
+    }
+}
+
+do {
+    toss(5)
+    toss(10)
+    toss(11)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Caught Bad!
+Caught Worse!
+Caught s ok
+
+----------------------------------------------------------------------------------------------------
+
 + bar(a) {
     if a > 1 {
         throw "bar"

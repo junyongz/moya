@@ -273,7 +273,7 @@ MoLLVMBridge::BeginModule(const std::string& name, bool shouldDebug) {
     
     FunctionType* ft = FunctionType::get(Type::getInt32Ty(context), true);
     personality = Function::Create(ft, Function::ExternalLinkage,
-                                   "__gxx_personality_v0", module.get());
+                                   "__moya_personality_v0", module.get());
     
     if (shouldDebug) {
         dibuilder = new DIBuilder(*module);
@@ -413,11 +413,13 @@ MoLLVMBridge::GetFunctionSignatureType(Type* returnType, const std::vector<Type*
 
 Value*
 MoLLVMBridge::DeclareExternalFunction(std::string& name, Type* returnType,
-                                     const std::vector<Type*>& argTypes) {
+                                     const std::vector<Type*>& argTypes, bool doesNotThrow) {
     FunctionType* ft = FunctionType::get(returnType ? returnType : Type::getVoidTy(context),
                                          argTypes, false);
     Function* func = Function::Create(ft, Function::ExternalLinkage, name, module.get());
-    // func->setDoesNotThrow();
+    if (doesNotThrow) {
+        func->setDoesNotThrow();
+    }
 
     if (!returnType) {
         func->addFnAttr(Attribute::NoReturn);
@@ -479,11 +481,14 @@ MoLLVMBridge::CreateClassTable(const std::string& name, const std::vector<Value*
 }
 
 llvm::Value*
-MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value) {
+MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value,
+                        bool isConstant) {
  	if (value) {
-        return new GlobalVariable(*module, type, false, GlobalValue::PrivateLinkage, value, name);
+        return new GlobalVariable(*module, type, isConstant, GlobalValue::PrivateLinkage, value,
+                                  name);
     } else {
-        return new GlobalVariable(*module, type, true, GlobalValue::ExternalLinkage, NULL, name);
+        return new GlobalVariable(*module, type, isConstant, GlobalValue::ExternalLinkage, NULL,
+                                  name);
     }
 }
 

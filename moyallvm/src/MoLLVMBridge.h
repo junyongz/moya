@@ -46,7 +46,8 @@ public:
         
     llvm::LLVMContext& GetContext();
 
-    llvm::Value* GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value);
+    llvm::Value* GetGlobal(llvm::Type* type, const std::string& name, llvm::Constant* value,
+                           bool isConstant);
 
     llvm::Type* GetType(int code);
     uint64_t GetTypeSize(llvm::Type* type);
@@ -77,7 +78,8 @@ public:
                                          const std::vector<llvm::Type*>& argTypes);
         
     llvm::Value* DeclareExternalFunction(std::string& name, llvm::Type* returnType,
-                                 const std::vector<llvm::Type*>& argTypes);
+                                 const std::vector<llvm::Type*>& argTypes,
+                                 bool doesNotThrow);
 
     std::vector<llvm::Value*> DeclareFunction(std::string& name, llvm::Type* returnType,
                                             const std::vector<llvm::Type*>& args,

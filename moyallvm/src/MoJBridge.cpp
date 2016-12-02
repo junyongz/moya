@@ -194,8 +194,10 @@ void MoJBridge::GetGlobal(const Nan::FunctionCallbackInfo<Value>& info) {
     llvm::Constant* value = valv
         ? static_cast<llvm::Constant*>(valv->GetValue())
         : NULL;
+
+    bool isConstant = info[3]->NumberValue();
     
-    llvm::Value* val = bridge->compiler->GetGlobal(type, name, value);
+    llvm::Value* val = bridge->compiler->GetGlobal(type, name, value, isConstant);
     info.GetReturnValue().Set(MoJValue::Create(val));
 }
 
@@ -455,7 +457,10 @@ void MoJBridge::DeclareExternalFunction(const Nan::FunctionCallbackInfo<Value>& 
         argTypes.push_back(type);
     }
 
-    llvm::Value* ret = bridge->compiler->DeclareExternalFunction(name, retType, argTypes);
+    int doesNotThrow = info[3]->NumberValue();
+
+    llvm::Value* ret = bridge->compiler->DeclareExternalFunction(name, retType, argTypes,
+                                                                 doesNotThrow);
     info.GetReturnValue().Set(MoJValue::Create(ret));
 }
 
