@@ -7,5 +7,21 @@ C"char* resizeBuffer(char*, int, int)"
 
 ----------------------------------------------------------------------------------------------------
 
++ Error {
+    + message = ""
+    
+    + This(msg:String) {
+        message = msg
+    }
+}
+
++ OutOfBoundsError : Error {
+    + This(msg:String) {
+        message = msg
+    }
+}
+
+----------------------------------------------------------------------------------------------------
+
 ` XXXjoe For when I support type constraints
 ` + Number = Int1 | Int8 | Int16 | Int32 | Int64 | Float32 | Float64

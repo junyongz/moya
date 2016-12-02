@@ -36,8 +36,7 @@
         if index < length {
             = items[index]
         } else {
-            = items[index]
-            `throw "List index %index out of range"
+            throw OutOfBoundsError("List index %index out of range")
         }
     }
     
