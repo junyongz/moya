@@ -8,7 +8,9 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -18,7 +20,9 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="private">
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -30,7 +34,9 @@ Assignments can be made public or private (valid only in declarative contexts).
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Property name="a" access="public">
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -41,7 +47,9 @@ Assignments can be made public or private (valid only in declarative contexts).
 
 <Property name="a" access="public">
     <TypeId name="A"/>
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -54,7 +62,9 @@ Assignments can be made public or private (valid only in declarative contexts).
 
 <Property name="a" access="public">
     <TypeId name="A"/>
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -69,10 +79,12 @@ Assignments can be made public or private (valid only in declarative contexts).
 
 <Property name="a" access="public">
     <TypeId name="A"/>
-    <clause>
-        <Integer value="2"/>
-    </clause>
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+        <where>
+            <Integer value="2"/>
+        </where>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------
@@ -85,10 +97,12 @@ Assignments can be made public or private (valid only in declarative contexts).
 
 <Property name="a" access="public">
     <TypeId name="A"/>
-    <clause>
-        <Integer value="2"/>
-    </clause>
-    <Integer value="1"/>
+    <Block>
+        <Integer value="1"/>
+        <where>
+            <Integer value="2"/>
+        </where>
+    </Block>
 </Property>
 
 ----------------------------------------------------------------------------------------------------

@@ -11,90 +11,90 @@ throw 42
 ----------------------------------------------------------------------------------------------------
 
 try {
-    _
+    1
 } catch {
-    _
+    1
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
-    <Id name="null"/>
+    <Integer value="1"/>
     <Catch>
-        <Id name="null"/>
+        <Integer value="1"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
 try {
-    _
+    1
 } catch exc {
-    _
+    1
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
-    <Id name="null"/>
+    <Integer value="1"/>
     <Catch>
         <Id name="exc"/>
-        <Id name="null"/>
+        <Integer value="1"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
 try {
-    _
+    1
 } catch exc:Exception {
-    _
+    1
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
-    <Id name="null"/>
+    <Integer value="1"/>
     <Catch>
         <TypeAssignment name="exc">
             <TypeId name="Exception"/>
         </TypeAssignment>
-        <Id name="null"/>
+        <Integer value="1"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
 try {
-    _
+    1
 } catch exc:Exception {
-    _
+    1
 } catch exc:OtherException {
-    _
+    1
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
-    <Id name="null"/>
+    <Integer value="1"/>
     <Catch>
         <TypeAssignment name="exc">
             <TypeId name="Exception"/>
         </TypeAssignment>
-        <Id name="null"/>
+        <Integer value="1"/>
     </Catch>
     <Catch>
         <TypeAssignment name="exc">
             <TypeId name="OtherException"/>
         </TypeAssignment>
-        <Id name="null"/>
+        <Integer value="1"/>
     </Catch>
 </Try>
 
 ----------------------------------------------------------------------------------------------------
 
 try {
-    _
+    1
 } catch {
     1
 } catch {
@@ -104,7 +104,7 @@ try {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Try>
-    <Id name="null"/>
+    <Integer value="1"/>
     <Catch>
         <Integer value="1"/>
     </Catch>

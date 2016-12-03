@@ -56,7 +56,7 @@ class MoyaTestFixture(TestFixture):
             extraArgs = []
             
         if isExpr:
-            source = '{ ' + source + '}'
+            source = 'do { ' + source + '}'
         elif source[0] == '-':
             source = ' ' + source
 
@@ -88,7 +88,7 @@ class ParseTests(MoyaTestFixture):
 class ExparseTests(MoyaTestFixture):
     order = 1
 
-    def testExparse(self, source, expected, mode="ast", **kwds):
+    def testExparse(self, source, expected, mode="ast-expr", **kwds):
         return self.runTest(["--inspect", mode] if mode else [], source, True, **kwds)
 
 class RunTests(MoyaTestFixture):

@@ -30,15 +30,17 @@ n = * a -> b
     <Id name="n"/>
     <Function>
         <Argument name="iterable"/>
-        <Iterator>
-            <left>
-                <Id name="a"/>
-            </left>
-            <iterable>
-                <Id name="iterable"/>
-            </iterable>
-            <Id name="b"/>
-        </Iterator>
+        <Block>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
+                <Id name="b"/>
+            </Iterator>
+        </Block>
     </Function>
 </AssignmentExpression>
 
@@ -52,16 +54,18 @@ n = * a,x -> b
     <Id name="n"/>
     <Function>
         <Argument name="iterable"/>
-        <Iterator>
-            <left>
-                <Id name="a"/>
-                <Id name="x"/>
-            </left>
-            <iterable>
-                <Id name="iterable"/>
-            </iterable>
-            <Id name="b"/>
-        </Iterator>
+        <Block>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                    <Id name="x"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
+                <Id name="b"/>
+            </Iterator>
+        </Block>
     </Function>
 </AssignmentExpression>
 
@@ -77,19 +81,158 @@ n = * a,x if a -> {
     <Id name="n"/>
     <Function>
         <Argument name="iterable"/>
+        <Block>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                    <Id name="x"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
+                <clause>
+                    <Id name="a"/>
+                </clause>
+                <Block>
+                    <Id name="b"/>
+                </Block>
+            </Iterator>
+        </Block>
+    </Function>
+</AssignmentExpression>
+
+====================================================================================================
+# Iterator expressions with where clauses
+====================================================================================================
+----------------------------------------------------------------------------------------------------
+
+n = * a in b -> c where c = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <Block>
         <Iterator>
             <left>
                 <Id name="a"/>
-                <Id name="x"/>
             </left>
             <iterable>
-                <Id name="iterable"/>
+                <Id name="b"/>
             </iterable>
-            <clause>
-                <Id name="a"/>
-            </clause>
-            <Id name="b"/>
+            <Id name="c"/>
         </Iterator>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+n = * a -> b where c = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <Block>
+        <Function>
+            <Argument name="iterable"/>
+            <Block>
+                <Iterator>
+                    <left>
+                        <Id name="a"/>
+                    </left>
+                    <iterable>
+                        <Id name="iterable"/>
+                    </iterable>
+                    <Id name="b"/>
+                </Iterator>
+            </Block>
+        </Function>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+n = * a,x -> b where c = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <Block>
+        <Function>
+            <Argument name="iterable"/>
+            <Block>
+                <Iterator>
+                    <left>
+                        <Id name="a"/>
+                        <Id name="x"/>
+                    </left>
+                    <iterable>
+                        <Id name="iterable"/>
+                    </iterable>
+                    <Id name="b"/>
+                </Iterator>
+            </Block>
+        </Function>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
+n = * a,x if a -> {
+    b
+} where {
+    c = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <Function>
+        <Argument name="iterable"/>
+        <Block>
+            <Iterator>
+                <left>
+                    <Id name="a"/>
+                    <Id name="x"/>
+                </left>
+                <iterable>
+                    <Id name="iterable"/>
+                </iterable>
+                <clause>
+                    <Id name="a"/>
+                </clause>
+                <Block>
+                    <Id name="b"/>
+                    <where>
+                        <AssignmentExpression op="=">
+                            <Id name="c"/>
+                            <Integer value="1"/>
+                        </AssignmentExpression>
+                    </where>
+                </Block>
+            </Iterator>
+        </Block>
     </Function>
 </AssignmentExpression>
 
@@ -134,7 +277,9 @@ n = * a,x in b -> {
         <iterable>
             <Id name="b"/>
         </iterable>
-        <Id name="c"/>
+        <Block>
+            <Id name="c"/>
+        </Block>
     </Iterator>
 </AssignmentExpression>
 
@@ -174,15 +319,17 @@ foo(* a -> a)
     <arg>
         <Function>
             <Argument name="iterable"/>
-            <Iterator>
-                <left>
+            <Block>
+                <Iterator>
+                    <left>
+                        <Id name="a"/>
+                    </left>
+                    <iterable>
+                        <Id name="iterable"/>
+                    </iterable>
                     <Id name="a"/>
-                </left>
-                <iterable>
-                    <Id name="iterable"/>
-                </iterable>
-                <Id name="a"/>
-            </Iterator>
+                </Iterator>
+            </Block>
         </Function>
     </arg>
 </CallExpression>
@@ -199,18 +346,20 @@ foo(* a if a -> a)
     <arg>
         <Function>
             <Argument name="iterable"/>
-            <Iterator>
-                <left>
+            <Block>
+                <Iterator>
+                    <left>
+                        <Id name="a"/>
+                    </left>
+                    <iterable>
+                        <Id name="iterable"/>
+                    </iterable>
+                    <clause>
+                        <Id name="a"/>
+                    </clause>
                     <Id name="a"/>
-                </left>
-                <iterable>
-                    <Id name="iterable"/>
-                </iterable>
-                <clause>
-                    <Id name="a"/>
-                </clause>
-                <Id name="a"/>
-            </Iterator>
+                </Iterator>
+            </Block>
         </Function>
     </arg>
 </CallExpression>

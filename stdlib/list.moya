@@ -27,11 +27,11 @@
     
     ------------------------------------------------------------------------------------------------
 
-    + (!this) {
+    + !this {
         = length == 0
     }
     
-    + ([index:Int32]):T {
+    + this[index:Int32] {
         index = normalizeIndex(index)
         if index < length {
             = items[index]
@@ -40,7 +40,7 @@
         }
     }
     
-    + ([index:Int32] = item:T) {
+    + this[index:Int32] = item:T {
         if (index >= capacity) {
             grow(index)
             length = index + 1

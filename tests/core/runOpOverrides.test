@@ -34,7 +34,7 @@ Incremental assignment operators.
 + Thing {
     + a = 10
     
-    + (this += n) {
+    + this += n {
         a += n
     }
 }
@@ -59,7 +59,7 @@ do {
         a = aa
     }
     
-    + (this + n) {
+    + this + n {
         = Thing(a + n)
     }
 }
@@ -80,7 +80,7 @@ do {
 + Member {
     + a = 10
     
-    + (this += n) {
+    + this += n {
         a += n
     }
 }
@@ -107,7 +107,7 @@ Concat operator
 + Thing {
     + a = "me"
     
-    + (this ++ other) {
+    + this ++ other {
         = "%a with%other"
     }
 }
@@ -133,7 +133,7 @@ Comparison operators.
         a = v
     }
     
-    + (this == other) {
+    + this == other {
         = a == other.a
     }
 }
@@ -159,7 +159,7 @@ true
         a = v
     }
     
-    + (this != other) {
+    + this != other {
         = a != other.a
     }
 }
@@ -186,7 +186,7 @@ false
         a = v
     }
     
-    + (this == other) {
+    + this == other {
         = a == other.a
     }
 }
@@ -212,7 +212,7 @@ false
         a = v
     }
     
-    + (this > other) {
+    + this > other {
         = a > other.a
     }
 }
@@ -232,7 +232,7 @@ true
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + (this > other) {
+    + this > other {
         = "hi"
     }
 }
@@ -252,11 +252,11 @@ Exception: Invalid type for truth test
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + (this is in other) {
+    + this is in other {
         = this == other
     }
 
-    + (this not in other) {
+    + this not in other {
         = this != other
     }
 }
@@ -288,7 +288,7 @@ true
         a = v
     }
     
-    + (this is in other) {
+    + this is in other {
         = a == other.a
     }
 }
@@ -333,7 +333,7 @@ Prefix operators.
 # Incremental operator on a property of a member
 
 + Thing {
-    + (!this) {
+    + !this {
         = true
     }
 }
@@ -357,7 +357,7 @@ true
         a = n
     }
     
-    + (!this) {
+    + !this {
         = a <= 10
     }
 }
@@ -388,7 +388,7 @@ true
         a = n
     }
     
-    + (!this) {
+    + !this {
         = a <= 10
     }
 }
@@ -419,7 +419,7 @@ true
         a = n
     }
     
-    + (!this) {
+    + !this {
         = a <= 10
     }
 }
@@ -450,7 +450,7 @@ oh
         a = n
     }
     
-    + (!this) {
+    + !this {
         = a <= 10
     }
 }
@@ -473,7 +473,7 @@ hi b
 + Thing {
     + a = 3
     
-    + (!this) {
+    + !this {
         = a == 0
     }
 }
@@ -518,7 +518,7 @@ Exception: Operator must return Int1
 
 + Thing {
     + a = 0
-    + (!this) {
+    + !this {
         = a
     }
 }
@@ -545,14 +545,14 @@ true
         truth = t
     }
     
-    + (!this) {
+    + !this {
         = !truth
     }
 }
 
 + Thing {
     + state = State(true)
-    + (!this) {
+    + !this {
         = state
     }
 }
@@ -574,7 +574,7 @@ false
 + Thing {
     + a = 5
     
-    + (-this) {
+    + -this {
         neg = Thing()
         neg.a = -a
         = neg
@@ -594,7 +594,7 @@ do {
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + (in this) {
+    + in this {
         = 5
     }
 }
@@ -614,7 +614,7 @@ Index operators.
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + ([index]) {
+    + this[index] {
         = index + 5
     }
 }
@@ -633,7 +633,7 @@ do {
 + Thing {
     + a = 10
     
-    + ([index] = value) {
+    + this[index] = value {
         a = index + value
     }
 }
@@ -653,7 +653,7 @@ do {
 + Thing {
     + a = 10
     
-    + (-= [index]) {
+    + -= this[index] {
         a -= index
     }
 }
@@ -674,7 +674,7 @@ Slice operators.
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + ([g to h by i]) {
+    + this[g to h by i] {
         = g + h + i
     }
 }
@@ -691,7 +691,7 @@ do {
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + ([g to h by i=1]) {
+    + this[g to h by i=1] {
         = g + h + i
     }
 }
@@ -710,7 +710,7 @@ do {
 + Thing {
     + a = 10
     
-    + ([g to h by i] = value) {
+    + this[g to h by i] = value {
         a = g + h + i + value
     }
 }
@@ -730,7 +730,7 @@ do {
 + Thing {
     + a = 10
     
-    + ([g to h by i=1] = value) {
+    + this[g to h by i=1] = value {
         a = g + h + i + value
     }
 }
@@ -750,7 +750,7 @@ do {
 + Thing {
     + a = 10
     
-    + (-= [g to h by i]) {
+    + -= this[g to h by i] {
         a -= g + h + i
     }
 }
@@ -771,7 +771,7 @@ Lookup operators.
 ----------------------------------------------------------------------------------------------------
 
 + Thing {
-    + (.[key]) {
+    + this.[key] {
         = "found %key"
     }
 }
@@ -790,7 +790,7 @@ found foo
 + Thing {
     + a = "nada"
     
-    + (.[key] = value) {
+    + this.[key] = value {
         a = "got %key = %value"
     }
 }
@@ -810,7 +810,7 @@ got foo = bar
 + Thing {
     + a = "nada"
     
-    + (-= .[key]) {
+    + -= this.[key] {
         a = "removed %key"
     }
 }

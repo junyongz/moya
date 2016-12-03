@@ -26,20 +26,18 @@ Functions are prefixed with a + if they are public or a - if they are private. T
 ----------------------------------------------------------------------------------------------------
 
 - foo() {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <FunctionDeclaration access="private">
     <Id name="foo"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -47,13 +45,12 @@ Functions are prefixed with a + if they are public or a - if they are private. T
 <FunctionDeclaration access="public">
     <Id name="a"/>
     <Argument name="arg1"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1, arg2) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -62,7 +59,7 @@ Functions are prefixed with a + if they are public or a - if they are private. T
     <Id name="a"/>
     <Argument name="arg1"/>
     <Argument name="arg2"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -71,7 +68,6 @@ Default argument values are included in assignments.
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1, arg2=42) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -82,7 +78,7 @@ Default argument values are included in assignments.
     <Argument name="arg2">
         <Integer value="42"/>
     </Argument>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -97,13 +93,14 @@ The => operator means the block contains a single expression instead of imperati
 <FunctionDeclaration access="public">
     <Id name="a"/>
     <Argument name="b"/>
-    <Integer value="42"/>
+    <Block>
+        <Integer value="42"/>
+    </Block>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + a(b) => {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -111,7 +108,7 @@ The => operator means the block contains a single expression instead of imperati
 <FunctionDeclaration access="public">
     <Id name="a"/>
     <Argument name="b"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -120,27 +117,25 @@ A name without parentheses is a function that takes no arguments.
 ----------------------------------------------------------------------------------------------------
 
 + a {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <FunctionDeclaration access="public">
     <Id name="a"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 
 + a => {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <FunctionDeclaration access="public">
     <Id name="a"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -149,7 +144,6 @@ External argument names are a secondary name for the argument, indicated by a bu
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1, •label arg2) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -158,14 +152,13 @@ External argument names are a secondary name for the argument, indicated by a bu
     <Id name="a"/>
     <Argument name="arg1"/>
     <Argument name="arg2" outer="label"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 # With default value
 
 + a(arg1, •label arg2=1) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -176,7 +169,7 @@ External argument names are a secondary name for the argument, indicated by a bu
     <Argument name="arg2" outer="label">
         <Integer value="1"/>
     </Argument>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -185,7 +178,6 @@ An argument name can be both internal and external.
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1, •arg2) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -194,14 +186,13 @@ An argument name can be both internal and external.
     <Id name="a"/>
     <Argument name="arg1"/>
     <Argument name="arg2" outer="arg2"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 # With default value
 
 + a(arg1, •arg2=42) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -212,7 +203,7 @@ An argument name can be both internal and external.
     <Argument name="arg2" outer="arg2">
         <Integer value="42"/>
     </Argument>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -221,7 +212,6 @@ Variadic arguments are accumulated as a list in a single argument indicated by t
 ----------------------------------------------------------------------------------------------------
 
 + a(arg1, ...remainder) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -230,14 +220,13 @@ Variadic arguments are accumulated as a list in a single argument indicated by t
     <Id name="a"/>
     <Argument name="arg1"/>
     <Argument name="remainder" variadic="true"/>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
 # With default value
 
 + a(arg1, ...remainder=42) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -248,7 +237,7 @@ Variadic arguments are accumulated as a list in a single argument indicated by t
     <Argument name="remainder" variadic="true">
         <Integer value="42"/>
     </Argument>
-    <Id name="null"/>
+    <Block/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -257,14 +246,13 @@ Imperative functions
 ----------------------------------------------------------------------------------------------------
 
 + foo() do {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<FunctionDeclaration access="public" imperative="true">
+<FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Id name="null"/>
+    <Block imperative="true"/>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -280,7 +268,9 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Argument name="n"/>
+    <Block>
+        <Argument name="n"/>
+    </Block>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -293,9 +283,11 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Argument name="n">
-        <TypeId name="T"/>
-    </Argument>
+    <Block>
+        <Argument name="n">
+            <TypeId name="T"/>
+        </Argument>
+    </Block>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -308,10 +300,12 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Argument name="n">
-        <TypeId name="T"/>
-        <Integer value="1"/>
-    </Argument>
+    <Block>
+        <Argument name="n">
+            <TypeId name="T"/>
+            <Integer value="1"/>
+        </Argument>
+    </Block>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -330,17 +324,19 @@ Where combined with a function declaration will apply to the function body and i
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <where>
-        <AssignmentExpression op="=">
-            <Id name="a"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-        <AssignmentExpression op="=">
-            <Id name="b"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-    </where>
-    <Id name="a"/>
+    <Block>
+        <Id name="a"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+            <AssignmentExpression op="=">
+                <Id name="b"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -354,17 +350,19 @@ Where combined with a function declaration will apply to the function body and i
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <where>
-        <AssignmentExpression op="=">
-            <Id name="a"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-        <AssignmentExpression op="=">
-            <Id name="b"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-    </where>
-    <Id name="a"/>
+    <Block>
+        <Id name="a"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+            <AssignmentExpression op="=">
+                <Id name="b"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------

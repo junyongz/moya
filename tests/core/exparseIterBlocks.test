@@ -45,15 +45,83 @@
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <Id name="c"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="c"/>
+            </Block>
+        </Iterator>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+
+* a -> {
+    c
+} where {
+    c = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="iterable"/>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="c"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+
+* a -> {
+    c
+} where c = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="iterable"/>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="c"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -64,15 +132,46 @@
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <Id name="c"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Id name="c"/>
+        </Iterator>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+
+* a -> c where c = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="iterable"/>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="c"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -90,7 +189,37 @@
     <iterable>
         <Id name="b"/>
     </iterable>
-    <Id name="c"/>
+    <Block>
+        <Id name="c"/>
+    </Block>
+</Iterator>
+
+----------------------------------------------------------------------------------------------------
+
+* a in b -> {
+    c
+} where {
+    c = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Iterator>
+    <left>
+        <Id name="a"/>
+    </left>
+    <iterable>
+        <Id name="b"/>
+    </iterable>
+    <Block>
+        <Id name="c"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
 </Iterator>
 
 ----------------------------------------------------------------------------------------------------
@@ -234,7 +363,9 @@ If clauses
     <clause>
         <Id name="a"/>
     </clause>
-    <Id name="c"/>
+    <Block>
+        <Id name="c"/>
+    </Block>
 </Iterator>
 
 ====================================================================================================
@@ -279,6 +410,37 @@ While clauses.
     <Id name="c"/>
 </Iterator>
 
+----------------------------------------------------------------------------------------------------
+
+* a in b while a {
+    c
+} where {
+    c = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Iterator while="true">
+    <left>
+        <Id name="a"/>
+    </left>
+    <iterable>
+        <Id name="b"/>
+    </iterable>
+    <clause>
+        <Id name="a"/>
+    </clause>
+    <Block>
+        <Id name="c"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</Iterator>
+
 ====================================================================================================
 With multiple variables.
 ====================================================================================================
@@ -304,7 +466,7 @@ With multiple variables.
 ----------------------------------------------------------------------------------------------------
 
 * a,b in c if a {
-    _
+    d
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -320,7 +482,7 @@ With multiple variables.
     <clause>
         <Id name="a"/>
     </clause>
-    <Id name="null"/>
+    <Id name="d"/>
 </Iterator>
 
 ----------------------------------------------------------------------------------------------------
@@ -339,8 +501,40 @@ With multiple variables.
     <iterable>
         <Id name="b"/>
     </iterable>
-    <Id name="c"/>
+    <Block>
+        <Id name="c"/>
+    </Block>
 </Iterator>
+
+----------------------------------------------------------------------------------------------------
+
+* a,x -> b where b = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="iterable"/>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="b"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="b"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Block>
+</Function>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -350,16 +544,48 @@ With multiple variables.
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <Id name="b"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Id name="b"/>
+        </Iterator>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+
+* a,x -> b where b = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="iterable"/>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="b"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="b"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -370,19 +596,21 @@ With multiple variables.
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <clause>
-            <Id name="a"/>
-        </clause>
-        <Id name="b"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <clause>
+                <Id name="a"/>
+            </clause>
+            <Id name="b"/>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -395,16 +623,20 @@ With multiple variables.
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <Id name="b"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
+                <Id name="b"/>
+            </Block>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -417,19 +649,23 @@ With multiple variables.
 
 <Function>
     <Argument name="iterable"/>
-    <Iterator>
-        <left>
-            <Id name="a"/>
-            <Id name="x"/>
-        </left>
-        <iterable>
-            <Id name="iterable"/>
-        </iterable>
-        <clause>
-            <Id name="a"/>
-        </clause>
-        <Id name="b"/>
-    </Iterator>
+    <Block>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+                <Id name="x"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <clause>
+                <Id name="a"/>
+            </clause>
+            <Block>
+                <Id name="b"/>
+            </Block>
+        </Iterator>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------

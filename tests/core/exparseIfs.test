@@ -367,16 +367,18 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-        <if>
-            <Id name="b"/>
-            <Integer value="2"/>
-        </if>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <if>
+                <Id name="b"/>
+                <Integer value="2"/>
+            </if>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -390,15 +392,17 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-        <else>
-            <Integer value="2"/>
-        </else>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <else>
+                <Integer value="2"/>
+            </else>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -410,12 +414,14 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -427,15 +433,19 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Function>
-                <Argument name="b"/>
-                <Integer value="1"/>
-            </Function>
-        </if>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Function>
+                    <Argument name="b"/>
+                    <Block>
+                        <Integer value="1"/>
+                    </Block>
+                </Function>
+            </if>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -449,19 +459,21 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-        <if>
-            <Id name="b"/>
-            <Integer value="2"/>
-        </if>
-        <else>
-            <Integer value="3"/>
-        </else>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <if>
+                <Id name="b"/>
+                <Integer value="2"/>
+            </if>
+            <else>
+                <Integer value="3"/>
+            </else>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -474,15 +486,17 @@ foo(if a -> 1 or b -> 2 else 3)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-        <else>
-            <Integer value="2"/>
-        </else>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+            <else>
+                <Integer value="2"/>
+            </else>
+        </If>
+    </Block>
 </Function>
 
 ====================================================================================================
@@ -501,15 +515,19 @@ Block expressions within a transform.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <If>
-        <if>
-            <Id name="a"/>
-            <Function>
-                <Argument name="b"/>
-                <Integer value="1"/>
-            </Function>
-        </if>
-    </If>
+    <Block>
+        <If>
+            <if>
+                <Id name="a"/>
+                <Function>
+                    <Argument name="b"/>
+                    <Block>
+                        <Integer value="1"/>
+                    </Block>
+                </Function>
+            </if>
+        </If>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------

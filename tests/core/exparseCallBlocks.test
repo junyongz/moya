@@ -12,7 +12,9 @@ iter {
 <CallExpression>
     <Id name="iter"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -28,8 +30,10 @@ iter {
 <CallExpression>
     <Id name="iter"/>
     <arg>
-        <Integer value="2"/>
-        <Id name="b"/>
+        <Block>
+            <Integer value="2"/>
+            <Id name="b"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -47,7 +51,9 @@ iter() {
 <CallExpression>
     <Id name="iter"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -65,7 +71,9 @@ iter(1) {
         <Integer value="1"/>
     </arg>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -100,10 +108,14 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg>
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -116,6 +128,9 @@ foo {
 
 <CallExpression>
     <Id name="foo"/>
+    <arg>
+        <Block/>
+    </arg>
 </CallExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -133,13 +148,19 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg>
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
     <arg>
-        <Integer value="4"/>
+        <Block>
+            <Integer value="4"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -159,10 +180,14 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg name="arg2">
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -181,13 +206,19 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg name="arg2">
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
     <arg name="arg3">
-        <Integer value="4"/>
+        <Block>
+            <Integer value="4"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -201,7 +232,9 @@ foo •>() {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Function/>
+        <Function>
+            <Block/>
+        </Function>
     </arg>
 </CallExpression>
 
@@ -217,6 +250,7 @@ foo •>(args) {
     <arg>
         <Function>
             <Argument name="args"/>
+            <Block/>
         </Function>
     </arg>
 </CallExpression>
@@ -233,6 +267,7 @@ foo •cb >(args) {
     <arg name="cb">
         <Function>
             <Argument name="args"/>
+            <Block/>
         </Function>
     </arg>
 </CallExpression>
@@ -248,7 +283,9 @@ foo •>(args) 2
     <arg>
         <Function>
             <Argument name="args"/>
-            <Integer value="2"/>
+            <Block>
+                <Integer value="2"/>
+            </Block>
         </Function>
     </arg>
 </CallExpression>
@@ -266,12 +303,16 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg>
         <Function>
             <Argument name="args"/>
-            <Integer value="3"/>
+            <Block>
+                <Integer value="3"/>
+            </Block>
         </Function>
     </arg>
 </CallExpression>
@@ -289,12 +330,16 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg name="cb">
         <Function>
             <Argument name="args"/>
-            <Integer value="3"/>
+            <Block>
+                <Integer value="3"/>
+            </Block>
         </Function>
     </arg>
 </CallExpression>
@@ -310,7 +355,9 @@ foo •arg1 {
 <CallExpression>
     <Id name="foo"/>
     <arg name="arg1">
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -332,13 +379,19 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg>
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
     <arg name="arg3">
-        <Integer value="4"/>
+        <Block>
+            <Integer value="4"/>
+        </Block>
     </arg>
 </CallExpression>
 
@@ -357,15 +410,49 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Integer value="2"/>
+        <Block>
+            <Integer value="2"/>
+        </Block>
     </arg>
     <arg name="arg2">
-        <Integer value="3"/>
+        <Block>
+            <Integer value="3"/>
+        </Block>
     </arg>
     <arg>
-        <Integer value="4"/>
+        <Block>
+            <Integer value="4"/>
+        </Block>
     </arg>
 </CallExpression>
+
+----------------------------------------------------------------------------------------------------
+
+foo {
+    1
+} where {
+    a = 1
+}
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block>
+    <CallExpression>
+        <Id name="foo"/>
+        <arg>
+            <Block>
+                <Integer value="1"/>
+            </Block>
+        </arg>
+    </CallExpression>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Block>
 
 ====================================================================================================
 A bullet after any expression will call the result of that expression.

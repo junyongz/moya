@@ -1,165 +1,158 @@
 ====================================================================================================
-Read operator.
+# Block
+
+The where directive contains a set of assignments that apply to the expression above.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-<< channel
+{ a }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="<<">
-    <Id name="channel"/>
-</UnaryExpression>
+<Block>
+    <Id name="a"/>
+</Block>
 
 ----------------------------------------------------------------------------------------------------
 
-n = <<
+do { a }
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block imperative="true">
+    <Id name="a"/>
+</Block>
+
+----------------------------------------------------------------------------------------------------
+
+{ a } where a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block>
+    <Id name="a"/>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Block>
+
+----------------------------------------------------------------------------------------------------
+
+{ a } where { a = 1 }
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block>
+    <Id name="a"/>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Block>
+
+----------------------------------------------------------------------------------------------------
+
+x = { a }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <AssignmentExpression op="=">
-    <Id name="n"/>
-    <UnaryExpression op="<<"/>
-</AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-n = << channel
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<AssignmentExpression op="=">
-    <Id name="n"/>
-    <UnaryExpression op="<<">
-        <Id name="channel"/>
-    </UnaryExpression>
-</AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-n << channel
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<AssignmentExpression op="<<">
-    <Id name="n"/>
-    <Id name="channel"/>
-</AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo(<<)
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <arg>
-        <UnaryExpression op="<<"/>
-    </arg>
-</CallExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo(<< channel)
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <arg>
-        <UnaryExpression op="<<">
-            <Id name="channel"/>
-        </UnaryExpression>
-    </arg>
-</CallExpression>
-
-====================================================================================================
-Write operator.
-====================================================================================================
-----------------------------------------------------------------------------------------------------
-
->> message
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<UnaryExpression op=">>">
-    <Id name="message"/>
-</UnaryExpression>
-
-----------------------------------------------------------------------------------------------------
-
-message >> channel
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<BinaryExpression op=">>">
-    <Id name="message"/>
-    <Id name="channel"/>
-</BinaryExpression>
-
-----------------------------------------------------------------------------------------------------
-# Write expression in block
-
->> {
-    message
-}
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<UnaryExpression op=">>">
+    <Id name="x"/>
     <Block>
-        <Id name="message"/>
+        <Id name="a"/>
     </Block>
-</UnaryExpression>
+</AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
-# Write expression in block
 
->> {
-    message
-} where {
-    message = 1
-}
+x = { a } where { a = 1 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op=">>">
+<AssignmentExpression op="=">
+    <Id name="x"/>
     <Block>
-        <Id name="message"/>
+        <Id name="a"/>
         <where>
             <AssignmentExpression op="=">
-                <Id name="message"/>
+                <Id name="a"/>
                 <Integer value="1"/>
             </AssignmentExpression>
         </where>
     </Block>
-</UnaryExpression>
+</AssignmentExpression>
 
-====================================================================================================
-Write all operator.
-====================================================================================================
 ----------------------------------------------------------------------------------------------------
-# Write all expression without channel
 
-*>> channel
+x = { a } where a = 1
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="*>>">
-    <Id name="channel"/>
-</UnaryExpression>
+<AssignmentExpression op="=">
+    <Id name="x"/>
+    <Block>
+        <Id name="a"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
-# Write all expression without channel
 
-channel *>> channel
+x = do { a }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="*>>">
-    <Id name="channel"/>
-    <Id name="channel"/>
-</BinaryExpression>
+Exception: Syntax error
+<no file>, line 1
+    do { x = do { a }}
+           ^
+
+----------------------------------------------------------------------------------------------------
+
+a where {
+    a = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block>
+    <Id name="a"/>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="a"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Block>
+
+----------------------------------------------------------------------------------------------------
+
+= a where {
+    a = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Return>
+    <Block>
+        <Id name="a"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</Return>
 
 ----------------------------------------------------------------------------------------------------

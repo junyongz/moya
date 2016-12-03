@@ -103,6 +103,32 @@ foo is {
 ----------------------------------------------------------------------------------------------------
 
 foo is {
+    a -> 1
+} where {
+    c = 1
+}
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Block>
+    <Is>
+        <Id name="foo"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+    </Is>
+    <where>
+        <AssignmentExpression op="=">
+            <Id name="c"/>
+            <Integer value="1"/>
+        </AssignmentExpression>
+    </where>
+</Block>
+
+----------------------------------------------------------------------------------------------------
+foo is {
     a -> {
         1
     }
@@ -118,6 +144,34 @@ foo is {
     </if>
 </Is>
 
+----------------------------------------------------------------------------------------------------
+
+foo is {
+    a -> {
+        c
+    } where {
+        c = 1
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Is>
+    <Id name="foo"/>
+    <if>
+        <Id name="a"/>
+        <Block>
+            <Id name="c"/>
+            <where>
+                <AssignmentExpression op="=">
+                    <Id name="c"/>
+                    <Integer value="1"/>
+                </AssignmentExpression>
+            </where>
+        </Block>
+    </if>
+</Is>
+
 ====================================================================================================
 Within expressions.
 ====================================================================================================
@@ -128,13 +182,15 @@ Within expressions.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Is>
-        <Id name="foo"/>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-    </Is>
+    <Block>
+        <Is>
+            <Id name="foo"/>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+        </Is>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -170,13 +226,15 @@ bar(foo is a -> 1 else 2)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Is>
-        <Id name="foo"/>
-        <if>
-            <Id name="a"/>
-            <Integer value="1"/>
-        </if>
-    </Is>
+    <Block>
+        <Is>
+            <Id name="foo"/>
+            <if>
+                <Id name="a"/>
+                <Integer value="1"/>
+            </if>
+        </Is>
+    </Block>
 </Function>
 
 ====================================================================================================
@@ -195,16 +253,20 @@ Block expressions within a transform.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Is>
-        <Id name="foo"/>
-        <if>
-            <Id name="a"/>
-            <Function>
-                <Argument name="b"/>
-                <Integer value="1"/>
-            </Function>
-        </if>
-    </Is>
+    <Block>
+        <Is>
+            <Id name="foo"/>
+            <if>
+                <Id name="a"/>
+                <Function>
+                    <Argument name="b"/>
+                    <Block>
+                        <Integer value="1"/>
+                    </Block>
+                </Function>
+            </if>
+        </Is>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------

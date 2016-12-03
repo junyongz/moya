@@ -28,8 +28,8 @@ break a
 
 Exception: Syntax error
 <no file>, line 1
-    { break a}
-      ^^^^^
+    do { break a}
+         ^^^^^
 
 ----------------------------------------------------------------------------------------------------
 
@@ -39,8 +39,8 @@ continue a
 
 Exception: Syntax error
 <no file>, line 1
-    { continue a}
-      ^^^^^^^^
+    do { continue a}
+         ^^^^^^^^
 
 ====================================================================================================
 The return statement

@@ -4,9 +4,10 @@
 > () 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 <Function>
-    <Integer value="2"/>
+    <Block>
+        <Integer value="2"/>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -18,7 +19,9 @@
 
 <Function>
     <Argument name="a"/>
-    <Integer value="2"/>
+    <Block>
+        <Integer value="2"/>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -31,21 +34,43 @@
 <Function>
     <Argument name="a"/>
     <Argument name="b"/>
-    <Integer value="2"/>
+    <Block>
+        <Integer value="2"/>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with one argument and where
+
+> (a) c where c = 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Argument name="a"/>
+    <Block>
+        <Id name="c"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="2"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
 # Anonymous function in an expression
 
 = > () {
-    _
+    
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Return>
     <Function>
-        <Id name="null"/>
+        <Block/>
     </Function>
 </Return>
 
@@ -53,7 +78,6 @@
 # Anonymous function in an expression
 
 = > (a) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -61,7 +85,7 @@
 <Return>
     <Function>
         <Argument name="a"/>
-        <Id name="null"/>
+        <Block/>
     </Function>
 </Return>
 
@@ -69,7 +93,6 @@
 # Anonymous function in an expression
 
 = > (a,) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,7 +100,7 @@
 <Return>
     <Function>
         <Argument name="a"/>
-        <Id name="null"/>
+        <Block/>
     </Function>
 </Return>
 
@@ -85,7 +108,6 @@
 # Anonymous function in an expression
 
 = > (a,b) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -94,7 +116,7 @@
     <Function>
         <Argument name="a"/>
         <Argument name="b"/>
-        <Id name="null"/>
+        <Block/>
     </Function>
 </Return>
 
@@ -102,7 +124,6 @@
 # Anonymous function in an assignment
 
 x = > (a,b) {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -112,7 +133,7 @@ x = > (a,b) {
     <Function>
         <Argument name="a"/>
         <Argument name="b"/>
-        <Id name="null"/>
+        <Block/>
     </Function>
 </AssignmentExpression>
 
@@ -128,10 +149,12 @@ foo(> (a,b) a + b)
         <Function>
             <Argument name="a"/>
             <Argument name="b"/>
-            <BinaryExpression op="+">
-                <Id name="a"/>
-                <Id name="b"/>
-            </BinaryExpression>
+            <Block>
+                <BinaryExpression op="+">
+                    <Id name="a"/>
+                    <Id name="b"/>
+                </BinaryExpression>
+            </Block>
         </Function>
     </arg>
 </CallExpression>
@@ -142,14 +165,13 @@ With "do" annotation.
 ----------------------------------------------------------------------------------------------------
 
 > (a) do {
-    _
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<Function imperative="true">
+<Function>
     <Argument name="a"/>
-    <Id name="null"/>
+    <Block imperative="true"/>
 </Function>
 
 ====================================================================================================
@@ -189,5 +211,99 @@ n = *.bar + 1
         <Integer value="1"/>
     </BinaryExpression>
 </AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with where clause
+
+a = > () {
+    2
+} where {
+    a = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="a"/>
+    <Function>
+        <Block>
+            <Integer value="2"/>
+            <where>
+                <AssignmentExpression op="=">
+                    <Id name="a"/>
+                    <Integer value="1"/>
+                </AssignmentExpression>
+            </where>
+        </Block>
+    </Function>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with where clause
+
+a = > () {
+    2
+} where a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="a"/>
+    <Function>
+        <Block>
+            <Integer value="2"/>
+            <where>
+                <AssignmentExpression op="=">
+                    <Id name="a"/>
+                    <Integer value="1"/>
+                </AssignmentExpression>
+            </where>
+        </Block>
+    </Function>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with where clause
+
+> () {
+    2
+} where {
+    a = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Block>
+        <Integer value="2"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</Function>
+
+----------------------------------------------------------------------------------------------------
+# Anonymous function with where clause
+
+> () {
+    2
+} where a = 1
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<Function>
+    <Block>
+        <Integer value="2"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="a"/>
+                <Integer value="1"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</Function>
 
 ----------------------------------------------------------------------------------------------------
