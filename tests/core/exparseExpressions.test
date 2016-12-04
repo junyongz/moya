@@ -326,8 +326,10 @@ Bind expressions.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <UnaryExpression op=";">
-    <Id name="foo"/>
-    <Id name="bar"/>
+    <Tuple>
+        <Id name="foo"/>
+        <Id name="bar"/>
+    </Tuple>
 </UnaryExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -337,12 +339,14 @@ Bind expressions.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <UnaryExpression op=";">
-    <CallExpression>
-        <Id name="foo"/>
-    </CallExpression>
-    <CallExpression>
-        <Id name="bar"/>
-    </CallExpression>
+    <Tuple>
+        <CallExpression>
+            <Id name="foo"/>
+        </CallExpression>
+        <CallExpression>
+            <Id name="bar"/>
+        </CallExpression>
+    </Tuple>
 </UnaryExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -352,15 +356,17 @@ Bind expressions.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <UnaryExpression op=";">
-    <CallExpression>
-        <Id name="foo"/>
-    </CallExpression>
-    <CallExpression>
-        <Id name="bar"/>
-    </CallExpression>
-    <CallExpression>
-        <Id name="baz"/>
-    </CallExpression>
+    <Tuple>
+        <CallExpression>
+            <Id name="foo"/>
+        </CallExpression>
+        <CallExpression>
+            <Id name="bar"/>
+        </CallExpression>
+        <CallExpression>
+            <Id name="baz"/>
+        </CallExpression>
+    </Tuple>
 </UnaryExpression>
 
 ----------------------------------------------------------------------------------------------------

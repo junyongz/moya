@@ -40,6 +40,9 @@
 #include "llvm/Support/DynamicLibrary.h"
 #include "llvm/Support/raw_ostream.h"
 
+// Not used , just need this here so it gets linked
+#include "MoCore/MoCore.h"
+
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
@@ -320,6 +323,7 @@ MoLLVMBridge::EmitObject(const std::string& path) {
     }
 
     dest.flush();
+    dest.close();
 }
 
 int

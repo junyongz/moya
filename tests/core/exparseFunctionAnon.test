@@ -4,10 +4,9 @@
 > () 2
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 <Function>
-    <Block>
-        <Integer value="2"/>
-    </Block>
+    <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -19,9 +18,7 @@
 
 <Function>
     <Argument name="a"/>
-    <Block>
-        <Integer value="2"/>
-    </Block>
+    <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -34,9 +31,7 @@
 <Function>
     <Argument name="a"/>
     <Argument name="b"/>
-    <Block>
-        <Integer value="2"/>
-    </Block>
+    <Integer value="2"/>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -149,12 +144,10 @@ foo(> (a,b) a + b)
         <Function>
             <Argument name="a"/>
             <Argument name="b"/>
-            <Block>
-                <BinaryExpression op="+">
-                    <Id name="a"/>
-                    <Id name="b"/>
-                </BinaryExpression>
-            </Block>
+            <BinaryExpression op="+">
+                <Id name="a"/>
+                <Id name="b"/>
+            </BinaryExpression>
         </Function>
     </arg>
 </CallExpression>

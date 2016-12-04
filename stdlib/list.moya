@@ -5,19 +5,16 @@
     + length = 0
     - capacity = 30
     - items = T[30]
-
-    + This() {
-    }
     
     ------------------------------------------------------------------------------------------------
         
-    - grow(increment=30) {
+    - grow(increment=30) do {
         oldSize = capacity
         capacity += increment
         items = resize(items, T, oldSize, capacity)
     }
     
-    - normalizeIndex(index) {
+    - normalizeIndex(index) do {
         if index < 0 {
             = length + index
         } else {
@@ -27,11 +24,11 @@
     
     ------------------------------------------------------------------------------------------------
 
-    + !this {
+    + !this do {
         = length == 0
     }
     
-    + this[index:Int32] {
+    + (this[index:Int32]):T do {
         index = normalizeIndex(index)
         if index < length {
             = items[index]
@@ -40,7 +37,7 @@
         }
     }
     
-    + this[index:Int32] = item:T {
+    + this[index:Int32] = item:T do {
         if (index >= capacity) {
             grow(index)
             length = index + 1
@@ -51,7 +48,7 @@
     
     ------------------------------------------------------------------------------------------------
     
-    + add(item:T) {
+    + add(item:T) do {
         if (length == capacity) {
             grow()
         }

@@ -101,8 +101,8 @@ class RunTests(MoyaTestFixture):
             
         exePath = "/Volumes/Moya/appmoya"
         exePath = os.environ['MOYA_EXE_PATH']
-        if exePath:
-            args += ["-o", exePath]
+        # if exePath:
+        #     args += ["-o", exePath]
         return self.runTest(args, source, False, **kwds)
 
 # **************************************************************************************************

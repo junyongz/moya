@@ -268,9 +268,9 @@ lineEnding:
 
 declarationList:
     declaration
-        { $$ = p.parseSet(@$, $1); }
+        { $$ = p.parseArray($1); }
     | declarationList lineEnding declaration
-        { $$ = $1; if ($3) $1.append($3); }
+        { $$ = $1; if ($3) $1.push($3); }
     | declarationList lineEnding
         { $$ = $1; }
     ;
@@ -368,29 +368,28 @@ operatorArgs:
         { $$ = p.parseOpFunc(@$, ops.In); }
 
     | THIS op declArgument
-        { $$ = p.parseOpFunc(@$, $2, p.parseSet(@3, $3)); }
+        { $$ = p.parseOpFunc(@$, $2, p.parseArray($3)); }
 
     | THIS LB declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.Index, p.parseSet(@3, $3)); }
+        { $$ = p.parseOpFunc(@$, ops.Index, p.parseArray($3)); }
     | THIS LB declArgument RB EQ declArgument
-        { $$ = p.parseOpFunc(@$, ops.IndexAssign, p.parseSet(@3, $3).append($6)); }
+        { $$ = p.parseOpFunc(@$, ops.IndexAssign, p.parseArray($3, $6)); }
     | SUBTRACT_EQ THIS LB declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.IndexDelete, p.parseSet(@4, $4)); }
+        { $$ = p.parseOpFunc(@$, ops.IndexDelete, p.parseArray($4)); }
 
     | THIS LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.Slice, p.parseSet(@3, $3).append($5).append($7)); }
+        { $$ = p.parseOpFunc(@$, ops.Slice, p.parseArray($3, $5, $7)); }
     | THIS LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB EQ declArgument
-        { $$ = p.parseOpFunc(@$, ops.SliceAssign,
-                               p.parseSet(@10, $10).append($3).append($5).append($7)); }
+        { $$ = p.parseOpFunc(@$, ops.SliceAssign, p.parseArray($10, $3, $5, $7)); }
     | SUBTRACT_EQ THIS LB declArgumentNoDefault TO declArgumentNoDefault BY declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.SliceDelete, p.parseSet(@4, $4).append($6).append($8)); }
+        { $$ = p.parseOpFunc(@$, ops.SliceDelete, p.parseArray($4, $6, $8)); }
 
     | THIS DOT LB declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.Lookup, p.parseSet(@4, $4)); }
+        { $$ = p.parseOpFunc(@$, ops.Lookup, p.parseArray($4)); }
     | THIS DOT LB declArgument RB EQ declArgument
-        { $$ = p.parseOpFunc(@$, ops.LookupAssign, p.parseSet(@4, $4).append($7)); }
+        { $$ = p.parseOpFunc(@$, ops.LookupAssign, p.parseArray($4, $7)); }
     | SUBTRACT_EQ THIS DOT LB declArgument RB
-        { $$ = p.parseOpFunc(@$, ops.LookupDelete, p.parseSet(@5, $5)); }
+        { $$ = p.parseOpFunc(@$, ops.LookupDelete, p.parseArray($5)); }
     ;
 
     
@@ -398,34 +397,34 @@ declClassId:
     UIDENTIFIER
         { $$ = p.parseTypeId(@$, $1); }
     | declClassId BACKSLASH UIDENTIFIER
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push(p.parseTypeId(@3, $3)); }
     ;
 
 declId:
     IDENTIFIER
         { $$ = p.parseId(@$, $1); }
     | declId BACKSLASH UIDENTIFIER
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push(p.parseTypeId(@3, $3)); }
     ;
 
 declTypeId:
     UIDENTIFIER
         { $$ = p.parseTypeId(@$, $1); }
     | GT LP declTypeIdList RP COLON declTypeId
-        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Function')); $$.append($6); $$.appendList($3); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Function')); $$.push($6); $$.pushList($3); }
     | LT GT
         { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Channel')); }
     | LT declTypeId GT
-        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Channel')); $$.append($2); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Channel')); $$.push($2); }
     | LB declTypeId RB
-        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'List')); $$.append($2); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'List')); $$.push($2); }
     | LCBP declTypeId EQ declTypeId RCBP
-        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Map')); $$.append($2); $$.append($4); }
+        { $$ = p.parseTypeArguments(@$, p.parseTypeId(@$, 'Map')); $$.push($2); $$.push($4); }
 
     | declTypeId BACKSLASH UIDENTIFIER
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push(p.parseTypeId(@3, $3)); }
     | declTypeId BACKSLASH LP declTypeId RP
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append($4); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push($4); }
     | declTypeId QUESTION
         { $$ = p.ensureTypeArguments(@$, $1); $$.optionals++; }
     ;
@@ -439,11 +438,11 @@ declTypeIdList:
     
 declArgumentList:
     declArgument
-        { $$ = p.parseSet(@$, $1); }
+        { $$ = p.parseArray($1); }
     | declArgumentList COMMA
         { $$ = $1; }
     | declArgumentList COMMA declArgument
-        { $$ = $1; $1.append($3); }
+        { $$ = $1; $1.push($3); }
     ;
 
 declArgumentPair:
@@ -489,9 +488,9 @@ statement:
 
 statementList:
     statement
-        { $$ = p.parseSet(@$, $1); }
+        { $$ = p.parseArray($1); }
     | statementList lineEnding statement
-        { $$ = $1; if ($3) $1.append($3); }
+        { $$ = $1; if ($3) $1.push($3); }
     | statementList lineEnding
         { $$ = $1; }
     ;
@@ -503,11 +502,11 @@ importDirective:
 
 moduleName:
     SLASH id
-        { $$ = p.parseSet(@$, $2); }
+        { $$ = p.parseArray($2); }
     | id
-        { $$ = p.parseSet(@$, p.parseId(@$, ".")); $$.append($1); }
+        { $$ = p.parseArray(p.parseId(@$, "."), $1); }
     | moduleName SLASH id
-        { $$ = $1; $1.append($3); }
+        { $$ = $1; $1.push($3); }
     ;
 
 moduleNameList:
@@ -557,9 +556,9 @@ catchBlock:
 
 catchBlockList:
     catchBlock
-        { $$ = p.parseSet(@$, $1); }
+        { $$ = p.parseArray($1); }
     | catchBlockList catchBlock
-        { $$ = $1; $1.append($2); }
+        { $$ = $1; $1.push($2); }
     ;
 
 block:
@@ -576,7 +575,7 @@ right:
 rightList:
     right
     | rightList COMMA right
-        { $$ = p.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureArray($1); $$.push($3); }
     | rightList COMMA
         { $$ = $1; }
     ;
@@ -588,7 +587,7 @@ doBlock:
 
 blockOrRight:
     right
-        { $$ = p.ensureSet(@$, $1); }
+        { $$ = p.ensureArray($1); }
     | block
     ;
 
@@ -599,7 +598,7 @@ blockExpressionLeft:
     | block WHERE block
         { $$ = p.parseBlock(@$, $1, $3); }
     | block WHERE left
-        { $$ = p.parseBlock(@$, $1, p.ensureSet(@3, $3)); }
+        { $$ = p.parseBlock(@$, $1, $3); }
     ;
 
 left:
@@ -625,22 +624,22 @@ left:
     | STAR tupleExpression inOn tupleExpression RARROW leftRightBlock
         { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
     | STAR tupleExpression inOn tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, null, $5, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, p.parseBlock(@5, $5), $3, false); }
     | STAR tupleExpression inOn tupleExpression block WHERE blockOrExpr
         { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@5, $5, $7), $3, false); }
     | STAR tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, null, $3, 0, false); }
+        { $$ = p.parseIterator(@$, $2, null, null, p.parseBlock(@3, $3), 0, false); }
     | STAR tupleExpression block WHERE blockOrExpr
         { $$ = p.parseIterator(@$, $2, null, null, p.ensureBlock(@3, $3, $5), 0, false); }
     
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW leftRightBlock
         { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, p.parseBlock(@7, $7), $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
         { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@7, $7, $9), $3, $5); }
     | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, $4, $5, 0, $3); }
+        { $$ = p.parseIterator(@$, $2, null, $4, p.parseBlock(@5, $5), 0, $3); }
     | STAR tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
         { $$ = p.parseIterator(@$, $2, null, $4, p.ensureBlock(@5, $5, $7), 0, $3); }
     
@@ -654,9 +653,9 @@ leftRightBlock:
     blockRight
     | assignmentExpression
     | assignmentExpression WHERE assignmentExpression
-        { $$ = p.parseBlock(@1, p.ensureSet(@1, $1), p.ensureSet(@3, $3)); }
+        { $$ = p.parseBlock(@1, $1, $3); }
     | assignmentExpression WHERE block
-        { $$ = p.parseBlock(@1, p.ensureSet(@1, $1), $3); }
+        { $$ = p.parseBlock(@1, $1, $3); }
     ;
 
 callBlock:
@@ -672,18 +671,18 @@ callBlock:
     | callBlock BIDENTIFIER anonFunc
         { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, $2)); }
     | callBlock WHERE block
-        { $$ = p.parseBlock(@$, p.ensureSet(@1, $1), $3); }
+        { $$ = p.parseBlock(@$, $1, $3); }
     | callBlock WHERE assignmentExpression
-        { $$ = p.parseBlock(@$, p.ensureSet(@1, $1), p.ensureSet(@3, $3)); }
+        { $$ = p.parseBlock(@$, $1, $3); }
     ;
 
 anonFunc:
     GT anonFuncArgs anonFuncBody
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, null, false)); }
+        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3)); }
     | GT anonFuncArgs anonFuncBody WHERE block
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5, false)); }
+        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5)); }
     | GT anonFuncArgs anonFuncBody WHERE assignmentExpression
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, p.ensureSet(@5, $5), false)); }
+        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5)); }
     | GT anonFuncArgs DO anonFuncBody
         { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@4, $4, null, true)); }
     ;
@@ -706,40 +705,40 @@ isBlock:
     | tupleExpression IS matchExpr WHERE block
         { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $3), $5); }
     | tupleExpression IS matchExpr ELSE blockOrRight
-        { $$ = p.parseIs(@$, $1, $3, $5); }
+        { $$ = p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)); }
     | tupleExpression IS matchExpr ELSE blockOrRight WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $3, $5), $7); }
+        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)), $7); }
     | tupleExpression IS LCB matchList RCB
         { $$ = p.parseIs(@$, $1, $4); }
     | tupleExpression IS LCB matchList RCB WHERE block
         { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $4), $7); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
-        { $$ = p.parseIs(@$, $1, $4, $8); }
+        { $$ = p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $4, $8), $11); }
+        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)), $11); }
     ;
     
 ifBlock:
     IF elseIfChain
         { $$ = p.parseIf(@$, $2, null); }
     | IF elseIfChain ELSE blockOrRight
-        { $$ = p.parseIf(@$, $2, $4); }
+        { $$ = p.parseIf(@$, $2, p.ensureBlock(@4, $4)); }
     | IF LCB matchList RCB
         { $$ = p.parseIf(@$, $3); }
     | IF LCB matchList lineEnding ELSE RARROW blockOrRight RCB
-        { $$ = p.parseIf(@$, $3, $7); }
+        { $$ = p.parseIf(@$, $3, p.ensureBlock(@7, $7)); }
     ;
 
 elseIfChain:
     tupleExpression block
-        { $$ = p.parseTransform(@$, p.parseTransformPair($1, $2)); }
+        { $$ = p.parseTransform(@$, p.parseTransformPair($1, p.parseBlock(@2, $2))); }
     | elseIfChain ELSE IF tupleExpression block
-        { $$ = $1; $$.addPair(p.parseTransformPair($4, $5)); }
+        { $$ = $1; $$.addPair(p.parseTransformPair($4, p.parseBlock(@5, $5))); }
     ;
 
 match:
     tupleExpression RARROW blockOrRight
-        { $$ = p.parseTransformPair($1, $3); }
+        { $$ = p.parseTransformPair($1, p.ensureBlock(@$, $3)); }
     | tupleExpression RARROW blockOrRight WHERE blockOrExpr
         { $$ = p.parseTransformPair($1, p.ensureBlock(@$, $3, $5)); }
     ;
@@ -799,7 +798,7 @@ blockRight:
 blockOrExpr:
     block
     | assignmentExpression
-        { $$ = p.ensureSet(@1, $1); }
+        { $$ = p.ensureArray($1); }
     ;
         
 blockRightInner:
@@ -824,26 +823,26 @@ blockRightInner:
     | GT anonFuncArgs blockRightInner
         { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3)); }
     | GT anonFuncArgs DO blockRightInner
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, null, true)) }
+        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, null, true)); }
 
     | STAR tupleExpression inOn tupleExpression RARROW blockRightInner
-        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@6, $6), $3, false); }
     | STAR tupleExpression inOn tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, null, $5, $3, false); }
+        { $$ = p.parseIterator(@$, $2, $4, null, p.parseBlock(@5, $5), $3, false); }
     | STAR tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, null, $3, 0, false); }
+        { $$ = p.parseIterator(@$, $2, null, null, p.parseBlock(@3, $3), 0, false); }
     
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRightInner
-        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@8, $8), $3, $5); }
     | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
+        { $$ = p.parseIterator(@$, $2, $4, $6, p.parseBlock(@7, $7), $3, $5); }
     | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, $4, $5, 0, $3); }
+        { $$ = p.parseIterator(@$, $2, null, $4, p.parseBlock(@5, $5), 0, $3); }
     
     | STAR tupleExpression RARROW blockRightInner
-        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
+        { $$ = p.parseMapper(@$, $2, null, p.ensureBlock(@4, $4), false, false); }
     | STAR tupleExpression ifWhile tupleExpression RARROW blockRightInner
-        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
+        { $$ = p.parseMapper(@$, $2, $4, p.ensureBlock(@4, $4), false, $3); }
     ;
 
 assignmentExpression:
@@ -916,7 +915,7 @@ assignmentExpressionSimple:
 tupleExpression:
     simpleExpression
     | simpleExpression COMMA tupleExpression
-        { $$ = p.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureTuple(@$, $1); $$.push($3); }
     ;
 
 simpleExpression:
@@ -1031,7 +1030,7 @@ bindExpression:
 bindList:
     callExpression
     | bindList SEMICOLON callExpression
-        { $$ = p.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureTuple(@$, $1); $$.push($3); }
     ;
 
 callExpression:
@@ -1069,9 +1068,9 @@ basicExpression:
 
 parenExpression:
     LP rightList RP
-        { $$ = $2; }
+        { $$ = p.parseTuple(@$, $2); }
     | LP RP
-        { $$ = null; }
+        { $$ = p.parseTuple(@$, []); }
     ;
 
 listExpression:
@@ -1103,9 +1102,9 @@ id:
     | THIS
         { $$ = p.parseId(@$, 'this'); }
     | id BACKSLASH UIDENTIFIER
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append(p.parseTypeId(@3, $3)); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push(p.parseTypeId(@3, $3)); }
     | id BACKSLASH LP id RP
-        { $$ = p.ensureTypeArguments(@$, $1); $$.append($4); }
+        { $$ = p.ensureTypeArguments(@$, $1); $$.push($4); }
     ;
 
 literal:
@@ -1253,11 +1252,11 @@ argument:
 
 mapTupleExpression:
     mapAssignmentExpression
-        { $$ = p.ensureSet(@$, $1); }
+        { $$ = p.ensureArray($1); }
     | mapTupleExpression COMMA mapAssignmentExpression
-        { $$ = p.ensureSet(@$, $1); $$.append($3); }
+        { $$ = p.ensureArray($1); $$.push($3); }
     | mapTupleExpression COMMA
-        { $$ = p.ensureSet(@$, $1); }
+        { $$ = p.ensureArray($1); }
     ;
 
 mapAssignmentExpression:
@@ -1298,9 +1297,9 @@ cType:
 
 cArgs:
     cArg
-        { $$ = p.parseSet(@$, $1); }
+        { $$ = p.parseArray($1); }
     | cArgs COMMA cArg
-        { $$ = $1; $1.append($3); }
+        { $$ = $1; $1.push($3); }
     ;
 
 cArg:

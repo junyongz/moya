@@ -93,9 +93,7 @@ The => operator means the block contains a single expression instead of imperati
 <FunctionDeclaration access="public">
     <Id name="a"/>
     <Argument name="b"/>
-    <Block>
-        <Integer value="42"/>
-    </Block>
+    <Integer value="42"/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -268,9 +266,7 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Block>
-        <Argument name="n"/>
-    </Block>
+    <Argument name="n"/>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -283,11 +279,9 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Block>
-        <Argument name="n">
-            <TypeId name="T"/>
-        </Argument>
-    </Block>
+    <Argument name="n">
+        <TypeId name="T"/>
+    </Argument>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
@@ -300,12 +294,10 @@ Extra arguments.
 
 <FunctionDeclaration access="public">
     <Id name="foo"/>
-    <Block>
-        <Argument name="n">
-            <TypeId name="T"/>
-            <Integer value="1"/>
-        </Argument>
-    </Block>
+    <Argument name="n">
+        <TypeId name="T"/>
+        <Integer value="1"/>
+    </Argument>
 </FunctionDeclaration>
 
 ====================================================================================================

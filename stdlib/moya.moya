@@ -1,7 +1,7 @@
 
 C"char* resizeBuffer(char*, int, int)"
 
-+ resize\T(items:T, size:Int32, oldSize, newSize):T {
++ resize\T(items:T, size:Int32, oldSize, newSize):T do {
     = resizeBuffer(items, size * oldSize, size * newSize)
 }
 
@@ -10,13 +10,13 @@ C"char* resizeBuffer(char*, int, int)"
 + Error {
     + message = ""
     
-    + This(msg:String) {
+    + This(msg:String) do {
         message = msg
     }
 }
 
 + OutOfBoundsError : Error {
-    + This(msg:String) {
+    + This(msg:String) do {
         message = msg
     }
 }

@@ -15,7 +15,7 @@ Caught
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     throw "bar"
 }
     
@@ -33,7 +33,7 @@ Caught
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     a:Int32
     throw a
 }
@@ -52,7 +52,7 @@ Caught unknown
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     throw 42.5
 }
 
@@ -73,12 +73,12 @@ Caught 42.500000
 + Error {
     + message = ""
     
-    + This(msg) {
+    + This(msg) do {
         message = msg
     }
 }
 
-+ foo() {
++ foo() do {
     throw Error("that ain't right")
 }
 
@@ -104,7 +104,7 @@ Caught that ain't right
     + message = "Bad!"
 }
 
-+ foo(a) {
++ foo(a) do {
     if a < 10 {
         throw BadError()
     } else {
@@ -112,7 +112,7 @@ Caught that ain't right
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo(a)
     } catch (exc:BadError) {
@@ -142,7 +142,7 @@ Caught Error
     + message = "Worse!"
 }
 
-+ foo2(a) {
++ foo2(a) do {
     if a < 10 {
         throw BadError()
     } else if (a == 10) {
@@ -152,11 +152,11 @@ Caught Error
     }
 }
 
-+ foo(a) {
++ foo(a) do {
     throw "ok"
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo2(a)
     } catch (exc:BadError) {
@@ -182,7 +182,7 @@ Caught s ok
 
 ----------------------------------------------------------------------------------------------------
 
-+ bar(a) {
++ bar(a) do {
     if a > 1 {
         throw "bar"
     } else {
@@ -190,7 +190,7 @@ Caught s ok
     }
 }
 
-+ foo(a) {
++ foo(a) do {
     bar(a)
 }
     
@@ -210,7 +210,7 @@ Caught bar
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo(a) {
++ foo(a) do {
     if (a > 1) {
         throw 42
     } else {
@@ -218,7 +218,7 @@ Caught bar
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo(a)
     } catch (exc:String) {
@@ -240,7 +240,7 @@ Caught int 42
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo(a) {
++ foo(a) do {
     if (a > 2) {
         throw 42
     } else if (a > 1) {
@@ -250,7 +250,7 @@ Caught int 42
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo(a)
     } catch (exc:String) {
@@ -276,7 +276,7 @@ Caught str foo
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo(a) {
++ foo(a) do {
     if (a > 2) {
         throw 42
     } else if (a > 1) {
@@ -286,7 +286,7 @@ Caught str foo
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo(a)
     } catch (exc:String) {
@@ -311,7 +311,7 @@ Caught str foo
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo(a) {
++ foo(a) do {
     if (a > 2) {
         throw 42
     } else if (a > 1) {
@@ -321,7 +321,7 @@ Caught str foo
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         foo(a)
     } catch (exc:String) {
@@ -345,7 +345,7 @@ Caught str foo
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo(a) {
++ foo(a) do {
     if (a > 2) {
         throw 42
     } else if (a > 1) {
@@ -355,7 +355,7 @@ Caught str foo
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         toss2(a)
     } catch (exc:String) {
@@ -365,7 +365,7 @@ Caught str foo
     }
 }
 
-+ toss2(a) {
++ toss2(a) do {
     try {
         foo(a)
     } catch (exc:Int32) {
@@ -388,7 +388,7 @@ Caught str foo
 ----------------------------------------------------------------------------------------------------
 # throw after try
 
-+ foo(a) {
++ foo(a) do {
     if (a > 2) {
         throw 42
     } else if (a > 1) {
@@ -398,7 +398,7 @@ Caught str foo
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         toss2(a)
     } catch (exc:String) {
@@ -408,7 +408,7 @@ Caught str foo
     }
 }
 
-+ toss2(a) {
++ toss2(a) do {
     try {
         foo(a)
     } catch (exc:Int32) {
@@ -433,11 +433,11 @@ Caught str foo
 ----------------------------------------------------------------------------------------------------
 # Throw within catch
 
-+ toss2() {
++ toss2() do {
     throw 42
 }
 
-+ toss() {
++ toss() do {
     try {
         toss2()
     } catch (exc:Int32) {
@@ -463,11 +463,11 @@ Caught str ok
 ----------------------------------------------------------------------------------------------------
 # Re-throw during catch
 
-+ toss2() {
++ toss2() do {
     throw 42
 }
 
-+ toss() {
++ toss() do {
     try {
         toss2()
     } catch (exc:Int32) {
@@ -492,7 +492,7 @@ Re-caught int 42
 ----------------------------------------------------------------------------------------------------
 # Re-throw during catch
 
-+ foo(a) {
++ foo(a) do {
     if a < 10 {
         = a
     } else if a == 10 {
@@ -500,7 +500,7 @@ Re-caught int 42
     }
 }
 
-+ toss(a) {
++ toss(a) do {
     try {
         -- foo(a)
     } catch (exc) {
@@ -526,7 +526,7 @@ fine
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     -- "oops"
 }
     
@@ -547,7 +547,7 @@ Exception: Try without possible exceptions
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     throw 42
 }
 
@@ -570,7 +570,7 @@ Exception: Nothing to catch here
          
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     throw 42
 }
 
@@ -593,7 +593,7 @@ Exception: Multiple catch-alls
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     throw 42
 }
 

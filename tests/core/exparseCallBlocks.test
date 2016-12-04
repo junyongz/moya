@@ -12,9 +12,7 @@ iter {
 <CallExpression>
     <Id name="iter"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
 </CallExpression>
 
@@ -51,9 +49,7 @@ iter() {
 <CallExpression>
     <Id name="iter"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
 </CallExpression>
 
@@ -71,9 +67,7 @@ iter(1) {
         <Integer value="1"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
 </CallExpression>
 
@@ -108,14 +102,10 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
 </CallExpression>
 
@@ -148,19 +138,13 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="4"/>
-        </Block>
+        <Integer value="4"/>
     </arg>
 </CallExpression>
 
@@ -180,14 +164,10 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg name="arg2">
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
 </CallExpression>
 
@@ -206,19 +186,13 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg name="arg2">
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
     <arg name="arg3">
-        <Block>
-            <Integer value="4"/>
-        </Block>
+        <Integer value="4"/>
     </arg>
 </CallExpression>
 
@@ -283,9 +257,7 @@ foo •>(args) 2
     <arg>
         <Function>
             <Argument name="args"/>
-            <Block>
-                <Integer value="2"/>
-            </Block>
+            <Integer value="2"/>
         </Function>
     </arg>
 </CallExpression>
@@ -303,16 +275,12 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg>
         <Function>
             <Argument name="args"/>
-            <Block>
-                <Integer value="3"/>
-            </Block>
+            <Integer value="3"/>
         </Function>
     </arg>
 </CallExpression>
@@ -330,16 +298,12 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg name="cb">
         <Function>
             <Argument name="args"/>
-            <Block>
-                <Integer value="3"/>
-            </Block>
+            <Integer value="3"/>
         </Function>
     </arg>
 </CallExpression>
@@ -355,9 +319,7 @@ foo •arg1 {
 <CallExpression>
     <Id name="foo"/>
     <arg name="arg1">
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
 </CallExpression>
 
@@ -379,19 +341,13 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
     <arg name="arg3">
-        <Block>
-            <Integer value="4"/>
-        </Block>
+        <Integer value="4"/>
     </arg>
 </CallExpression>
 
@@ -410,19 +366,13 @@ foo {
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <Block>
-            <Integer value="2"/>
-        </Block>
+        <Integer value="2"/>
     </arg>
     <arg name="arg2">
-        <Block>
-            <Integer value="3"/>
-        </Block>
+        <Integer value="3"/>
     </arg>
     <arg>
-        <Block>
-            <Integer value="4"/>
-        </Block>
+        <Integer value="4"/>
     </arg>
 </CallExpression>
 
@@ -441,9 +391,7 @@ foo {
     <CallExpression>
         <Id name="foo"/>
         <arg>
-            <Block>
-                <Integer value="1"/>
-            </Block>
+            <Integer value="1"/>
         </arg>
     </CallExpression>
     <where>

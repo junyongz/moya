@@ -182,15 +182,13 @@ Within expressions.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Block>
-        <Is>
-            <Id name="foo"/>
-            <if>
-                <Id name="a"/>
-                <Integer value="1"/>
-            </if>
-        </Is>
-    </Block>
+    <Is>
+        <Id name="foo"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+    </Is>
 </Function>
 
 ----------------------------------------------------------------------------------------------------
@@ -226,15 +224,13 @@ bar(foo is a -> 1 else 2)
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Block>
-        <Is>
-            <Id name="foo"/>
-            <if>
-                <Id name="a"/>
-                <Integer value="1"/>
-            </if>
-        </Is>
-    </Block>
+    <Is>
+        <Id name="foo"/>
+        <if>
+            <Id name="a"/>
+            <Integer value="1"/>
+        </if>
+    </Is>
 </Function>
 
 ====================================================================================================
@@ -253,20 +249,16 @@ Block expressions within a transform.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Block>
-        <Is>
-            <Id name="foo"/>
-            <if>
-                <Id name="a"/>
-                <Function>
-                    <Argument name="b"/>
-                    <Block>
-                        <Integer value="1"/>
-                    </Block>
-                </Function>
-            </if>
-        </Is>
-    </Block>
+    <Is>
+        <Id name="foo"/>
+        <if>
+            <Id name="a"/>
+            <Function>
+                <Argument name="b"/>
+                <Integer value="1"/>
+            </Function>
+        </if>
+    </Is>
 </Function>
 
 ----------------------------------------------------------------------------------------------------

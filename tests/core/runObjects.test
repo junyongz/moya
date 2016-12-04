@@ -178,7 +178,7 @@ do {
     + a:T1 = 0
 }
 
-+ foo\T(j:Thing\T) {
++ foo\T(j:Thing\T) do {
     x:T = 1.5
     -- x
 }
@@ -210,7 +210,7 @@ do {
     + b:T1 = 0
 }
 
-+ foo\T(j:Foo\(List\T)) {
++ foo\T(j:Foo\(List\T)) do {
     x:T = 1.5
     -- x
 }
@@ -229,7 +229,7 @@ do {
 + Thing {
     + a = 0
     
-    + This(aa) {
+    + This(aa) do {
         a = aa
     }
 }
@@ -249,11 +249,11 @@ do {
 + Thing {
     + a = 0
     
-    + This(aa) {
+    + This(aa) do {
         a = aa
     }
 
-    + This(aa, bb) {
+    + This(aa, bb) do {
         a = 35
     }
 }
@@ -273,7 +273,7 @@ do {
 + Thing\T {
     + a:T = 0
     
-    + This(aa:T) {
+    + This(aa:T) do {
         a = aa
     }
 }
@@ -296,7 +296,7 @@ do {
 + Thing\T {
     + a:T = 0
     
-    + This(aa:T, bb=5) {
+    + This(aa:T, bb=5) do {
         a = aa + bb
     }
 }
@@ -316,11 +316,11 @@ do {
 + Thing\T {
     + a:T = 0
 
-    + This(aa:T) {
+    + This(aa:T) do {
         a = aa
     }
     
-    + This(aa=5) {
+    + This(aa=5) do {
         a = aa
     }
 }
@@ -339,7 +339,7 @@ do {
 + Thing\T {
     + a:T = 0
     
-    + This(aa=5) {
+    + This(aa=5) do {
         a = aa
     }
 }
@@ -361,7 +361,7 @@ Exception: Function not found
 + Thing\T {
     + a:T = 0
     
-    + This(aa=5) {
+    + This(aa=5) do {
         a = aa
     }
 }
@@ -380,7 +380,7 @@ do {
 + Thing\T {
     + a:T = 0
     
-    + This(aa:T=5) {
+    + This(aa:T=5) do {
         a = aa
     }
 }
@@ -436,11 +436,11 @@ do {
 + Thing {
     + a:Int32 = 0
     
-    + This() {
+    + This() do {
         a = 10
     }
 
-    + This(other) {
+    + This(other) do {
         a = other
     }
 }
@@ -541,7 +541,7 @@ do {
     + a:T = 42.5
 }
 
-+ foo\T(a:T) {
++ foo\T(a:T) do {
     x = T\Int32()
     -- x.a
 }
@@ -563,7 +563,7 @@ do {
     + a:T = 42.5
 }
 
-+ foo\T(a:T) {
++ foo\T(a:T) do {
     x:T\Int32 = T\Int32()
     -- x.a
 }
@@ -581,7 +581,7 @@ do {
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     a:Bling = 0
 }
 
@@ -598,7 +598,7 @@ Exception: Type not found
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() {
++ foo() do {
     a:Bling\T = 0
 }
 
@@ -649,7 +649,7 @@ do {
 + Thing {
     + a = 10
     
-    + add(n) {
+    + add(n) do {
         a += n
     }
 }
@@ -669,7 +669,7 @@ do {
 + Thing {
     + a = 10
     
-    + This(v) {
+    + This(v) do {
         a = v
     }
 }
@@ -696,13 +696,13 @@ false
 + A {
     + message = ""
     
-    + This(msg:String) {
+    + This(msg:String) do {
         message = msg
     }
 }
 
 + B : A {
-    + This(msg:String) {
+    + This(msg:String) do {
         message = msg
     }
 }

@@ -144,12 +144,10 @@ a | b & c | d
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 <Function>
-    <Block>
-        <AssignmentExpression op="=">
-            <Id name="a"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-    </Block>
+    <AssignmentExpression op="=">
+        <Id name="a"/>
+        <Integer value="1"/>
+    </AssignmentExpression>
 </Function>
 
 ----------------------------------------------------------------------------------------------------

@@ -111,9 +111,7 @@ foo(> (a) 1)
     <arg>
         <Function>
             <Argument name="a"/>
-            <Block>
-                <Integer value="1"/>
-            </Block>
+            <Integer value="1"/>
         </Function>
     </arg>
 </CallExpression>
@@ -130,9 +128,7 @@ foo(> (a,b) 1)
         <Function>
             <Argument name="a"/>
             <Argument name="b"/>
-            <Block>
-                <Integer value="1"/>
-            </Block>
+            <Integer value="1"/>
         </Function>
     </arg>
 </CallExpression>
@@ -149,9 +145,7 @@ foo(> (a,b) 1, c)
         <Function>
             <Argument name="a"/>
             <Argument name="b"/>
-            <Block>
-                <Integer value="1"/>
-            </Block>
+            <Integer value="1"/>
         </Function>
     </arg>
     <arg>

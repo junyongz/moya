@@ -17,7 +17,7 @@ do {
 + Thing {
     + a = 0
     
-    + This(v) {
+    + This(v) do {
         a = v
     }
 }

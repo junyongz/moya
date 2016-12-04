@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------
 # Infer return type from argument
 
-+ foo(a) {
++ foo(a) do {
     = a
 }
 
@@ -18,11 +18,11 @@ do {
 ----------------------------------------------------------------------------------------------------
 # Infer return type from type arguments
 
-+ foo\T(t:Thing\T) {
++ foo\T(t:Thing\T) do {
     = t.a
 }
 
-+ bar() {
++ bar() do {
     = Thing\Double()
 }
 
@@ -42,7 +42,7 @@ do {
 ----------------------------------------------------------------------------------------------------
 # Infer return type with multiple returns of same type
 
-+ foo(x) {
++ foo(x) do {
     if (x > 1) {
         = 1
     } else {
@@ -63,7 +63,7 @@ do {
 ----------------------------------------------------------------------------------------------------
 # Infer return type with multiple returns of same type
 
-+ foo(x) {
++ foo(x) do {
     while (x > 1) {
         = 1
     }
@@ -83,7 +83,7 @@ do {
 ----------------------------------------------------------------------------------------------------
 # Infer optional types from functions that do not always return
 
-+ foo(x) {
++ foo(x) do {
     if (x > 1) {
         = 1
     }
@@ -102,7 +102,7 @@ unknown
 ----------------------------------------------------------------------------------------------------
 # Infer optional types from functions that do not always return
 
-+ foo(x) {
++ foo(x) do {
     if (x > 1) {
         = x
     }
@@ -121,7 +121,7 @@ unknown
 ----------------------------------------------------------------------------------------------------
 # Infer union types from return values of different types
 
-+ foo(x) {
++ foo(x) do {
     if (x > 1) {
         = 1
     } else {
