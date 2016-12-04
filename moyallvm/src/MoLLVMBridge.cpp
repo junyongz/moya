@@ -40,7 +40,7 @@
 #include "llvm/Support/DynamicLibrary.h"
 #include "llvm/Support/raw_ostream.h"
 
-// Not used , just need this here so it gets linked
+// Not used, just need this here so it gets linked
 #include "MoCore/MoCore.h"
 
 #include <cctype>

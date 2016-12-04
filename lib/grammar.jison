@@ -1037,6 +1037,9 @@ callExpression:
     basicExpression
     | IDENTIFIER COLON declTypeId
         { $$ = p.parseTypeAssignment(@$, $1, $3); }
+    | IDENTIFIER COLON
+        { $$ = p.parseTypeAssignment(@$, $1, null); }
+
     | callExpression AS declTypeId
         { $$ = p.parseCast(@$, $1, $3); }
     
