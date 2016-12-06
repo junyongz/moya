@@ -209,15 +209,15 @@ __source__:Base
 }
 
 + Base2: Base1 {
-    + a() => 1
+    + a() -> 1
 }
 
 + Sub1: Base2 {
-    + a() => 2
+    + a() -> 2
 }
 
 + Sub2: Base2 {
-    + a() => 3
+    + a() -> 3
 }
 
 do {

@@ -27,14 +27,13 @@
     + !this do {
         = length == 0
     }
-    
-    + (this[index:Int32]):T do {
-        index = normalizeIndex(index)
-        if index < length {
-            = items[index]
-        } else {
-            throw OutOfBoundsError("List index %index out of range")
-        }
+
+    + (this[index:Int32]):T {
+        items[normalIndex]
+    } where {
+        normalIndex = normalizeIndex(index)
+    } throws if {
+        normalIndex >= length -> OutOfBoundsError("List index %index out of range")
     }
     
     + this[index:Int32] = item:T do {

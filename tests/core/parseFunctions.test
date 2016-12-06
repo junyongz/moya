@@ -471,3 +471,63 @@ Where combined with a function declaration will apply to the function body and i
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
+
++ foo() {
+} throws if {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
+    <Block/>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+} throws if {
+    a -> b
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
+    <Block>
+        <throwsIf>
+            <if>
+                <Id name="a"/>
+                <Id name="b"/>
+            </if>
+        </throwsIf>
+    </Block>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() {
+} throws if {
+    a -> b
+    c -> d
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
+    <Block>
+        <throwsIf>
+            <if>
+                <Id name="a"/>
+                <Id name="b"/>
+            </if>
+            <if>
+                <Id name="c"/>
+                <Id name="d"/>
+            </if>
+        </throwsIf>
+    </Block>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------

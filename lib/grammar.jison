@@ -59,6 +59,7 @@ hex 0x[0-9A-Fa-f]+
 "try"               { return 'TRY'; }
 "catch"             { return 'CATCH'; }
 "throw"             { return 'THROW'; }
+"throws"             { return 'THROWS'; }
 
 "..."               { return 'DOT3'; }
 ".."                { return 'DOT2'; }
@@ -235,7 +236,7 @@ hex 0x[0-9A-Fa-f]+
 %token <stringValue> CPRIMITIVE
 
 %left NEWLINE
-%left TRY CATCH THROW
+%left TRY CATCH THROW THROWS
 %left FOR ON WHILE BREAK CONTINUE DO
 %left IF ELSE OR
 %left POUND CARET AT UNDERSCORE
@@ -529,18 +530,30 @@ blockWhere:
         { $$ = p.parseBlock(@1, $1); }
     | block WHERE blockOrExpr
         { $$ = p.parseBlock(@1, $1, $3); }
+    | block WHERE blockOrExpr THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, $3, false, $6); }
+    | block THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, null, false, $4); }
     ;
-
+    
 tupleWhere:
     tupleExpression
     | tupleExpression WHERE blockOrExpr
         { $$ = p.parseBlock(@$, $1, $3); }
+    | tupleExpression WHERE blockOrExpr THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, $3, false, $6); }
+    | tupleExpression THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, null, false, $4); }
     ;
     
 exprOrBlockOrBlockLikeWhere:
     exprOrBlockOrBlockLike
     | exprOrBlockOrBlockLike WHERE blockOrExpr
         { $$ = p.parseBlock(@1, $1, $3); }
+    | exprOrBlockOrBlockLike WHERE blockOrExpr THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, $3, false, $6); }
+    | exprOrBlockOrBlockLike THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, null, false, $4); }
     ;
         
 blockOrExpr:
@@ -718,8 +731,8 @@ isBlock:
         { $$ = p.parseIs(@$, $1, $3); }
     | tupleExpression IS matchExpr ELSE blockOrRight
         { $$ = p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)); }
-    | tupleExpression IS LCB matchList RCB
-        { $$ = p.parseIs(@$, $1, $4); }
+    | tupleExpression IS matchBlock
+        { $$ = p.parseIs(@$, $1, $3); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
         { $$ = p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)); }
     ;
@@ -761,8 +774,8 @@ ifBlock:
         { $$ = p.parseIf(@$, $2, null); }
     | IF elseIfChain ELSE blockOrRight
         { $$ = p.parseIf(@$, $2, p.ensureBlock(@4, $4)); }
-    | IF LCB matchList RCB
-        { $$ = p.parseIf(@$, $3); }
+    | IF matchBlock
+        { $$ = p.parseIf(@$, $2); }
     | IF LCB matchList lineEnding ELSE RARROW blockOrRight RCB
         { $$ = p.parseIf(@$, $3, p.ensureBlock(@7, $7)); }
     ;
@@ -787,6 +800,13 @@ matchList:
     | matchList lineEnding
         { $$ = $1; }
     | lineEnding
+    ;
+
+matchBlock:
+    LCB matchList RCB
+        { $$ = $2; }
+    | LCB RCB
+        { $$ = null; }
     ;
 
 ifExpr:
