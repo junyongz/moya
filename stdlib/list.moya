@@ -1,10 +1,12 @@
 
 > moya
 
+- initialCapacity = 30
+
 + List\T {
     + length = 0
-    - capacity = 30
-    - items = T[30]
+    - capacity = initialCapacity
+    - items = T[initialCapacity]
     
     ------------------------------------------------------------------------------------------------
         
@@ -14,18 +16,15 @@
         items = resize(items, T, oldSize, capacity)
     }
     
-    - normalizeIndex(index) do {
-        if index < 0 {
-            = length + index
-        } else {
-            = index
-        }
+    - normalizeIndex(index) -> if {
+        index < 0   -> length + index
+        else        -> index
     }
     
     ------------------------------------------------------------------------------------------------
 
-    + !this do {
-        = length == 0
+    + !this {
+        length == 0
     }
 
     + (this[index:Int32]):T {

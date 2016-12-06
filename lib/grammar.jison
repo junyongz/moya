@@ -499,6 +499,8 @@ topLevelBlockWithCall:
     exprOrCallBlock
     | iteratorBlock
     | iteratorFuncBlock
+    | isBlock
+    | ifBlock
     | anonFunc
     ;
 
