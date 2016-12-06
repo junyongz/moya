@@ -69,6 +69,44 @@ n = * a,x -> b
 
 ----------------------------------------------------------------------------------------------------
 
+n = foo(* (a,x) -> a where d = 1)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<AssignmentExpression op="=">
+    <Id name="n"/>
+    <CallExpression>
+        <Id name="foo"/>
+        <arg>
+            <Function>
+                <Argument name="iterable"/>
+                <Iterator>
+                    <left>
+                        <Tuple>
+                            <Id name="a"/>
+                            <Id name="x"/>
+                        </Tuple>
+                    </left>
+                    <iterable>
+                        <Id name="iterable"/>
+                    </iterable>
+                    <Block>
+                        <Id name="a"/>
+                        <where>
+                            <AssignmentExpression op="=">
+                                <Id name="d"/>
+                                <Integer value="1"/>
+                            </AssignmentExpression>
+                        </where>
+                    </Block>
+                </Iterator>
+            </Function>
+        </arg>
+    </CallExpression>
+</AssignmentExpression>
+
+----------------------------------------------------------------------------------------------------
+
 n = * a,x if a -> {
     b
 }
@@ -92,7 +130,7 @@ n = * a,x if a -> {
             <clause>
                 <Id name="a"/>
             </clause>
-            <Id name="a"/>
+            <Id name="b"/>
         </Iterator>
     </Function>
 </AssignmentExpression>
@@ -108,23 +146,23 @@ n = * a in b -> c where c = 1
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <Block>
-        <Iterator>
-            <left>
-                <Id name="a"/>
-            </left>
-            <iterable>
-                <Id name="b"/>
-            </iterable>
+    <Iterator>
+        <left>
+            <Id name="a"/>
+        </left>
+        <iterable>
+            <Id name="b"/>
+        </iterable>
+        <Block>
             <Id name="c"/>
-        </Iterator>
-        <where>
-            <AssignmentExpression op="=">
-                <Id name="c"/>
-                <Integer value="1"/>
-            </AssignmentExpression>
-        </where>
-    </Block>
+            <where>
+                <AssignmentExpression op="=">
+                    <Id name="c"/>
+                    <Integer value="1"/>
+                </AssignmentExpression>
+            </where>
+        </Block>
+    </Iterator>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -135,26 +173,26 @@ n = * a -> b where c = 1
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <Block>
-        <Function>
-            <Argument name="iterable"/>
-            <Iterator>
-                <left>
-                    <Id name="a"/>
-                </left>
-                <iterable>
-                    <Id name="iterable"/>
-                </iterable>
+    <Function>
+        <Argument name="iterable"/>
+        <Iterator>
+            <left>
+                <Id name="a"/>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
                 <Id name="b"/>
-            </Iterator>
-        </Function>
-        <where>
-            <AssignmentExpression op="=">
-                <Id name="c"/>
-                <Integer value="1"/>
-            </AssignmentExpression>
-        </where>
-    </Block>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Function>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------
@@ -165,29 +203,29 @@ n = * a,x -> b where c = 1
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <Block>
-        <Function>
-            <Argument name="iterable"/>
-            <Iterator>
-                <left>
-                    <Tuple>
-                        <Id name="a"/>
-                        <Id name="x"/>
-                    </Tuple>
-                </left>
-                <iterable>
-                    <Id name="iterable"/>
-                </iterable>
+    <Function>
+        <Argument name="iterable"/>
+        <Iterator>
+            <left>
+                <Tuple>
+                    <Id name="a"/>
+                    <Id name="x"/>
+                </Tuple>
+            </left>
+            <iterable>
+                <Id name="iterable"/>
+            </iterable>
+            <Block>
                 <Id name="b"/>
-            </Iterator>
-        </Function>
-        <where>
-            <AssignmentExpression op="=">
-                <Id name="c"/>
-                <Integer value="1"/>
-            </AssignmentExpression>
-        </where>
-    </Block>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </Iterator>
+    </Function>
 </AssignmentExpression>
 
 ----------------------------------------------------------------------------------------------------

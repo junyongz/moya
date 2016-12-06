@@ -376,32 +376,6 @@ foo {
     </arg>
 </CallExpression>
 
-----------------------------------------------------------------------------------------------------
-
-foo {
-    1
-} where {
-    a = 1
-}
-
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<Block>
-    <CallExpression>
-        <Id name="foo"/>
-        <arg>
-            <Integer value="1"/>
-        </arg>
-    </CallExpression>
-    <where>
-        <AssignmentExpression op="=">
-            <Id name="a"/>
-            <Integer value="1"/>
-        </AssignmentExpression>
-    </where>
-</Block>
-
 ====================================================================================================
 A bullet after any expression will call the result of that expression.
 ====================================================================================================

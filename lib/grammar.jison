@@ -285,24 +285,21 @@ declarationSet:
 declaration:
     importDirective
     | cDeclaration
-    | declarationBlock
+    | funcDeclaration
+    | classDeclaration
+    | propertyDeclaration
     | doBlock
     ;
 
-declarationBlock:
+funcDeclaration:
     accessMode declFunc
         { $$ = p.parseFuncBlock(@$, $1, $2, null); }
-    | accessMode declFunc block
-        { $$ = p.parseFuncBlock(@$, $1, $2, p.parseBlock(@3, $3, null, false)); }
-    | accessMode declFunc funcOp blockOrRight
-        { $$ = p.parseFuncBlock(@$, $1, $2, p.parseBlock(@4, $4, null, $3)); }
-
-    | accessMode declFunc block WHERE blockOrRight
-        { $$ = p.parseFuncBlock(@$, $1, $2, p.parseBlock(@3, $3, $5, false)); }
-    | accessMode declFunc funcOp blockOrRight WHERE blockOrRight
-        { $$ = p.parseFuncBlock(@$, $1, $2, p.parseBlock(@4, $4, $6, $3)); }
-
-    | accessMode declClassId
+    | accessMode declFunc declarationBlock
+        { $$ = p.parseFuncBlock(@$, $1, $2, $3); }
+    ;
+    
+classDeclaration:
+    accessMode declClassId
         { $$ = p.parseClass(@$, $1, $2, null, null); }
     | accessMode declClassId COLON declTypeId
         { $$ = p.parseClass(@$, $1, $2, $3, null); }
@@ -310,17 +307,20 @@ declarationBlock:
         { $$ = p.parseClass(@$, $1, $2, null, $3); }
     | accessMode declClassId COLON declTypeId declarationSet
         { $$ = p.parseClass(@$, $1, $2, $4, $5); }
-
-    | accessMode IDENTIFIER EQ blockOrRight
-        { $$ = p.parseProperty(@$, $1, $2, null, p.parseBlock(@4, $4, null, false)); }
-    | accessMode IDENTIFIER EQ blockOrRight WHERE blockOrRight
-        { $$ = p.parseProperty(@$, $1, $2, null, p.parseBlock(@4, $4, $6, false)); }
-    | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight
-        { $$ = p.parseProperty(@$, $1, $2, $4, p.parseBlock(@6, $6, null, false)); }
-    | accessMode IDENTIFIER COLON declTypeId EQ blockOrRight WHERE blockOrRight
-        { $$ = p.parseProperty(@$, $1, $2, $4, p.parseBlock(@6, $6, $8, false)); }
     ;
     
+propertyDeclaration:
+    accessMode IDENTIFIER EQ exprOrBlockOrBlockLikeWhere
+        { $$ = p.parseProperty(@$, $1, $2, null, $4); }
+    | accessMode IDENTIFIER COLON declTypeId EQ exprOrBlockOrBlockLikeWhere
+        { $$ = p.parseProperty(@$, $1, $2, $4, $6); }
+    ;
+
+declarationBlock:
+    doBlock
+    | blockOrArrowBlock2
+    ;
+            
 declFunc:
     declId
         { $$ = p.parseFunc(@$, $1, null, null, null); }
@@ -391,7 +391,6 @@ operatorArgs:
     | SUBTRACT_EQ THIS DOT LB declArgument RB
         { $$ = p.parseOpFunc(@$, ops.LookupDelete, p.parseArray($5)); }
     ;
-
     
 declClassId:
     UIDENTIFIER
@@ -474,6 +473,118 @@ accessMode:
         { $$ = PublicAccess; }
     | SUBTRACT
         { $$ = PrivateAccess; }
+    ;
+
+blockOrArrowBlock:
+    blockWhere
+    | RARROW topLevelBlock
+        { $$ = $2; }
+    ;
+
+topLevelBlock:
+    exprOrBlockOrBlockLikeWhere
+    | iteratorBlock
+    | iteratorFuncBlock
+    | anonFunc
+    ;
+
+blockOrArrowBlock2:
+    blockWhere
+    | RARROW topLevelBlockWithCall
+        { $$ = $2; }
+    ;
+
+topLevelBlockWithCall:
+    exprOrCallBlock
+    | iteratorBlock
+    | iteratorFuncBlock
+    | anonFunc
+    ;
+
+exprOrBlockOrBlockLike:
+    assignmentExpression
+    | blockOrBlockLike
+    ;
+        
+blockOrBlockLike:
+    blockLike
+    | block
+        { $$ = p.parseBlock(@$, $1, null); }
+    ;
+    
+blockLike:
+    isBlock
+    | ifBlock
+
+    | tupleExpression writeOp blockOrBlockLike
+        { $$ = p.parseBinary(@$, $2, $1, $3); }
+    | channelOp blockOrBlockLike
+        { $$ = p.parseUnary(@$, $1, $2); }
+    | channelOp
+        { $$ = p.parseUnary(@$, $1, null); }
+    ;
+
+blockWhere:
+    block
+        { $$ = p.parseBlock(@1, $1); }
+    | block WHERE blockOrExpr
+        { $$ = p.parseBlock(@1, $1, $3); }
+    ;
+
+tupleWhere:
+    tupleExpression
+    | tupleExpression WHERE blockOrExpr
+        { $$ = p.parseBlock(@$, $1, $3); }
+    ;
+    
+exprOrBlockOrBlockLikeWhere:
+    exprOrBlockOrBlockLike
+    | exprOrBlockOrBlockLike WHERE blockOrExpr
+        { $$ = p.parseBlock(@1, $1, $3); }
+    ;
+        
+blockOrExpr:
+    block
+    | assignmentExpression
+        { $$ = p.ensureArray($1); }
+    ;
+
+block:
+    LCB statementList RCB
+        { $$ = $2; }
+    | LCB RCB
+        { $$ = null; }
+    ;
+
+doBlock:
+    DO block
+        { $$ = p.parseBlock(@$, $2, null, true); }
+    ;
+
+blockOrRight:
+    right
+        { $$ = p.ensureArray($1); }
+    | block
+    ;
+
+blockExpressionLeft:
+    blockWhere
+    | exprOrCallBlock
+    | isBlock
+    | ifBlock
+    | iteratorBlock
+    | iteratorFuncBlock
+    | anonFunc
+    
+    | tupleExpression assignOp topLevelBlock
+        { $$ = p.parseAssignment(@$, $2, $1, $3); }
+    | tupleExpression writeOp topLevelBlock
+        { $$ = p.parseBinary(@2, $2, $1, $3); }
+    
+    | channelOp
+        { $$ = p.parseUnary(@$, $1, null); }
+    | channelOp topLevelBlock
+        { $$ = p.parseUnary(@$, $1, $2); }
     ;
     
 statement:
@@ -561,13 +672,6 @@ catchBlockList:
         { $$ = $1; $1.push($2); }
     ;
 
-block:
-    LCB statementList RCB
-        { $$ = $2; }
-    | LCB RCB
-        { $$ = null; }
-    ;
-
 right:
     assignmentExpressionSimple
     ;
@@ -580,116 +684,16 @@ rightList:
         { $$ = $1; }
     ;
 
-doBlock:
-    DO block
-        { $$ = p.parseBlock(@$, $2, null, true); }
-    ;
-
-blockOrRight:
-    right
-        { $$ = p.ensureArray($1); }
-    | block
-    ;
-
-blockExpressionLeft:
-    left
-    | block
-        { $$ = p.parseBlock(@$, $1, null); }
-    | block WHERE block
-        { $$ = p.parseBlock(@$, $1, $3); }
-    | block WHERE left
-        { $$ = p.parseBlock(@$, $1, $3); }
-    ;
-
-left:
-    callBlock
-    | anonFunc
-    
-    // | tupleExpression assignOp assignmentExpression block
-    //     { $$ = PARSE_FUNCTION(@$, p.parseAssignment(@$, $2, $1, $3), $4, false); }
-    | tupleExpression assignOp leftRightBlock
-        { $$ = p.parseAssignment(@$, $2, $1, $3); }
-        
-    | tupleExpression writeOp leftRightBlock
-        { $$ = p.parseBinary(@2, $2, $1, $3); }
-
-    | channelOp
-        { $$ = p.parseUnary(@$, $1, null); }
-    | channelOp leftRightBlock
-        { $$ = p.parseUnary(@$, $1, $2); }
-        
-    | isBlock
-    | ifBlock
-    
-    | STAR tupleExpression inOn tupleExpression RARROW leftRightBlock
-        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
-    | STAR tupleExpression inOn tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, null, p.parseBlock(@5, $5), $3, false); }
-    | STAR tupleExpression inOn tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@5, $5, $7), $3, false); }
-    | STAR tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, null, p.parseBlock(@3, $3), 0, false); }
-    | STAR tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, null, null, p.ensureBlock(@3, $3, $5), 0, false); }
-    
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW leftRightBlock
-        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.parseBlock(@7, $7), $3, $5); }
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@7, $7, $9), $3, $5); }
-    | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, $4, p.parseBlock(@5, $5), 0, $3); }
-    | STAR tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, null, $4, p.ensureBlock(@5, $5, $7), 0, $3); }
-    
-    | STAR tupleExpression RARROW leftRightBlock
-        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
-    | STAR tupleExpression ifWhile tupleExpression RARROW leftRightBlock
-        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
-    ;
-
-leftRightBlock:
-    blockRight
-    | assignmentExpression
-    | assignmentExpression WHERE assignmentExpression
-        { $$ = p.parseBlock(@1, $1, $3); }
-    | assignmentExpression WHERE block
-        { $$ = p.parseBlock(@1, $1, $3); }
-    ;
-
-callBlock:
-    tupleExpression
-    | tupleExpression block
-        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@2, p.parseBlock(@2, $2), null)); }
-    | callBlock BULLET block
-        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, p.parseBlock(@3, $3), null)); }
-    | callBlock BULLET anonFunc
-        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, null)); }
-    | callBlock BIDENTIFIER block
-        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, p.parseBlock(@3, $3), $2)); }
-    | callBlock BIDENTIFIER anonFunc
-        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, $3, $2)); }
-    | callBlock WHERE block
-        { $$ = p.parseBlock(@$, $1, $3); }
-    | callBlock WHERE assignmentExpression
-        { $$ = p.parseBlock(@$, $1, $3); }
-    ;
-
 anonFunc:
-    GT anonFuncArgs anonFuncBody
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3)); }
-    | GT anonFuncArgs anonFuncBody WHERE block
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5)); }
-    | GT anonFuncArgs anonFuncBody WHERE assignmentExpression
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5)); }
-    | GT anonFuncArgs DO anonFuncBody
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@4, $4, null, true)); }
+    GT anonFuncArgs exprOrBlockOrBlockLikeWhere
+        { $$ = p.parseAnonFunc(@$, $2, $3); }
+    | GT anonFuncArgs doBlock
+        { $$ = p.parseAnonFunc(@$, $2, $3); }
     ;
 
-anonFuncBody:
-    assignmentExpression
-    | blockRightInner
+anonFuncExpr:
+    GT anonFuncArgs exprOrBlockOrBlockLike
+        { $$ = p.parseAnonFunc(@$, $2, $3); }
     ;
     
 anonFuncArgs:
@@ -699,25 +703,59 @@ anonFuncArgs:
         { $$ = $2; }
     ;
 
+exprOrCallBlock:
+    tupleWhere
+    | tupleExpression blockOrArrowBlock
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@2, p.parseBlock(@2, $2), null)); }
+    | exprOrCallBlock BULLET topLevelBlock
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, p.parseBlock(@3, $3), null)); }
+    | exprOrCallBlock BIDENTIFIER topLevelBlock
+        { $$ = p.parseCallBlock(@$, $1); $$.addArg(p.parseArg(@3, p.parseBlock(@3, $3), $2)); }
+    ;
+    
 isBlock:
     tupleExpression IS matchExpr
         { $$ = p.parseIs(@$, $1, $3); }
-    | tupleExpression IS matchExpr WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $3), $5); }
     | tupleExpression IS matchExpr ELSE blockOrRight
         { $$ = p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)); }
-    | tupleExpression IS matchExpr ELSE blockOrRight WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)), $7); }
     | tupleExpression IS LCB matchList RCB
         { $$ = p.parseIs(@$, $1, $4); }
-    | tupleExpression IS LCB matchList RCB WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $4), $7); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
         { $$ = p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)); }
-    | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB WHERE block
-        { $$ = p.ensureBlock(@$, p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)), $11); }
+    ;
+
+iteratorBlock:
+    STAR tupleExpression inOn tupleExpression blockOrArrowBlock
+        { $$ = p.parseIterator(@$, $2, $4, null, $5, $3, false); }
+    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression blockOrArrowBlock
+        { $$ = p.parseIterator(@$, $2, $4, $6, $7, $3, $5); }
     ;
     
+iteratorFuncBlock:
+    STAR tupleExpression blockOrArrowBlock
+        { $$ = p.parseMapper(@$, $2, null, $3, false, false); }
+    | STAR tupleExpression ifWhile tupleExpression blockOrArrowBlock
+        { $$ = p.parseMapper(@$, $2, $4, $5, false, $3); }
+    ;
+
+iteratorExpressionSimple:
+    STAR simpleExpression inOn simpleExpression RARROW right
+        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
+    | STAR simpleExpression inOn simpleExpression ifWhile simpleExpression RARROW right
+        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
+    ;
+    
+iteratorFuncExpressionSimple:
+    STAR simpleExpression RARROW right
+        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
+    | STAR simpleExpression ifWhile simpleExpression RARROW right
+        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
+    | STAR simpleExpression RARROW right WHERE assignmentExpressionSimple
+        { $$ = p.parseMapper(@$, $2, null, p.parseBlock(@4, $4, $6), false, false); }
+    | STAR simpleExpression ifWhile simpleExpression RARROW right WHERE assignmentExpressionSimple
+        { $$ = p.parseMapper(@$, $2, $4, p.parseBlock(@6, $6, $8), false, $3); }
+    ;
+        
 ifBlock:
     IF elseIfChain
         { $$ = p.parseIf(@$, $2, null); }
@@ -737,10 +775,8 @@ elseIfChain:
     ;
 
 match:
-    tupleExpression RARROW blockOrRight
-        { $$ = p.parseTransformPair($1, p.ensureBlock(@$, $3)); }
-    | tupleExpression RARROW blockOrRight WHERE blockOrExpr
-        { $$ = p.parseTransformPair($1, p.ensureBlock(@$, $3, $5)); }
+    tupleExpression RARROW topLevelBlock
+        { $$ = p.parseTransformPair($1, $3); }
     ;
     
 matchList:
@@ -766,113 +802,13 @@ matchExpr:
     | matchExpr OR binaryExpression RARROW binaryExpression
         { $$ = $1; $$.addPair(p.parseTransformPair($3, $5)); }
     ;
-        
-blockRight:
-    blockRightInner
-    | blockRightInner WHERE blockOrExpr
-        { $$ = p.ensureBlock(@$, $1, $3); }
-    
-    | GT anonFuncArgs blockRightInner WHERE blockOrExpr
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, $5)); }
-
-    | STAR tupleExpression inOn tupleExpression RARROW blockRightInner WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@6, $6, $8), $3, false); }
-    | STAR tupleExpression inOn tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@5, $5, $7), $3, false); }
-    | STAR tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, null, null, p.ensureBlock(@3, $3, $5), 0, false); }
-
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRightInner WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@8, $8, $10), $3, $5); }
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@7, $7, $9), $3, $5); }
-    | STAR tupleExpression ifWhile tupleExpression block WHERE blockOrExpr
-        { $$ = p.parseIterator(@$, $2, null, $4, p.ensureBlock(@5, $5, $7), 0, $3); }
-
-    | STAR tupleExpression RARROW blockRightInner WHERE blockOrExpr
-        { $$ = p.parseMapper(@$, $2, null, p.ensureBlock(@4, $4, $6), false, false); }
-    | STAR tupleExpression ifWhile tupleExpression RARROW blockRightInner WHERE blockOrExpr
-        { $$ = p.parseMapper(@$, $2, $4, p.ensureBlock(@6, $6, $8), false, $3); }
-    ;
-    
-blockOrExpr:
-    block
-    | assignmentExpression
-        { $$ = p.ensureArray($1); }
-    ;
-        
-blockRightInner:
-    block
-        { $$ = p.parseBlock(@$, $1, null); }
-    
-    // | tupleExpression assignOp blockRightInner
-    //     { $$ = p.parseAssignment(@$, $2, $1, $3); }
-    // | tupleExpression BULLET blockRightInner
-    //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
-        
-    | tupleExpression writeOp blockRightInner
-        { $$ = p.parseBinary(@$, $2, $1, $3); }
-    | channelOp blockRightInner
-        { $$ = p.parseUnary(@$, $1, $2); }
-    | channelOp
-        { $$ = p.parseUnary(@$, $1, null); }
-        
-    | isBlock
-    | ifBlock
-
-    | GT anonFuncArgs blockRightInner
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3)); }
-    | GT anonFuncArgs DO blockRightInner
-        { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3, null, true)); }
-
-    | STAR tupleExpression inOn tupleExpression RARROW blockRightInner
-        { $$ = p.parseIterator(@$, $2, $4, null, p.ensureBlock(@6, $6), $3, false); }
-    | STAR tupleExpression inOn tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, null, p.parseBlock(@5, $5), $3, false); }
-    | STAR tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, null, p.parseBlock(@3, $3), 0, false); }
-    
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW blockRightInner
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.ensureBlock(@8, $8), $3, $5); }
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, $4, $6, p.parseBlock(@7, $7), $3, $5); }
-    | STAR tupleExpression ifWhile tupleExpression block
-        { $$ = p.parseIterator(@$, $2, null, $4, p.parseBlock(@5, $5), 0, $3); }
-    
-    | STAR tupleExpression RARROW blockRightInner
-        { $$ = p.parseMapper(@$, $2, null, p.ensureBlock(@4, $4), false, false); }
-    | STAR tupleExpression ifWhile tupleExpression RARROW blockRightInner
-        { $$ = p.parseMapper(@$, $2, $4, p.ensureBlock(@4, $4), false, $3); }
-    ;
 
 assignmentExpression:
     tupleExpression
     | assignmentExpression assignOp tupleExpression
         { $$ = p.parseAssignment(@$, $2, $1, $3); }
-
-    // | tupleExpression BULLET assignmentExpression
-    //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
-
-    // | assignmentExpression writeOp tupleExpression
-    //     { $$ = p.parseBinary(@$, $2, $1, $3); }
     | channelOp tupleExpression
         { $$ = p.parseUnary(@$, $1, $2); }
-    
-    // | tupleExpression funcOp assignmentExpression
-    //     { $$ = PARSE_FUNCTION(@$, $1, $3, $2); }
-    // | funcOp assignmentExpression
-    //     { $$ = PARSE_FUNCTION(@$, null, $2, $1); }
-
-    | STAR tupleExpression inOn tupleExpression RARROW assignmentExpression
-        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
-    
-    | STAR tupleExpression inOn tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
-    
-    | STAR tupleExpression RARROW assignmentExpression
-        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
-    | STAR tupleExpression ifWhile tupleExpression RARROW assignmentExpression
-        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
 
 assignmentExpressionSimple:
@@ -891,27 +827,27 @@ assignmentExpressionSimple:
     | channelOp
         { $$ = p.parseUnary(@$, $1, null); }
     
-    | GT anonFuncArgs right
+    | anonFuncSimple
+    | iteratorExpressionSimple
+    | iteratorFuncExpressionSimple
+    | isExpressionSimple
+            
+    ;
+
+anonFuncSimple:
+    GT anonFuncArgs right
         { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@3, $3)); }
     | GT anonFuncArgs DO right
         { $$ = p.parseAnonFunc(@$, $2, p.ensureBlock(@4, $4, null, true)); }
-    
-    | simpleExpression IS matchExpr
+    ;
+
+isExpressionSimple:
+    simpleExpression IS matchExpr
         { $$ = p.parseIs(@$, $1, $3, null);  }
     | simpleExpression IS matchExpr ELSE right
         { $$ = p.parseIs(@$, $1, $3, $5); }
-
-    | STAR simpleExpression inOn simpleExpression RARROW right
-        { $$ = p.parseIterator(@$, $2, $4, null, $6, $3, false); }
-    | STAR simpleExpression inOn simpleExpression ifWhile simpleExpression RARROW right
-        { $$ = p.parseIterator(@$, $2, $4, $6, $8, $3, $5); }
-    
-    | STAR simpleExpression RARROW right
-        { $$ = p.parseMapper(@$, $2, null, $4, false, false); }
-    | STAR simpleExpression ifWhile simpleExpression RARROW right
-        { $$ = p.parseMapper(@$, $2, $4, $6, false, $3); }
     ;
-
+    
 tupleExpression:
     simpleExpression
     | simpleExpression COMMA tupleExpression
@@ -1209,13 +1145,6 @@ writeOp:
         { $$ = ops.Write; }
     | RARROW2MUL
         { $$ = ops.WriteAll; }
-    ;
-
-funcOp:
-    FATARROW
-        { $$ = false; }
-    | DO
-        { $$ = true; }
     ;
 
 ifWhile:

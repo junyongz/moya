@@ -82,11 +82,11 @@ Default argument values are included in assignments.
 </FunctionDeclaration>
 
 ====================================================================================================
-The => operator means the block contains a single expression instead of imperative statements.
+The -> operator means the block contains a single expression instead of imperative statements.
 ====================================================================================================
 ----------------------------------------------------------------------------------------------------
 
-+ a(b) => 42
++ a(b) -> 42
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -98,7 +98,30 @@ The => operator means the block contains a single expression instead of imperati
 
 ----------------------------------------------------------------------------------------------------
 
-+ a(b) => {
++ a(b) -> c where c = 2
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="a"/>
+    <Argument name="b"/>
+    <Block>
+        <Id name="c"/>
+        <where>
+            <AssignmentExpression op="=">
+                <Id name="c"/>
+                <Integer value="2"/>
+            </AssignmentExpression>
+        </where>
+    </Block>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ a(b) -> f {
+    c
+} where {
+    c = 2
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -106,7 +129,64 @@ The => operator means the block contains a single expression instead of imperati
 <FunctionDeclaration access="public">
     <Id name="a"/>
     <Argument name="b"/>
-    <Block/>
+    <CallExpression>
+        <Id name="f"/>
+        <arg>
+            <Block>
+                <Id name="c"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="2"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </arg>
+    </CallExpression>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ a(b) -> f {
+    c
+} where {
+    c = 2
+} • {
+    2
+} where {
+    c = 2
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="a"/>
+    <Argument name="b"/>
+    <CallExpression>
+        <Id name="f"/>
+        <arg>
+            <Block>
+                <Id name="c"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="2"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </arg>
+        <arg>
+            <Block>
+                <Integer value="2"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="c"/>
+                        <Integer value="2"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </arg>
+    </CallExpression>
 </FunctionDeclaration>
 
 ====================================================================================================
@@ -115,18 +195,6 @@ A name without parentheses is a function that takes no arguments.
 ----------------------------------------------------------------------------------------------------
 
 + a {
-}
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<FunctionDeclaration access="public">
-    <Id name="a"/>
-    <Block/>
-</FunctionDeclaration>
-
-----------------------------------------------------------------------------------------------------
-
-+ a => {
 }
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -333,7 +401,7 @@ Where combined with a function declaration will apply to the function body and i
 
 ----------------------------------------------------------------------------------------------------
 
-+ foo() => a where {
++ foo() -> a where {
     a = 1
     b = 1
 }
@@ -355,6 +423,51 @@ Where combined with a function declaration will apply to the function body and i
             </AssignmentExpression>
         </where>
     </Block>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() -> call {
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
+    <CallExpression>
+        <Id name="call"/>
+        <arg>
+            <Block/>
+        </arg>
+    </CallExpression>
+</FunctionDeclaration>
+
+----------------------------------------------------------------------------------------------------
+
++ foo() -> call {
+    a
+} where {
+    a = 1
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<FunctionDeclaration access="public">
+    <Id name="foo"/>
+    <CallExpression>
+        <Id name="call"/>
+        <arg>
+            <Block>
+                <Id name="a"/>
+                <where>
+                    <AssignmentExpression op="=">
+                        <Id name="a"/>
+                        <Integer value="1"/>
+                    </AssignmentExpression>
+                </where>
+            </Block>
+        </arg>
+    </CallExpression>
 </FunctionDeclaration>
 
 ----------------------------------------------------------------------------------------------------
