@@ -223,7 +223,7 @@ Foo 2
     }
 }
 
-+ act(foo:Foo){
++ act(foo:Foo) do {
     foo.f1()
 }
 
