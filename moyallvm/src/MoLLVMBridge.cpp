@@ -483,8 +483,8 @@ MoLLVMBridge::GetGlobal(llvm::Type* type, const std::string& name, llvm::Constan
 }
 
 llvm::Value*
-MoLLVMBridge::DeclareString(const std::string& str) {
-    return builder.CreateGlobalStringPtr(str.c_str());
+MoLLVMBridge::DeclareString(const std::string& str, const std::string& name) {
+    return builder.CreateGlobalStringPtr(str.c_str(), name);
 }
 
 llvm::Value*

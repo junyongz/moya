@@ -887,7 +887,7 @@ isExpressionSimple:
 tupleExpression:
     simpleExpression
     | simpleExpression COMMA tupleExpression
-        { $$ = p.ensureTuple(@$, $1); $$.push($3); }
+        { $$ = p.ensureTupleRight(@$, $1, $3); }
     ;
 
 simpleExpression:
@@ -1004,7 +1004,7 @@ bindExpression:
 bindList:
     callExpression
     | bindList SEMICOLON callExpression
-        { $$ = p.ensureTuple(@$, $1); $$.push($3); }
+        { $$ = p.ensureTuple(@$, $1, $3); }
     ;
 
 callExpression:

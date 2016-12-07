@@ -91,7 +91,7 @@ public:
 
     llvm::Value* CreateClassTable(const std::string& name, const std::vector<llvm::Value*> functions);
 
-    llvm::Value* DeclareString(const std::string& str);
+    llvm::Value* DeclareString(const std::string& str, const std::string& name);
 
     llvm::Value* CompileInteger(size_t size, int value);
     llvm::Value* CompileFloat(float value);

@@ -515,11 +515,20 @@ void MoJBridge::DeclareFunction(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void MoJBridge::DeclareString(const Nan::FunctionCallbackInfo<Value>& info) {
     MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
     String::Utf8Value _str(info[0]->ToString());
     std::string str = std::string(*_str);
 
-    llvm::Value* ret = bridge->compiler->DeclareString(str);
-    info.GetReturnValue().Set(MoJValue::Create(ret));
+    if (info.Length() > 1) {
+        String::Utf8Value _name(info[1]->ToString());
+        std::string name = std::string(*_name);
+
+        llvm::Value* ret = bridge->compiler->DeclareString(str, name);
+        info.GetReturnValue().Set(MoJValue::Create(ret));
+    } else {
+        llvm::Value* ret = bridge->compiler->DeclareString(str, "");
+        info.GetReturnValue().Set(MoJValue::Create(ret));
+    }
 }
 
 void MoJBridge::CompileNull(const Nan::FunctionCallbackInfo<Value>& info) {
