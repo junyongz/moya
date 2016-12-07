@@ -500,10 +500,9 @@ blockOrArrowBlock2:
 
 topLevelBlockWithCall:
     exprOrCallBlock
+    | blockOrBlockLikeWhere
     | iteratorBlock
     | iteratorFuncBlock
-    | isBlock
-    | ifBlock
     | anonFunc
     ;
 
@@ -530,6 +529,16 @@ blockLike:
         { $$ = p.parseUnary(@$, $1, null); }
     ;
 
+tupleWhere:
+    tupleExpression
+    | tupleExpression WHERE blockOrExpr
+        { $$ = p.parseBlock(@$, $1, $3); }
+    | tupleExpression WHERE blockOrExpr THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, $3, false, $6); }
+    | tupleExpression THROWS IF matchBlock
+        { $$ = p.parseBlock(@1, $1, null, false, $4); }
+    ;
+    
 blockWhere:
     block
         { $$ = p.parseBlock(@1, $1); }
@@ -540,14 +549,14 @@ blockWhere:
     | block THROWS IF matchBlock
         { $$ = p.parseBlock(@1, $1, null, false, $4); }
     ;
-    
-tupleWhere:
-    tupleExpression
-    | tupleExpression WHERE blockOrExpr
+
+blockOrBlockLikeWhere:
+    blockOrBlockLike
+    | blockOrBlockLike WHERE blockOrExpr
         { $$ = p.parseBlock(@$, $1, $3); }
-    | tupleExpression WHERE blockOrExpr THROWS IF matchBlock
+    | blockOrBlockLike WHERE blockOrExpr THROWS IF matchBlock
         { $$ = p.parseBlock(@1, $1, $3, false, $6); }
-    | tupleExpression THROWS IF matchBlock
+    | blockOrBlockLike THROWS IF matchBlock
         { $$ = p.parseBlock(@1, $1, null, false, $4); }
     ;
     
