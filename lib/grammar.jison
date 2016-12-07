@@ -59,7 +59,10 @@ hex 0x[0-9A-Fa-f]+
 "try"               { return 'TRY'; }
 "catch"             { return 'CATCH'; }
 "throw"             { return 'THROW'; }
-"throws"             { return 'THROWS'; }
+"throws"            { return 'THROWS'; }
+
+"defer"             { return 'DEFER'; }
+"use"               { return 'USE'; }
 
 "..."               { return 'DOT3'; }
 ".."                { return 'DOT2'; }
@@ -236,7 +239,7 @@ hex 0x[0-9A-Fa-f]+
 %token <stringValue> CPRIMITIVE
 
 %left NEWLINE
-%left TRY CATCH THROW THROWS
+%left TRY CATCH THROW THROWS DEFER USE
 %left FOR ON WHILE BREAK CONTINUE DO
 %left IF ELSE OR
 %left POUND CARET AT UNDERSCORE
@@ -657,6 +660,8 @@ controlFlowStatement:
         { $$ = p.parseThrow(@$, p.parseUndefined(@$)); }
     | DASHDASH blockExpressionLeft
         { $$ = p.parsePrint(@$, $2); }
+    | DEFER blockExpressionLeft
+        { $$ = p.parseDefer(@$, $2); }
     ;
 
 whileBlock:
@@ -975,6 +980,8 @@ unaryExpression:
         { $$ = p.parseUnary(@$, ops.Not, $2); }
     | IN unaryExpression
         { $$ = p.parseUnary(@$, ops.In, $2); }
+    | USE unaryExpression
+        { $$ = p.parseUse(@$, $2); }
     ;
 
 bindExpression:

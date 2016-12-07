@@ -459,7 +459,6 @@ do {
 Caught int 42
 Caught str ok
 
-
 ----------------------------------------------------------------------------------------------------
 # Re-throw during catch
 
@@ -490,7 +489,7 @@ Caught int 42
 Re-caught int 42
 
 ----------------------------------------------------------------------------------------------------
-# Re-throw during catch
+# Infer optional return when some paths throw and some return
 
 + foo(a) do {
     if a < 10 {
@@ -557,7 +556,7 @@ do {
     } catch (exc:Int32) {
         -- "Caught %exc"
     } catch {
-        -- "Caught %exc"
+        -- "Caught"
     }
 }
 
@@ -607,7 +606,7 @@ do {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Catch for type not thrown
+Exception: Nothing to catch here
 <no file>, line 8
         } catch (exc:String) {
           ^^^^^^^^^^^^^^^^^^^^

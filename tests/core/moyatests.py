@@ -95,7 +95,9 @@ class RunTests(MoyaTestFixture):
     order = 1
 
     def testRun(self, source, expected, mode="", **kwds):
-        args = ["--debug", "--optimize"]
+        args = []
+        # args += ["--debug"]
+        args += ["--optimize"]
         if mode:
             args += ["--inspect", mode]
             
