@@ -402,18 +402,18 @@ do {
             -- "1"
         }
         -- foo(1)
-
+    
         defer {
             -- "2"
         }
-
+    
         -- foo(0)
     } catch (exc) {
         -- exc
     }
-
+    
     -- ""
-
+    
     try {
         -- foo(1)
         ` Invalidate landing pad due to new exception type thrown by bar()
@@ -425,7 +425,7 @@ do {
     }
     
     -- ""
-
+    
     try {
         ` Same landing pad used for all three foo() calls
         -- foo(1)
@@ -451,5 +451,56 @@ bad
 clear
 clear
 bad
+
+----------------------------------------------------------------------------------------------------
+# Defer with early return
+
++ foo() do {
+    defer {
+        -- "bye"
+    }
+    -- "hi"
+    = 1
+    -- "again"
+}
+
+do {
+    -- foo()
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+hi
+bye
+1
+
+----------------------------------------------------------------------------------------------------
+# Defer with early return in nested scope
+
++ foo(a) do {
+    defer {
+        -- "bye"
+    }
+    -- "hi"
+    if (a > 1) {
+        = 1
+    }
+    -- "again"
+}
+
+do {
+    -- foo(2)
+    -- foo(0)
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+hi
+bye
+1
+hi
+again
+bye
+unknown
 
 ----------------------------------------------------------------------------------------------------
