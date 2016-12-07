@@ -46,6 +46,8 @@ void MoJBridge::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "beginModule", BeginModule);
   Nan::SetPrototypeMethod(tpl, "endModule", EndModule);
   Nan::SetPrototypeMethod(tpl, "emitObject", EmitObject);
+  Nan::SetPrototypeMethod(tpl, "loadJIT", LoadJIT);
+  Nan::SetPrototypeMethod(tpl, "executeMain", ExecuteMain);
   Nan::SetPrototypeMethod(tpl, "getInsertBlock", GetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "setInsertBlock", SetInsertBlock);
   Nan::SetPrototypeMethod(tpl, "isBlockEmpty", IsBlockEmpty);
@@ -83,7 +85,6 @@ void MoJBridge::Init(Local<Object> exports) {
   Nan::SetPrototypeMethod(tpl, "storeVariable", StoreVariable);
   Nan::SetPrototypeMethod(tpl, "loadVariable", LoadVariable);
   Nan::SetPrototypeMethod(tpl, "getPointer", GetPointer);
-  Nan::SetPrototypeMethod(tpl, "executeMain", ExecuteMain);
   Nan::SetPrototypeMethod(tpl, "compileLandingPad", CompileLandingPad);
   Nan::SetPrototypeMethod(tpl, "compileResume", CompileResume);
   Nan::SetPrototypeMethod(tpl, "compileCatchSwitch", CompileCatchSwitch);
@@ -360,6 +361,14 @@ void MoJBridge::EmitObject(const Nan::FunctionCallbackInfo<Value>& info) {
   
   bridge->compiler->EmitObject(path);
 
+  info.GetReturnValue().Set(Nan::Undefined());
+}
+
+void MoJBridge::LoadJIT(const Nan::FunctionCallbackInfo<Value>& info) {
+  MoJBridge* bridge = ObjectWrap::Unwrap<MoJBridge>(info.Holder());
+
+  bridge->compiler->LoadJIT();
+  
   info.GetReturnValue().Set(Nan::Undefined());
 }
 

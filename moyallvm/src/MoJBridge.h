@@ -34,6 +34,7 @@ private:
     static void BeginModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EndModule(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void EmitObject(const Nan::FunctionCallbackInfo<v8::Value>& info);
+    static void LoadJIT(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void ExecuteMain(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void GetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);
     static void SetInsertBlock(const Nan::FunctionCallbackInfo<v8::Value>& info);

@@ -61,6 +61,7 @@ static MLVOptimizeLevel optimizeLevel = MLVOptimizeNothing;
 
 static TargetMachine*
 InitMachine() {
+    LLVMLinkInMCJIT();
     InitializeAllTargetInfos();
     InitializeAllTargets();
     InitializeAllTargetMCs();
@@ -80,13 +81,13 @@ InitMachine() {
     return target->createTargetMachine(targetTriple, cpu, features, opt, rm);
 }
 
-static std::string
-mangle(const std::string &Name, DataLayout DL) {
-    std::string MangledName;
-    raw_string_ostream MangledNameStream(MangledName);
-    Mangler::getNameWithPrefix(MangledNameStream, Name, DL);
-    return MangledNameStream.str();
-}
+// static std::string
+// mangle(const std::string &Name, DataLayout DL) {
+//     std::string MangledName;
+//     raw_string_ostream MangledNameStream(MangledName);
+//     Mangler::getNameWithPrefix(MangledNameStream, Name, DL);
+//     return MangledNameStream.str();
+// }
 
 static void
 configurePasses(legacy::PassManagerBase& fpm) {
@@ -103,27 +104,6 @@ configurePasses(legacy::PassManagerBase& fpm) {
         // }
     }
 }
-    
-static std::unique_ptr<Module>
-optimizeModule(std::unique_ptr<Module> module) {
-    llvm::sys::DynamicLibrary::LoadLibraryPermanently(nullptr);
-
-    if (dumpMode == MLVDumpUnoptimized) {
-        module->dump();
-    }
-
-    legacy::FunctionPassManager fpm(module.get());
-    configurePasses(fpm);
-    fpm.doInitialization();
-    
-    for (auto &func : *module) {
-        fpm.run(func);
-    }
-
-    // fpm.doFinalization();
-
-    return module;
-}
 
 // *************************************************************************************************
 
@@ -134,11 +114,7 @@ MoLLVMBridge::MoLLVMBridge():
     diunit(NULL),
     machine(InitMachine()),
     dataLayout(machine->createDataLayout()),
-    compileLayer(objectLayer, SimpleCompiler(*machine)),
-    optimizeLayer(compileLayer,
-        [this](std::unique_ptr<Module> M) {
-          return optimizeModule(std::move(M));
-    })
+    engine(NULL)
 {
 }
 
@@ -273,7 +249,7 @@ void
 MoLLVMBridge::BeginModule(const std::string& name, bool shouldDebug) {
     module = make_unique<Module>(name, context);
     module->setDataLayout(dataLayout);
-    
+
     FunctionType* ft = FunctionType::get(Type::getInt32Ty(context), true);
     personality = Function::Create(ft, Function::ExternalLinkage,
                                    "__moya_personality_v0", module.get());
@@ -293,6 +269,10 @@ MoLLVMBridge::EndModule() {
 
 void
 MoLLVMBridge::EmitObject(const std::string& path) {
+    if (dumpMode == MLVDumpUnoptimized) {
+        module->dump();
+    }
+
     std::error_code EC;
     raw_fd_ostream dest(path, EC, sys::fs::F_None);
 
@@ -312,10 +292,6 @@ MoLLVMBridge::EmitObject(const std::string& path) {
       return;
     }
 
-    if (dumpMode == MLVDumpUnoptimized) {
-        module->dump();
-    }
-
     fpm.run(*module);
 
     if (dumpMode == MLVDumpOptimized) {
@@ -326,40 +302,48 @@ MoLLVMBridge::EmitObject(const std::string& path) {
     dest.close();
 }
 
+void
+MoLLVMBridge::LoadJIT() {
+     if (dumpMode == MLVDumpUnoptimized) {
+         module->dump();
+     }
+
+    Module* mod = module.get();
+
+    std::string err;
+    engine = EngineBuilder(std::move(module))
+          .setErrorStr(&err)
+          .setEngineKind(llvm::EngineKind::JIT)
+          .setMCJITMemoryManager(llvm::make_unique<SectionMemoryManager>())
+          .create();
+    if (!engine) {
+        fprintf(stderr, "Could not create ExecutionEngine: %s\n", err.c_str());
+        exit(1);
+    }
+ 
+    llvm::sys::DynamicLibrary::LoadLibraryPermanently(nullptr);
+ 
+    legacy::FunctionPassManager fpm(mod);
+    configurePasses(fpm);
+    fpm.doInitialization();
+     
+    for (auto &F : *mod) {
+        fpm.run(F);
+    }
+      
+    engine->finalizeObject();
+
+    if (dumpMode == MLVDumpOptimized) {
+        mod->dump();
+    }
+}
+
 int
 MoLLVMBridge::ExecuteMain() {
-    auto Resolver = createLambdaResolver(
-        [&](const std::string &Name) {
-        //   if (auto Sym = IndirectStubsMgr->findStub(Name, false))
-        //     return Sym.toRuntimeDyldSymbol();
-          if (auto Sym = optimizeLayer.findSymbol(Name, false))
-            return Sym.toRuntimeDyldSymbol();
-          return RuntimeDyld::SymbolInfo(nullptr);
-        },
-        [](const std::string &Name) {
-          if (auto SymAddr =
-                RTDyldMemoryManager::getSymbolAddressInProcess(Name))
-            return RuntimeDyld::SymbolInfo(SymAddr, JITSymbolFlags::Exported);
-          return RuntimeDyld::SymbolInfo(nullptr);
-        });
-
-    // llvm::verifyModule(*module.get());
-    
-    std::vector<std::unique_ptr<Module>> Ms;
-    Ms.push_back(std::move(module));
-    
-    auto moduleSet = optimizeLayer.addModuleSet(std::move(Ms),
-                                        make_unique<SectionMemoryManager>(),
-                                        std::move(Resolver));
-
-    optimizeLayer.emitAndFinalize(moduleSet);
-
-    if (auto sym = optimizeLayer.findSymbol(mangle("main", dataLayout), false)) {
-        int (*FP)() = (int (*)())(intptr_t)sym.getAddress();
-        return FP();
-    } else {
-        return -1;
-    }
+    // Function* main = mod->getFunction("main");
+    void* funcPointer = engine->getPointerToNamedFunction("main");
+    int (*func)() = (int (*)())((intptr_t)funcPointer);
+    return func();
 }
 
 // *************************************************************************************************
@@ -428,6 +412,8 @@ MoLLVMBridge::DeclareExternalFunction(std::string& name, Type* returnType,
     if (!returnType) {
         func->addFnAttr(Attribute::NoReturn);
     }
+
+    // func->addFnAttr(Attribute::ReadOnly);
 
     return func;
 }
@@ -717,9 +703,9 @@ MoLLVMBridge::CompileLandingPad(llvm::Type* padType, bool isCleanup,
                                 const std::vector<llvm::Value*>& clauses) {
     LandingPadInst* pad = builder.CreateLandingPad(padType, clauses.size());
     
-    if (isCleanup) {
+    // if (isCleanup) {
         pad->setCleanup(true);
-    }
+    // }
     
     for(int i = 0, l = clauses.size(); i < l; ++i) {
         llvm::Constant* clause = static_cast<llvm::Constant*>(clauses[i]);

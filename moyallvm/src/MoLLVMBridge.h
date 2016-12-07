@@ -13,6 +13,8 @@
 #include "llvm/ExecutionEngine/Orc/IRCompileLayer.h"
 #include "llvm/ExecutionEngine/Orc/IRTransformLayer.h"
 
+#include "llvm/IR/LegacyPassManager.h"
+
 typedef enum {
     MLVDumpNothing = 0,
     MLVDumpUnoptimized = 1,
@@ -65,6 +67,7 @@ public:
     void EndModule();
 
     void EmitObject(const std::string& path);
+    void LoadJIT();
     int ExecuteMain();
 
     llvm::Value* GetInsertBlock();
@@ -155,13 +158,9 @@ private:
     const llvm::DataLayout dataLayout;
 
     std::unique_ptr<llvm::Module> module;
-
     llvm::Function* personality;
-    
-    llvm::orc::ObjectLinkingLayer<> objectLayer;
-    llvm::orc::IRCompileLayer<decltype(objectLayer)> compileLayer;
-    typedef std::function<std::unique_ptr<llvm::Module>(std::unique_ptr<llvm::Module>)> OptimizeFunction;
-    llvm::orc::IRTransformLayer<decltype(compileLayer), OptimizeFunction> optimizeLayer;
+
+    llvm::ExecutionEngine* engine;
 };
 
 #endif
