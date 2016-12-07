@@ -606,9 +606,9 @@ do {
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Exception: Nothing to catch here
-<no file>, line 8
-        } catch (exc:String) {
-          ^^^^^^^^^^^^^^^^^^^^
+Exception: Try without possible exceptions
+<no file>, line 6
+        try {
+        ^^^^^
 
 ----------------------------------------------------------------------------------------------------

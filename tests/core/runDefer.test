@@ -355,7 +355,7 @@ do {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Exception: Illegal to throw in defer
-<no file>, line 4
+<no file>, line 5
                 throw 1
                 ^^^^^^^
 
@@ -375,5 +375,81 @@ do {
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ok
+
+----------------------------------------------------------------------------------------------------
+# This is just a workspace for proving that landingpad blocks get invalidated properly
+
++ foo(a) do {
+    if a == 0 {
+        throw "bad"
+    } else {
+        = "clear"
+    }
+}
+
++ bar(a) do {
+    if a == 0 {
+        throw 42
+    }
+}
+    
+        
+do {
+    ` 3 different landing pads here due to intermingled defers
+    try {
+        -- foo(1)
+        defer {
+            -- "1"
+        }
+        -- foo(1)
+
+        defer {
+            -- "2"
+        }
+
+        -- foo(0)
+    } catch (exc) {
+        -- exc
+    }
+
+    -- ""
+
+    try {
+        -- foo(1)
+        ` Invalidate landing pad due to new exception type thrown by bar()
+        bar(1)
+        -- foo(1)
+        -- foo(0)
+    } catch (exc) {
+        -- exc
+    }
+    
+    -- ""
+
+    try {
+        ` Same landing pad used for all three foo() calls
+        -- foo(1)
+        -- foo(1)
+        -- foo(0)
+    } catch (exc) {
+        -- exc
+    }
+}
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+clear
+clear
+2
+1
+bad
+
+clear
+clear
+bad
+
+clear
+clear
+bad
 
 ----------------------------------------------------------------------------------------------------
