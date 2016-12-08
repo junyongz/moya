@@ -314,9 +314,9 @@ classDeclaration:
     ;
     
 propertyDeclaration:
-    accessMode IDENTIFIER EQ exprOrBlockOrBlockLikeWhere
+    accessMode IDENTIFIER EQ topLevelBlock
         { $$ = p.parseProperty(@$, $1, $2, null, $4); }
-    | accessMode IDENTIFIER COLON declTypeId EQ exprOrBlockOrBlockLikeWhere
+    | accessMode IDENTIFIER COLON declTypeId EQ topLevelBlock
         { $$ = p.parseProperty(@$, $1, $2, $4, $6); }
     ;
 
