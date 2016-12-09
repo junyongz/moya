@@ -28,7 +28,7 @@ idUpper [A-Z][0-9a-zA-Z]*
 idDots ({idLower}*)([.]{idLower}+)*
 idSymbol [%$¢€£¥π˚]+
 specialty [a-zA-Z][0-9a-zA-Z]*(@[a-zA-Z][0-9a-zA-Z]*)?
-unit [a-zA-Z%$¢€£¥][a-zA-Z%$¢€£¥0-9]*
+unit [a-zA-Z%$¢€£¥°][a-zA-Z%$¢€£¥0-9]*
 
 integer [0-9]+
 float [0-9]+[\.][0-9]+
@@ -42,8 +42,8 @@ hex 0x[0-9A-Fa-f]+
 
 "`"[^\n\r]+{nl}       		               { return null; }
 "`"{nl}       		                       { return null; }
-"====="[=]+{nl}(.*?){nl}"====="[=]+{nl}    { return null; }
 "-----"[-]+{nl}                            { return null; }
+"====="[=]+{nl}                            { return null; }
 
 "if"                { return 'IF'; }
 "else"              { return 'ELSE'; }
@@ -204,11 +204,15 @@ hex 0x[0-9A-Fa-f]+
 <ccode>"unsigned int"          { return 'CPRIMITIVE'; }
 <ccode>"unsigned long long"    { return 'CPRIMITIVE'; }
 <ccode>"unsigned long"         { return 'CPRIMITIVE'; }
+<ccode>"unsigned long long int" { return 'CPRIMITIVE'; }
+<ccode>"unsigned long int"     { return 'CPRIMITIVE'; }
 <ccode>"int"                   { return 'CPRIMITIVE'; }
 <ccode>"float"                 { return 'CPRIMITIVE'; }
 <ccode>"double"                { return 'CPRIMITIVE'; }
+<ccode>"long long int"         { return 'CPRIMITIVE'; }
 <ccode>"long long"             { return 'CPRIMITIVE'; }
 <ccode>"long double"           { return 'CPRIMITIVE'; }
+<ccode>"long int"              { return 'CPRIMITIVE'; }
 <ccode>"long"                  { return 'CPRIMITIVE'; }
 <ccode>"size_t"                { return 'CPRIMITIVE'; }
 <ccode>{idLower}               { return 'IDENTIFIER'; }
@@ -303,14 +307,31 @@ funcDeclaration:
     ;
     
 classDeclaration:
-    accessMode declClassId
-        { $$ = p.parseClass(@$, $1, $2, null, null); }
-    | accessMode declClassId COLON declTypeId
-        { $$ = p.parseClass(@$, $1, $2, $3, null); }
+    accessMode declClassId COLON typeDefChain
+        { $$ = p.parseTypeDef(@$, $1, $2, $4); }
     | accessMode declClassId declarationSet
         { $$ = p.parseClass(@$, $1, $2, null, $3); }
-    | accessMode declClassId COLON declTypeId declarationSet
+    | accessMode declClassId COLON typeDefChain declarationSet
         { $$ = p.parseClass(@$, $1, $2, $4, $5); }
+    ;
+    
+typeDefChain:
+    typeDecl
+        { $$ = $1; }
+    | typeDefChain COLON typeDecl
+        { $$ = p.parseTypeDef(@$, 0, $1, $3); }
+    | typeDefChain COMMA declClassId
+        { $$ = p.parseImplements(@$, $1, $3); }
+    ;
+
+typeDecl:
+    declClassId
+    | IDENTIFIER
+        { $$ = p.parseId(@$, $1); }
+    | FLOAT_UNIT
+        { $$ = p.parseNumber(@$, $1); }
+    | INTEGER_UNIT
+        { $$ = p.parseNumber(@$, $1); }
     ;
     
 propertyDeclaration:
@@ -745,8 +766,12 @@ isBlock:
         { $$ = p.parseIs(@$, $1, $3); }
     | tupleExpression IS matchExpr ELSE blockOrRight
         { $$ = p.parseIs(@$, $1, $3, p.ensureBlock(@5, $5)); }
+    | tupleExpression IS matchExpr ELSE RARROW blockOrRight
+        { $$ = p.parseIs(@$, $1, $3, p.ensureBlock(@6, $6)); }
     | tupleExpression IS matchBlock
         { $$ = p.parseIs(@$, $1, $3); }
+    | tupleExpression IS LCB matchList lineEnding ELSE blockOrRight RCB
+        { $$ = p.parseIs(@$, $1, $4, p.ensureBlock(@7, $7)); }
     | tupleExpression IS LCB matchList lineEnding ELSE RARROW blockOrRight RCB
         { $$ = p.parseIs(@$, $1, $4, p.ensureBlock(@8, $8)); }
     ;
@@ -790,6 +815,8 @@ ifBlock:
         { $$ = p.parseIf(@$, $2, p.ensureBlock(@4, $4)); }
     | IF matchBlock
         { $$ = p.parseIf(@$, $2); }
+    | IF LCB matchList lineEnding ELSE blockOrRight RCB
+        { $$ = p.parseIf(@$, $3, p.ensureBlock(@6, $6)); }
     | IF LCB matchList lineEnding ELSE RARROW blockOrRight RCB
         { $$ = p.parseIf(@$, $3, p.ensureBlock(@7, $7)); }
     ;
@@ -828,6 +855,8 @@ ifExpr:
         { $$ = p.parseIf(@$, $2, null);  }
     | IF matchExpr ELSE binaryExpression
         { $$ = p.parseIf(@$, $2, $4); }
+    | IF matchExpr ELSE RARROW binaryExpression
+        { $$ = p.parseIf(@$, $2, $5); }
     ;
 
 matchExpr:
@@ -870,6 +899,8 @@ isExpressionSimple:
         { $$ = p.parseIs(@$, $1, $3, null);  }
     | simpleExpression IS matchExpr ELSE right
         { $$ = p.parseIs(@$, $1, $3, $5); }
+    | simpleExpression IS matchExpr ELSE RARROW right
+        { $$ = p.parseIs(@$, $1, $3, $6); }
     ;
     
 tupleExpression:
