@@ -7,20 +7,9 @@ Read operator.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="<<">
+<Read>
     <Id name="channel"/>
-</UnaryExpression>
-
-----------------------------------------------------------------------------------------------------
-
-n = <<
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<AssignmentExpression op="=">
-    <Id name="n"/>
-    <UnaryExpression op="<<"/>
-</AssignmentExpression>
+</Read>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -30,34 +19,10 @@ n = << channel
 
 <AssignmentExpression op="=">
     <Id name="n"/>
-    <UnaryExpression op="<<">
+    <Read>
         <Id name="channel"/>
-    </UnaryExpression>
+    </Read>
 </AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-n << channel
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<AssignmentExpression op="<<">
-    <Id name="n"/>
-    <Id name="channel"/>
-</AssignmentExpression>
-
-----------------------------------------------------------------------------------------------------
-
-foo(<<)
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-<CallExpression>
-    <Id name="foo"/>
-    <arg>
-        <UnaryExpression op="<<"/>
-    </arg>
-</CallExpression>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -68,9 +33,9 @@ foo(<< channel)
 <CallExpression>
     <Id name="foo"/>
     <arg>
-        <UnaryExpression op="<<">
+        <Read>
             <Id name="channel"/>
-        </UnaryExpression>
+        </Read>
     </arg>
 </CallExpression>
 
@@ -83,9 +48,9 @@ Write operator.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op=">>">
+<Yield>
     <Id name="message"/>
-</UnaryExpression>
+</Yield>
 
 ----------------------------------------------------------------------------------------------------
 
@@ -93,10 +58,10 @@ message >> channel
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op=">>">
+<Write>
     <Id name="message"/>
     <Id name="channel"/>
-</BinaryExpression>
+</Write>
 
 ----------------------------------------------------------------------------------------------------
 # Write expression in block
@@ -107,9 +72,9 @@ message >> channel
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op=">>">
+<Yield>
     <Id name="message"/>
-</UnaryExpression>
+</Yield>
 
 ----------------------------------------------------------------------------------------------------
 # Write expression in block
@@ -122,7 +87,7 @@ message >> channel
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op=">>">
+<Yield>
     <Block>
         <Id name="message"/>
         <where>
@@ -132,7 +97,7 @@ message >> channel
             </AssignmentExpression>
         </where>
     </Block>
-</UnaryExpression>
+</Yield>
 
 ====================================================================================================
 Write all operator.
@@ -144,9 +109,9 @@ Write all operator.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<UnaryExpression op="*>>">
+<Yield all="true">
     <Id name="channel"/>
-</UnaryExpression>
+</Yield>
 
 ----------------------------------------------------------------------------------------------------
 # Write all expression without channel
@@ -155,9 +120,9 @@ channel *>> channel
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<BinaryExpression op="*>>">
+<Write all="true">
     <Id name="channel"/>
     <Id name="channel"/>
-</BinaryExpression>
+</Write>
 
 ----------------------------------------------------------------------------------------------------

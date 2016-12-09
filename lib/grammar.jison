@@ -520,15 +520,14 @@ blockOrBlockLike:
 blockLike:
     isBlock
     | ifBlock
-
     | tupleExpression writeOp blockOrBlockLike
-        { $$ = p.parseBinary(@$, $2, $1, $3); }
-    | channelOp blockOrBlockLike
-        { $$ = p.parseUnary(@$, $1, $2); }
-    | channelOp
-        { $$ = p.parseUnary(@$, $1, null); }
+        { $$ = p.parseWrite(@$, $1, $3, $2); }
+    | writeOp blockOrBlockLike
+        { $$ = p.parseYield(@$, $2, $1); }
+    | readOp blockOrBlockLike
+        { $$ = p.parseRead(@$, $2); }
     ;
-
+    
 tupleWhere:
     tupleExpression
     | tupleExpression WHERE blockOrExpr
@@ -606,12 +605,11 @@ blockExpressionLeft:
     | tupleExpression assignOp topLevelBlock
         { $$ = p.parseAssignment(@$, $2, $1, $3); }
     | tupleExpression writeOp topLevelBlock
-        { $$ = p.parseBinary(@2, $2, $1, $3); }
-    
-    | channelOp
-        { $$ = p.parseUnary(@$, $1, null); }
-    | channelOp topLevelBlock
-        { $$ = p.parseUnary(@$, $1, $2); }
+        { $$ = p.parseWrite(@2, $1, $3, $2); }
+    | writeOp topLevelBlock
+        { $$ = p.parseYield(@$, $2, $1); }
+    | readOp topLevelBlock
+        { $$ = p.parseRead(@$, $2); }
     ;
     
 statement:
@@ -843,26 +841,16 @@ assignmentExpression:
     tupleExpression
     | assignmentExpression assignOp tupleExpression
         { $$ = p.parseAssignment(@$, $2, $1, $3); }
-    | channelOp tupleExpression
-        { $$ = p.parseUnary(@$, $1, $2); }
+    | readOp tupleExpression
+        { $$ = p.parseRead(@$, $2); }
     ;
 
 assignmentExpressionSimple:
     simpleExpression
     | simpleExpression assignOp right
         { $$ = p.parseAssignment(@$, $2, $1, $3); }
-    
-    // | simpleExpression BULLET right
-    //     { $$ = $1; /*PARSE_CALL(@$, $1, null); APPEND_ARGS($$, $3);*/ }
-        
-    | simpleExpression writeOp right
-        { $$ = p.parseBinary(@2, $2, $1, $3); }
-    
-    | channelOp right
-        { $$ = p.parseUnary(@$, $1, $2); }
-    | channelOp
-        { $$ = p.parseUnary(@$, $1, null); }
-    
+    | readOp right
+        { $$ = p.parseRead(@$, $2); }
     | anonFuncSimple
     | iteratorExpressionSimple
     | iteratorFuncExpressionSimple
@@ -1151,8 +1139,6 @@ op:
 assignOp:
     EQ
         { $$ = ops.Eq; }
-    | LARROW2
-        { $$ = ops.Read; }
     | ADD_EQ
         { $$ = ops.AddEq; }
     | SUBTRACT_EQ
@@ -1169,20 +1155,16 @@ assignOp:
         { $$ = ops.ConcatEq; }
     ;
 
-channelOp:
+readOp:
     LARROW2
         { $$ = ops.Read; }
-    | RARROW2
-        { $$ = ops.Write; }
-    | RARROW2MUL
-        { $$ = ops.WriteAll; }
     ;
 
 writeOp:
     RARROW2
-        { $$ = ops.Write; }
+        { $$ = false; }
     | RARROW2MUL
-        { $$ = ops.WriteAll; }
+        { $$ = true; }
     ;
 
 ifWhile:
