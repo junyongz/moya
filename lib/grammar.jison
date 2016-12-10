@@ -25,6 +25,7 @@ nl [\n\r]
 id [a-zA-Z][0-9a-zA-Z]*
 idLower [a-z][0-9a-zA-Z]*
 idUpper [A-Z][0-9a-zA-Z]*
+idC [_a-zA-Z][0-9a-zA-Z_]*
 idDots ({idLower}*)([.]{idLower}+)*
 idSymbol [%$¢€£¥π˚]+
 specialty [a-zA-Z][0-9a-zA-Z]*(@[a-zA-Z][0-9a-zA-Z]*)?
@@ -215,6 +216,7 @@ hex 0x[0-9A-Fa-f]+
 <ccode>"long int"              { return 'CPRIMITIVE'; }
 <ccode>"long"                  { return 'CPRIMITIVE'; }
 <ccode>"size_t"                { return 'CPRIMITIVE'; }
+<ccode>{idC}                   { return 'CIDENTIFIER'; }
 <ccode>{idLower}               { return 'IDENTIFIER'; }
 <ccode>{idUpper}               { return 'IDENTIFIER'; }
 
@@ -225,6 +227,7 @@ hex 0x[0-9A-Fa-f]+
 /lex
 
 %token <stringValue> IDENTIFIER
+%token <stringValue> CIDENTIFIER
 %token <stringValue> UIDENTIFIER
 %token <stringValue> UNIDENTIFIER
 %token <stringValue> BIDENTIFIER
@@ -1255,20 +1258,20 @@ cDeclaration:
     ;
     
 cFunction:
-    cType IDENTIFIER LP cArgs RP
+    cType CIDENTIFIER LP cArgs RP
         { $$ = p.parseCFunction(@$, $1, $2, $4); }
-    | cType IDENTIFIER LP RP
+    | cType CIDENTIFIER LP RP
         { $$ = p.parseCFunction(@$, $1, $2, null); }
     ;
 
 cType:
-    IDENTIFIER
+    CIDENTIFIER
         { $$ = p.parseCType(@$, $1); }
-    | STRUCT IDENTIFIER
+    | STRUCT CIDENTIFIER
         { $$ = p.parseCType(@$, $2); }
-    | CONST IDENTIFIER
+    | CONST CIDENTIFIER
         { $$ = p.parseCType(@$, $2); }
-    | CONST STRUCT IDENTIFIER
+    | CONST STRUCT CIDENTIFIER
         { $$ = p.parseCType(@$, $3); }
     | CPRIMITIVE
         { $$ = p.parseCType(@$, $1); }
@@ -1288,6 +1291,6 @@ cArgs:
 cArg:
     cType
         { $$ = p.parseCArgument(@$, $1, null); }
-    | cType IDENTIFIER
+    | cType CIDENTIFIER
         { $$ = p.parseCArgument(@$, $1, $2); }
     ;
