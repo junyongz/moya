@@ -1,11 +1,73 @@
 
-C"char* resizeBuffer(char*, int, int)"
-
-+ resize\T(items:T, size:Int32, oldSize, newSize):T do {
-    = resizeBuffer(items, size * oldSize, size * newSize)
++ Int1 {
 }
 
-----------------------------------------------------------------------------------------------------
++ Int8 {
+}
+
++ Int16 {
+}
+
++ Int32 {
+}
+
++ Int64 {
+}
+
++ Float32 {
+}
+
++ Float64 {
+}
+
++ Bool {
+}
+
++ Char {
+}
+
+` // XXXjoe For when I support units
+` + i1: Int1
+` + i16: Int16
+` + i32: i: Int32
+` + i64: Int64
+` + f32: f: Float32
+` + f64: d: Float64
+` + b: Bool
+` + c: Char
+
++ Int: i: Int32
++ Float: Float32
++ Double: Float64
+
+` XXXjoe For when I support type constraints
+` + Int = Bool | Char | Int1 | Int8 | Int16 | Int32 | Int64
+` + Float = Float32 | Float64
+` + Number = Int | Float
+
+====================================================================================================
+
++ Void {
+}
+
++ Pointer {
+    + foo() {
+        42
+    }
+}
+
+====================================================================================================
+
+
++ String : Pointer {
+}
+
+====================================================================================================
+
++ TypeInfo {
+}
+
+====================================================================================================
 
 + Error {
     + message = ""
@@ -21,7 +83,10 @@ C"char* resizeBuffer(char*, int, int)"
     }
 }
 
-----------------------------------------------------------------------------------------------------
+====================================================================================================
 
-` XXXjoe For when I support type constraints
-` + Number = Int1 | Int8 | Int16 | Int32 | Int64 | Float32 | Float64
+C"char* resizeBuffer(char*, int, int)"
+
++ resize\T(items:T, size:Int32, oldSize, newSize):T do {
+    = resizeBuffer(items, size * oldSize, size * newSize)
+}
